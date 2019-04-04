@@ -6,22 +6,31 @@ const figlet = require('figlet');
 const path = require('path');
 const program = require('commander');
 
-console.log(
-  chalk.red(
-    figlet.textSync('perfano - ModusCreate', { horizontalLayout: 'full' })
-  )
-);
 
-
-program
-	.version('0.0.1')
-  .description("A CLI tool for monitoring web performance in modern web projects")
-  .option('-p, --pwa', 'Check PWA')
-  .option('-l, --lighthouse', 'Lighthouse Checks')
-  .option('-s, --bundle-size', 'Checking bundle size')
-  .parse(process.argv);
-
-
-if (!process.argv.slice(2).length) {
-	program.outputHelp();
+const init = () => {
+  console.log(
+    chalk.white(
+      figlet.textSync("Perfano - ModusCreate", {
+        horizontalLayout: "default",
+        verticalLayout: "default"
+      })
+    )
+  );
+  program
+    .version('0.0.1')
+    .description("A CLI tool for monitoring web performance in modern web projects")
+    .option('-p, --pwa', 'Check PWA')
+    .option('-l, --lighthouse', 'Lighthouse Checks')
+    .option('-s, --bundle-size', 'Checking bundle size')
+    .parse(process.argv);
 }
+
+const runPerfTasks = async () => {
+  // show script introduction
+  // ask questions
+  // create the file
+  // show success message
+};
+
+runPerfTasks();
+init();

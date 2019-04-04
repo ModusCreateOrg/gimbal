@@ -2,16 +2,16 @@
   "name": "webperf-ci",
   "version": "1.0.0",
   "description": "A CLI tool for monitoring web performance in modern web projects",
-	"main": "./lib/index.js",
-	"bin": {
-		"perfano": "/lib/index.js"
-	},
+  "main": "./lib/index.js",
+  "bin": {
+    "perfano": "./lib/index.js"
+  },
   "scripts": {
-		"start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-		"create": "npm run build && npm run test",
-		"build": "tsc -p .",
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "create": "npm run build && npm run start",
+    "build": "tsc -p .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,7 @@
     "clear": "^0.1.0",
     "commander": "^2.20.0",
     "figlet": "^1.2.1",
+    "inquirer": "^6.2.2",
     "path": "^0.12.7"
   },
   "devDependencies": {
