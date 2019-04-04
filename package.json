@@ -1,0 +1,46 @@
+{
+  "name": "webperf-ci",
+  "version": "1.0.0",
+  "description": "A CLI tool for monitoring web performance in modern web projects",
+	"main": "./lib/index.js",
+	"bin": {
+		"perfano": "/lib/index.js"
+	},
+  "scripts": {
+		"start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+		"create": "npm run build && npm run test",
+		"build": "tsc -p .",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grgur/webperf-ci.git"
+  },
+  "keywords": [
+    "web-performance",
+    "ci",
+    "performance",
+    "webdevelopment",
+    "javascript"
+  ],
+  "author": "Ahsan Ayaz <ahsan.ayaz@moduscreate.com>, Adaobi Frank <adaobi.frank@moduscreate.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/grgur/webperf-ci/issues"
+  },
+  "homepage": "https://github.com/grgur/webperf-ci#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "clear": "^0.1.0",
+    "commander": "^2.20.0",
+    "figlet": "^1.2.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "@types/node": "^11.13.0",
+    "nodemon": "^1.18.10",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.1"
+  }
+}
