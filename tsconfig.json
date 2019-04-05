@@ -4,7 +4,7 @@
     "module": "commonjs",
     "lib": ["es6", "es2015", "dom"],
     "declaration": true,
-    "outDir": "lib",
+    "outDir": "bin",
     "rootDir": "src",
     "strict": true,
     "types": ["node"],

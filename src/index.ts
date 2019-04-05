@@ -1,29 +1,27 @@
 #!/usr/bin/env node
 
-const chalk = require('chalk');
-const clear = require('clear');
-const figlet = require('figlet');
-const path = require('path');
-const program = require('commander');
-
+import chalk from 'chalk';
+import figlet from 'figlet';
+import program from 'commander';
 
 const init = () => {
+  // eslint-disable-next-line no-console
   console.log(
     chalk.white(
-      figlet.textSync("Perfano - ModusCreate", {
-        horizontalLayout: "default",
-        verticalLayout: "default"
-      })
-    )
+      figlet.textSync('Perfano - ModusCreate', {
+        horizontalLayout: 'default',
+        verticalLayout: 'default',
+      }),
+    ),
   );
   program
     .version('0.0.1')
-    .description("A CLI tool for monitoring web performance in modern web projects")
+    .description('A CLI tool for monitoring web performance in modern web projects')
     .option('-p, --pwa', 'Check PWA')
     .option('-l, --lighthouse', 'Lighthouse Checks')
     .option('-s, --bundle-size', 'Checking bundle size')
     .parse(process.argv);
-}
+};
 
 const runPerfTasks = async () => {
   // show script introduction
