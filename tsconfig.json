@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
+    "moduleResolution": "node",
     "lib": ["es6", "es2015", "dom"],
     "declaration": true,
     "outDir": "bin",
@@ -9,6 +10,46 @@
     "strict": true,
     "types": ["node"],
     "esModuleInterop": true,
-    "resolveJsonModule": true
-  }
+    "resolveJsonModule": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@typings/*": ["./typings/*"]
+    },
+
+    /* Strict Type-Checking Options */
+    /* Raise error on expressions and declarations with an implied 'any' type. */
+    "noImplicitAny": true,
+    /* Enable strict null checks. */
+    "strictNullChecks": true,
+    /* Enable strict checking of function types. */
+    "strictFunctionTypes": true,
+    /* Enable strict checking of property initialization in classes. */
+    "strictPropertyInitialization": true,
+    /* Raise error on 'this' expressions with an implied 'any' type. */
+    "noImplicitThis": true,
+    /* Parse in strict mode and emit "use strict" for each source file. */
+    "alwaysStrict": true,
+
+    /* Additional Checks */
+    /* Report error when not all code paths in function return a value. */
+    "noImplicitReturns": true,
+    /* Report errors for fallthrough cases in switch statement. */
+    "noFallthroughCasesInSwitch": true,
+
+    /* Debugging Options */
+    /* Report module resolution log messages. */
+    "traceResolution": false,
+    /* Print names of generated files part of the compilation. */
+    "listEmittedFiles": false,
+    /* Print names of files part of the compilation. */
+    "listFiles": false,
+    /* Stylize errors and messages using color and context. */
+    "pretty": true
+  },
+  "exclude": [
+    "bin",
+    "node_modules"
+  ]
 }
