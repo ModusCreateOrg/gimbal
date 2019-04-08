@@ -14,8 +14,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@typings/*": ["./typings/*"]
+      "@/typings/*": ["./typings/*"],
+      "@/*": ["./src/*"]
     },
 
     /* Strict Type-Checking Options */
