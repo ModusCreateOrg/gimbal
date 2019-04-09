@@ -27,7 +27,8 @@
         "ignoreUrls": true
       }
     ],
-    "@typescript-eslint/indent": ["error", 2]
+    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/no-unused-vars": "error"
   },
   "settings": {
     "import/parsers": {

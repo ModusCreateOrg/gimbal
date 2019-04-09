@@ -47,14 +47,22 @@
   },
   "dependencies": {
     "chalk": "2.4.2",
+    "chrome-launcher": "0.10.5",
     "clear": "0.1.0",
     "commander": "2.20.0",
     "figlet": "1.2.1",
-    "inquirer": "6.2.2"
+    "get-port": "5.0.0",
+    "inquirer": "6.2.2",
+    "lighthouse": "4.2.0",
+    "mkdirp": "0.5.1",
+    "pidusage": "2.0.17",
+    "serve-handler": "6.0.0"
   },
   "devDependencies": {
     "@types/figlet": "1.2.0",
-    "@types/node": "11.13.0",
+    "@types/mkdirp": "0.5.2",
+    "@types/node": "11.13.1",
+    "@types/pidusage": "2.0.1",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "17.1.0",
@@ -70,6 +78,7 @@
     "nodemon": "1.18.10",
     "prettier": "1.16.4",
     "ts-node": "8.0.3",
-    "typescript": "3.4.1"
+    "tsconfig-paths": "3.8.0",
+    "typescript": "3.4.2"
   }
 }
