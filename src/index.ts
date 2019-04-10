@@ -22,6 +22,8 @@ program
   .option('--cwd [dir', 'Path of the CRA')
   .option('--no-lighthouse', 'Disable the lighthouse auditing')
   .option('--no-npm-install', 'Disable the `npm install` command')
+  .option('--no-calculate-unused-css', 'Disable calculating unused CSS')
+  .option('--no-heap-snapshot', 'Disable getting a heap snapshot')
   .option('--npm-install-command [cmd]', 'The command to use to install, defaults to `npm install`')
   .action(
     async (cmd): Promise<void> => {

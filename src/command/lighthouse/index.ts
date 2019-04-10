@@ -1,5 +1,6 @@
 // @ts-ignore
 import lighthouse from 'lighthouse';
+import Chrome from '@/module/chrome';
 import Lighthouse from '@/module/lighthouse';
 import Serve from '@/module/serve';
 import { CommandOptions } from '@/typings/utils/command';
@@ -13,16 +14,23 @@ const lighthouseRunner = async (options: CommandOptions): Promise<lighthouse.Res
     await mkdirp(options.artifactDir as string);
   }
 
+  const chrome = new Chrome();
+  const servePort = await findPort();
   const serve = new Serve({
-    port: await findPort(),
+    port: servePort,
     public: options.cwd as string,
   });
+
+  await serve.start();
+  await chrome.launch();
 
   try {
     // TODO make configurable
     ret = await Lighthouse(
-      `http://localhost:${serve.port}`,
-      {},
+      `http://localhost:${servePort}`,
+      {
+        chromePort: chrome.port as string,
+      },
       {
         extends: 'lighthouse:default',
         settings: {
@@ -36,6 +44,7 @@ const lighthouseRunner = async (options: CommandOptions): Promise<lighthouse.Res
     // need to catch a lighthouse error in order to stop the http server
   }
 
+  await chrome.kill();
   await serve.stop();
 
   return ret;

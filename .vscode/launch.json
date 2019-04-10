@@ -18,6 +18,9 @@
       "cra",
       "--cwd",
       "../test-react-app"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
     ]
   }]
 }

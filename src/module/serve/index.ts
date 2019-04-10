@@ -8,7 +8,7 @@ interface ServeOptions {
 }
 
 class Serve {
-  public port: number;
+  private port: number;
 
   private public: string;
 
