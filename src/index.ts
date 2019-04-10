@@ -13,7 +13,7 @@ import { CRAOptions } from '@/typings/command/cra';
 import { LightHouseOptions } from '@/typings/command/lighthouse';
 
 // eslint-disable-next-line no-console
-console.log(chalk.white(figlet.textSync('Perfano - ModusCreate')));
+console.log(chalk.white(figlet.textSync('Gimbal - Modus Create')));
 
 program.version('0.0.1').description('A CLI tool for monitoring web performance in modern web projects');
 

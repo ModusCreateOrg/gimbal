@@ -12,5 +12,5 @@
 
 - Run `npm run build`
 - Run `npm link`
-- Run `perfano` from anywhere in your machine
-- Run `perfano -h` for reviewing help
+- Run `gimbal` from anywhere in your machine
+- Run `gimbal -h` for reviewing help

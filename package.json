@@ -4,7 +4,7 @@
   "description": "A CLI tool for monitoring web performance in modern web projects",
   "main": "./bin/index.js",
   "bin": {
-    "perfano": "./bin/index.js"
+    "gimbal": "./bin/index.js"
   },
   "types": "./bin/index.d.ts",
   "scripts": {
@@ -14,7 +14,8 @@
     "lint": "eslint 'src/**/*.ts'",
     "lint-staged": "lint-staged",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
-    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "start": "nodemon --config ./.nodemon/start.json",
+    "start:debug": "nodemon --config ./.nodemon/debug.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
