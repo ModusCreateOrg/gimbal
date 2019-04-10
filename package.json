@@ -47,12 +47,16 @@
     ]
   },
   "dependencies": {
+    "brotli-size": "0.0.3",
+    "bytes": "3.1.0",
     "chalk": "2.4.2",
     "chrome-devtools-frontend": "1.0.588237",
     "clear": "0.1.0",
     "commander": "2.20.0",
     "figlet": "1.2.1",
     "get-port": "5.0.0",
+    "globby": "9.2.0",
+    "gzip-size": "5.0.0",
     "inquirer": "6.2.2",
     "lighthouse": "4.3.0",
     "mkdirp": "0.5.1",
@@ -61,9 +65,12 @@
     "serve-handler": "6.0.0"
   },
   "devDependencies": {
+    "@types/bytes": "3.0.0",
     "@types/figlet": "1.2.0",
+    "@types/globby": "9.1.0",
+    "@types/gzip-size": "4.1.0",
     "@types/mkdirp": "0.5.2",
-    "@types/node": "11.13.2",
+    "@types/node": "11.13.4",
     "@types/pidusage": "2.0.1",
     "@types/puppeteer": "1.12.3",
     "@typescript-eslint/eslint-plugin": "1.6.0",
@@ -82,6 +89,6 @@
     "prettier": "1.16.4",
     "ts-node": "8.0.3",
     "tsconfig-paths": "3.8.0",
-    "typescript": "3.4.2"
+    "typescript": "3.4.3"
   }
 }

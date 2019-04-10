@@ -1,11 +1,13 @@
 // @ts-ignore
 import lighthouse from 'lighthouse';
+import bundlesizeModule from '@/module/bundlesize';
 import LighthouseModule from '@/module/lighthouse';
 import Chrome from '@/module/chrome';
 import Heap from '@/module/chrome/Heap';
 import UnusedCSS from '@/module/chrome/UnusedCSS';
 import NpmInstall from '@/module/npm-install';
 import Serve from '@/module/serve';
+import { BundleConfig, ParsedBundleConfig } from '@/typings/module/bundlesize';
 import { UnusedCSSRet } from '@/typings/module/chrome/UnusedCSS';
 import { Snapshot } from '@/typings/module/chrome/Heap';
 import { CommandOptions } from '@/typings/utils/command';
@@ -18,11 +20,29 @@ interface LighthouseCRAConfig {
 }
 
 interface Rets {
+  bundleSizes?: ParsedBundleConfig[];
   heapSnapshots?: Snapshot[];
   lighthouse?: lighthouse.Result | void;
   npmInstall?: CmdSpawnRet;
   unusedCSS?: UnusedCSSRet;
 }
+
+const defaultBundleConfig: BundleConfig = {
+  configs: [
+    {
+      path: './build/precache-*.js',
+      maxSize: '50 kB',
+    },
+    {
+      path: './build/static/js/*.chunk.js',
+      maxSize: '300 kB',
+    },
+    {
+      path: './build/static/js/runtime*.js',
+      maxSize: '30 kB',
+    },
+  ],
+};
 
 const calculateUnusedCss = async (chrome: Chrome, url: string): Promise<UnusedCSSRet | void> => {
   const page = await chrome.newPage();
@@ -111,6 +131,11 @@ const cra = async (options: CommandOptions): Promise<void> => {
 
   if (chrome) {
     await chrome.launch();
+  }
+
+  if (options.bundleSize) {
+    // TODO make configurable
+    rets.bundleSizes = await bundlesizeModule(options.cwd as string, defaultBundleConfig);
   }
 
   if (options.lighthouse && chrome && localUri) {

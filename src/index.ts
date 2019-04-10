@@ -3,6 +3,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import program from 'commander';
+import bundlesize from '@/command/bundlesize';
 import cra from '@/command/cra';
 import lighthouse from '@/command/lighthouse';
 import npmInstall from '@/command/npm-install';
@@ -19,9 +20,10 @@ program.version('0.0.1').description('A CLI tool for monitoring web performance 
 
 program
   .command('cra')
-  .option('--cwd [dir', 'Path of the CRA')
+  .option('--cwd [dir]', 'Path of the CRA')
   .option('--no-lighthouse', 'Disable the lighthouse auditing')
   .option('--no-npm-install', 'Disable the `npm install` command')
+  .option('--no-bundle-size', 'Disable checking bundle sizes')
   .option('--no-calculate-unused-css', 'Disable calculating unused CSS')
   .option('--no-heap-snapshot', 'Disable getting a heap snapshot')
   .option('--npm-install-command [cmd]', 'The command to use to install, defaults to `npm install`')
@@ -37,6 +39,15 @@ program
           }),
         ),
       );
+    },
+  );
+
+program
+  .command('bundlesize')
+  .option('--cwd [dir]', 'The directory holding the bundles')
+  .action(
+    async (cmd): Promise<void> => {
+      await bundlesize(getOptionsFromCommand(cmd));
     },
   );
 

@@ -4,6 +4,7 @@ import path from 'path';
 import { promisify } from 'util';
 
 export const mkdirp = promisify(mkdirpMod);
+export const readFile = promisify(fs.readFile);
 export const writeFile = promisify(fs.writeFile);
 
 export const resolvePath = (...paths: string[]): string => {
