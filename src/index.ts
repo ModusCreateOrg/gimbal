@@ -1,94 +1,42 @@
 #!/usr/bin/env node
 
-import chalk from 'chalk';
 import figlet from 'figlet';
 import program from 'commander';
-import bundlesize from '@/command/bundlesize';
-import cra from '@/command/cra';
-import lighthouse from '@/command/lighthouse';
-import npmInstall from '@/command/npm-install';
-import { getOptionsFromCommand } from '@/utils/command';
-import { resolvePath } from '@/utils/fs';
+import CRARegister from '@/command/cra/program';
+import BundleSizeRegister from '@/command/bundlesize/program';
+import LighthouseRegister from '@/command/lighthouse/program';
+import NpmInstallRegister from '@/command/npm-install/program';
+import log from '@/utils/logger';
 
-import { CRAOptions } from '@/typings/command/cra';
-import { LightHouseOptions } from '@/typings/command/lighthouse';
-
-// eslint-disable-next-line no-console
-console.log(chalk.white(figlet.textSync('Gimbal - Modus Create')));
-
-program.version('0.0.1').description('A CLI tool for monitoring web performance in modern web projects');
+log(
+  figlet.textSync('Gimbal by Modus Create', {
+    horizontalLayout: 'full',
+  }),
+  `\n ${new Array(147).fill('─').join('')}`,
+);
 
 program
-  .command('cra')
-  .option('--cwd [dir]', 'Path of the CRA')
-  .option('--no-lighthouse', 'Disable the lighthouse auditing')
-  .option('--no-npm-install', 'Disable the `npm install` command')
-  .option('--no-bundle-size', 'Disable checking bundle sizes')
-  .option('--no-calculate-unused-css', 'Disable calculating unused CSS')
-  .option('--no-heap-snapshot', 'Disable getting a heap snapshot')
-  .option('--npm-install-command [cmd]', 'The command to use to install, defaults to `npm install`')
-  .action(
-    async (cmd): Promise<void> => {
-      await cra(
-        getOptionsFromCommand(
-          cmd,
-          ({ cwd }: CRAOptions): CRAOptions => ({
-            artifactDir: resolvePath(cwd, '../artifacts'),
-            cwd,
-            npmInstallCommand: ['npm', 'install'],
-          }),
-        ),
-      );
-    },
-  );
-
-program
-  .command('bundlesize')
-  .option('--cwd [dir]', 'The directory holding the bundles')
-  .action(
-    async (cmd): Promise<void> => {
-      await bundlesize(getOptionsFromCommand(cmd));
-    },
-  );
-
-program
-  .command('lighthouse')
+  .version('0.0.1')
+  .description('A CLI tool for monitoring web performance in modern web projects')
+  // global options all command will receive
+  .option('-c, --config [dir]', 'Path to the configuration file.')
+  .option('--cwd [dir]', 'The directory to work in. Defaults to where the command was executed from.')
   .option(
-    '-a, --artifact-dir [dir]',
-    'Path to the artifact directory (defaults to `../artifacts` relative to the cwd directory)',
-  )
-  .option('--cwd [dir]', 'The directory to host to run lighthouse against (defaults to the curred working directory)')
-  .action(
-    async (cmd): Promise<void> => {
-      await lighthouse(
-        getOptionsFromCommand(
-          cmd,
-          ({ cwd }: LightHouseOptions): LightHouseOptions => ({
-            artifactDir: resolvePath(cwd, '../artifacts'),
-            cwd,
-          }),
-        ),
-      );
-    },
+    '-o, --output [file]',
+    'The type of output or path to output results (in which case the type of output is determined by file extension). Valid outputs are: html, json, markdown',
   );
 
-program
-  .command('npm-install [cmd...]')
-  .option('--cwd [dir]', 'Path to run the install in, defaults to current working directory')
-  .action(
-    async (args: string[], cmd): Promise<void> => {
-      await npmInstall(
-        getOptionsFromCommand(cmd, {
-          cwd: process.env,
-        }),
-        args,
-      );
-    },
-  );
+// register commands with commander
+CRARegister();
+BundleSizeRegister();
+LighthouseRegister();
+NpmInstallRegister();
 
+// kick off commander
 program.parse(process.argv);
 
 if (!program.args.length) {
+  // if no args, present help screen automatically
   program.help();
 
   process.exit(0);

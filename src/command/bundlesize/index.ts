@@ -6,25 +6,21 @@ const defaultConfig: BundleConfig = {
   configs: [
     {
       path: './build/precache-*.js',
-      maxSize: '50 kB',
+      maxSize: '50 KB',
     },
     {
       path: './build/static/js/*.chunk.js',
-      maxSize: '300 kB',
+      maxSize: '200 KB',
     },
     {
       path: './build/static/js/runtime*.js',
-      maxSize: '30 kB',
+      maxSize: '30 KB',
     },
   ],
 };
 
-const bundlesizeCommand = async (options: CommandOptions): Promise<void> => {
+const bundlesizeCommand = async (options: CommandOptions): Promise<ParsedBundleConfig[]> =>
   // TODO make configurable
-  const failed: ParsedBundleConfig[] = await bundlesizeModule(options.cwd as string, defaultConfig);
-
-  // eslint-disable-next-line no-console
-  console.log(JSON.stringify(failed, null, 2));
-};
+  bundlesizeModule(options.cwd as string, defaultConfig);
 
 export default bundlesizeCommand;

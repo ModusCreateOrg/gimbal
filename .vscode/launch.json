@@ -6,7 +6,26 @@
   "configurations": [{
     "type": "node",
     "request": "launch",
-    "name": "Launch Program",
+    "name": "Test bundle-size",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/src/index.ts",
+      "bundle-size",
+      "--cwd",
+      "../test-react-app"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "Test CRA",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -16,6 +35,44 @@
     "args": [
       "${workspaceFolder}/src/index.ts",
       "cra",
+      "--cwd",
+      "../test-react-app"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "Test lighthouse",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/src/index.ts",
+      "lighthouse",
+      "--cwd",
+      "../test-react-app/build"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "Test npm-install",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/src/index.ts",
+      "npm-install",
       "--cwd",
       "../test-react-app"
     ],

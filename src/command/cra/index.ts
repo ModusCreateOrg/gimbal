@@ -1,5 +1,3 @@
-// @ts-ignore
-import lighthouse from 'lighthouse';
 import bundlesizeModule from '@/module/bundlesize';
 import LighthouseModule from '@/module/lighthouse';
 import Chrome from '@/module/chrome';
@@ -10,9 +8,11 @@ import Serve from '@/module/serve';
 import { BundleConfig, ParsedBundleConfig } from '@/typings/module/bundlesize';
 import { UnusedCSSRet } from '@/typings/module/chrome/UnusedCSS';
 import { Snapshot } from '@/typings/module/chrome/Heap';
+import { Result } from '@/typings/module/lighthouse';
 import { CommandOptions } from '@/typings/utils/command';
 import { CmdSpawnRet } from '@/typings/utils/spawn';
 import { mkdirp, writeFile } from '@/utils/fs';
+import log from '@/utils/logger';
 import findPort from '@/utils/port';
 
 interface LighthouseCRAConfig {
@@ -22,7 +22,7 @@ interface LighthouseCRAConfig {
 interface Rets {
   bundleSizes?: ParsedBundleConfig[];
   heapSnapshots?: Snapshot[];
-  lighthouse?: lighthouse.Result | void;
+  lighthouse?: Result | void;
   npmInstall?: CmdSpawnRet;
   unusedCSS?: UnusedCSSRet;
 }
@@ -76,11 +76,7 @@ const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<Snapshot[]
   throw new Error('Could not open page to calculate unused css');
 };
 
-const runLighthouse = async (
-  options: CommandOptions,
-  config: LighthouseCRAConfig,
-  url: string,
-): Promise<lighthouse.Result> => {
+const runLighthouse = async (options: CommandOptions, config: LighthouseCRAConfig, url: string): Promise<Result> => {
   const artifactDir = `${options.cwd}/artifacts`;
 
   await mkdirp(artifactDir);
@@ -173,8 +169,7 @@ const cra = async (options: CommandOptions): Promise<void> => {
   }
 
   // do something with the rets
-  // eslint-disable-next-line no-console
-  console.log(JSON.stringify(rets, null, 2));
+  log(JSON.stringify(rets, null, 2));
 };
 
 export default cra;

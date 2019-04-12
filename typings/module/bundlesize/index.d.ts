@@ -9,16 +9,17 @@ export interface BundleConfig {
 }
 
 export interface ParsedBundleConfig {
+  failures: ParsedFile[];
   files: ParsedFile[];
   fullPath: string;
   maxSize: string;
   maxSizeBytes: number;
   path: string;
+  successes: ParsedFile[];
 }
 
 export interface ParsedFile {
   fail: boolean;
   path: string;
   size: number;
-  source: Buffer;
 }

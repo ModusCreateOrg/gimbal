@@ -33,45 +33,47 @@ const getFileResult = async (
 
   const maxSizeBytes = bytes(config.maxSize);
 
+  const failures: ParsedFile[] = [];
+  const successes: ParsedFile[] = [];
+
   const completeFiles = await Promise.all(
     files.map(
       async (file: string): Promise<ParsedFile> => {
         const source = await getFileSource(file);
         const size = getBundleSize(source, bundleConfig.compression);
-
-        return {
-          fail: size > maxSizeBytes,
+        const fail = size > maxSizeBytes;
+        const parsedFile: ParsedFile = {
+          fail,
           path: file,
           size,
-          source,
         };
+
+        if (fail) {
+          failures.push(parsedFile);
+        } else {
+          successes.push(parsedFile);
+        }
+
+        return parsedFile;
       },
     ),
   );
 
   return {
     ...config,
+    failures,
     files: completeFiles,
     fullPath,
     maxSizeBytes,
+    successes,
   };
 };
 
-const bundlesizeModule = async (cwd: string, bundleConfig: BundleConfig): Promise<ParsedBundleConfig[]> => {
-  const results = await Promise.all(
+const bundlesizeModule = async (cwd: string, bundleConfig: BundleConfig): Promise<ParsedBundleConfig[]> =>
+  Promise.all(
     bundleConfig.configs.map(
       (config: BundleConfigs): Promise<ParsedBundleConfig> => getFileResult(cwd, bundleConfig, config),
     ),
   );
-
-  return results
-    .map(
-      (config: ParsedBundleConfig): ParsedBundleConfig => ({
-        ...config,
-        files: config.files.filter((file: ParsedFile): boolean => file.fail),
-      }),
-    )
-    .filter((config: ParsedBundleConfig): boolean => config.files.length > 0);
-};
 
 export default bundlesizeModule;

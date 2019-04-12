@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import { CmdSpawnOptions, CmdSpawnRet } from '@/typings/utils/spawn';
+import log from '@/utils/logger';
 import OS from './Process';
 
 const cmdSpawn = (args: string[], options?: CmdSpawnOptions): Promise<CmdSpawnRet> => {
@@ -18,8 +19,7 @@ const cmdSpawn = (args: string[], options?: CmdSpawnOptions): Promise<CmdSpawnRe
       const onLog = (data: Buffer): void => {
         os.capture();
 
-        // eslint-disable-next-line no-console
-        console.log(data.toString());
+        log(data.toString());
       };
 
       spawned.stderr.on('data', onLog);
