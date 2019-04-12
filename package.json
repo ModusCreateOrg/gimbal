@@ -14,8 +14,9 @@
     "lint": "eslint 'src/**/*.ts'",
     "lint-staged": "lint-staged",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
-    "start": "nodemon --config ./.nodemon/start.json",
-    "start:debug": "nodemon --config ./.nodemon/debug.json",
+    "start": "node -r ts-node/register -r tsconfig-paths/register src/index.ts",
+    "start:break": "node --inspect-brk -r ts-node/register -r tsconfig-paths/register src/index.ts",
+    "start:debug": "node --inspect -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -85,7 +86,6 @@
     "eslint-plugin-react": "7.12.4",
     "husky": "1.3.1",
     "lint-staged": "8.1.5",
-    "nodemon": "1.18.11",
     "prettier": "1.16.4",
     "ts-node": "8.0.3",
     "tsconfig-paths": "3.8.0",

@@ -1,19 +1,17 @@
 #!/usr/bin/env node
 
-import figlet from 'figlet';
 import program from 'commander';
+import fs from 'fs';
+import path from 'path';
 import CRARegister from '@/command/cra/program';
 import BundleSizeRegister from '@/command/bundlesize/program';
 import LighthouseRegister from '@/command/lighthouse/program';
 import NpmInstallRegister from '@/command/npm-install/program';
 import log from '@/utils/logger';
 
-log(
-  figlet.textSync('Gimbal by Modus Create', {
-    horizontalLayout: 'full',
-  }),
-  `\n ${new Array(147).fill('─').join('')}`,
-);
+const gimbal = fs.readFileSync(path.join(__dirname, 'ascii_art/gimbal.txt'), 'utf8');
+
+log(gimbal);
 
 program
   .version('0.0.1')
@@ -38,6 +36,4 @@ program.parse(process.argv);
 if (!program.args.length) {
   // if no args, present help screen automatically
   program.help();
-
-  process.exit(0);
 }
