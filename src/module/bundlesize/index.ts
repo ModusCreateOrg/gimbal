@@ -6,6 +6,23 @@ import gzipSize from 'gzip-size';
 import { BundleConfig, BundleConfigs, ParsedBundleConfig, ParsedFile } from '@/typings/module/bundlesize';
 import { readFile, resolvePath } from '@/utils/fs';
 
+export const defaultConfig: BundleConfig = {
+  configs: [
+    {
+      path: './build/precache-*.js',
+      maxSize: '50 KB',
+    },
+    {
+      path: './build/static/js/*.chunk.js',
+      maxSize: '200 KB',
+    },
+    {
+      path: './build/static/js/runtime*.js',
+      maxSize: '30 KB',
+    },
+  ],
+};
+
 const getBundleSize = (source: Buffer, compression?: 'brotli' | 'gzip'): number => {
   switch (compression) {
     case 'brotli':
@@ -69,7 +86,10 @@ const getFileResult = async (
   };
 };
 
-const bundlesizeModule = async (cwd: string, bundleConfig: BundleConfig): Promise<ParsedBundleConfig[]> =>
+const bundlesizeModule = async (
+  cwd: string,
+  bundleConfig: BundleConfig = defaultConfig,
+): Promise<ParsedBundleConfig[]> =>
   Promise.all(
     bundleConfig.configs.map(
       (config: BundleConfigs): Promise<ParsedBundleConfig> => getFileResult(cwd, bundleConfig, config),
