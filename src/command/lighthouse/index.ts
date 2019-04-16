@@ -22,19 +22,9 @@ const lighthouseRunner = async (options: CommandOptions): Promise<Result | void>
   await chrome.launch();
 
   try {
-    // TODO make configurable
-    const ret = await Lighthouse(
-      `http://localhost:${servePort}`,
-      {
-        chromePort: chrome.port as string,
-      },
-      {
-        extends: 'lighthouse:default',
-        settings: {
-          skipAudits: ['uses-http2', 'redirects-http', 'uses-long-cache-ttl'],
-        },
-      },
-    );
+    const ret = await Lighthouse(`http://localhost:${servePort}`, {
+      chromePort: chrome.port as string,
+    });
 
     await writeFile(`${options.artifactDir}/lighthouse.json`, JSON.stringify(ret, null, 2));
 

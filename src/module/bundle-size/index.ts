@@ -3,6 +3,7 @@ import brotliSize from 'brotli-size';
 import bytes from 'bytes';
 import globby from 'globby';
 import gzipSize from 'gzip-size';
+import Config from '@/config';
 import { BundleConfig, BundleConfigs, ParsedBundleConfig, ParsedFile } from '@/typings/module/bundle-size';
 import { readFile, resolvePath } from '@/utils/fs';
 
@@ -87,12 +88,19 @@ const getFileResult = async (
 
 const bundlesizeModule = async (
   cwd: string,
-  bundleConfig: BundleConfig = defaultConfig,
-): Promise<ParsedBundleConfig[]> =>
-  Promise.all(
-    bundleConfig.configs.map(
-      (config: BundleConfigs): Promise<ParsedBundleConfig> => getFileResult(cwd, bundleConfig, config),
+  bundleConfig: BundleConfig | BundleConfigs[] = Config.get('configs.bundle-size', defaultConfig),
+): Promise<ParsedBundleConfig[]> => {
+  if (!bundleConfig) {
+    return Promise.resolve([]);
+  }
+
+  const configObject: BundleConfig = Array.isArray(bundleConfig) ? { configs: bundleConfig } : bundleConfig;
+
+  return Promise.all(
+    configObject.configs.map(
+      (config: BundleConfigs): Promise<ParsedBundleConfig> => getFileResult(cwd, configObject, config),
     ),
   );
+};
 
 export default bundlesizeModule;

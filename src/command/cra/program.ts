@@ -1,5 +1,6 @@
 import program from 'commander';
 import cra from './index';
+import Config from '@/config';
 import output from '@/output';
 import { CRAOptions } from '@/typings/command/cra';
 import { CommandOptions } from '@/typings/utils/command';
@@ -21,6 +22,8 @@ const CRARegister = (): void => {
             artifactDir: resolvePath(cwd, './artifacts'),
           }),
         );
+
+        await Config.load(commandOptions.cwd);
 
         const report = await cra(commandOptions);
 

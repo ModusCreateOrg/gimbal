@@ -62,19 +62,9 @@ const runLighthouse = async (options: CommandOptions, config: LighthouseCRAConfi
 
   await mkdirp(artifactDir);
 
-  const ret = await LighthouseModule(
-    url,
-    {
-      chromePort: config.chromePort,
-    },
-    // TODO make configurable
-    {
-      extends: 'lighthouse:default',
-      settings: {
-        skipAudits: ['uses-http2', 'redirects-http', 'uses-long-cache-ttl'],
-      },
-    },
-  );
+  const ret = await LighthouseModule(url, {
+    chromePort: config.chromePort,
+  });
 
   await writeFile(`${artifactDir}/lighthouse.json`, JSON.stringify(ret, null, 2));
 
@@ -103,7 +93,6 @@ const cra = async (options: CommandOptions): Promise<Rets> => {
   }
 
   if (options.bundleSize) {
-    // TODO make configurable
     const report = await bundlesizeModule(options.cwd);
 
     table.push([{ colSpan: 2, content: 'Bundle Size' }]);

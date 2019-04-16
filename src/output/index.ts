@@ -1,6 +1,7 @@
 import path from 'path';
+import Config from '@/config';
 import { CommandOptions } from '@/typings/utils/command';
-import { mkdirp } from '@/utils/fs';
+import { mkdirp, resolvePath } from '@/utils/fs';
 import log from '@/utils/logger';
 import htmlOutput from './html';
 import jsonOutput from './json';
@@ -8,28 +9,42 @@ import markdownOutput from './markdown';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 const output = async (data: any, commandOptions: CommandOptions): Promise<void> => {
-  if (commandOptions.outputHtml) {
-    await mkdirp(path.dirname(commandOptions.outputHtml));
+  const { html, json, markdown } = Config.get('outputs', {});
 
-    await htmlOutput(commandOptions.outputHtml, data);
+  if (html || commandOptions.outputHtml) {
+    const file = html ? resolvePath(commandOptions.cwd, html) : commandOptions.outputHtml;
 
-    log(`HTML report written to: ${commandOptions.outputHtml}`);
+    if (file) {
+      await mkdirp(path.dirname(file));
+
+      await htmlOutput(file, data);
+
+      log(`HTML report written to: ${file}`);
+    }
   }
 
-  if (commandOptions.outputJson) {
-    await mkdirp(path.dirname(commandOptions.outputJson));
+  if (json || commandOptions.outputJson) {
+    const file = json ? resolvePath(commandOptions.cwd, json) : commandOptions.outputJson;
 
-    await jsonOutput(commandOptions.outputJson, data);
+    if (file) {
+      await mkdirp(path.dirname(file));
 
-    log(`JSON report written to: ${commandOptions.outputJson}`);
+      await jsonOutput(file, data);
+
+      log(`JSON report written to: ${file}`);
+    }
   }
 
-  if (commandOptions.outputMarkdown) {
-    await mkdirp(path.dirname(commandOptions.outputMarkdown));
+  if (markdown || commandOptions.outputMarkdown) {
+    const file = markdown ? resolvePath(commandOptions.cwd, markdown) : commandOptions.outputMarkdown;
 
-    await markdownOutput(commandOptions.outputMarkdown, data);
+    if (file) {
+      await mkdirp(path.dirname(file));
 
-    log(`Markdown report written to: ${commandOptions.outputMarkdown}`);
+      await markdownOutput(file, data);
+
+      log(`Markdown report written to: ${file}`);
+    }
   }
 };
 

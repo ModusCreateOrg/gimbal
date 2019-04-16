@@ -9,6 +9,8 @@ import HeapSnapshotRegister from '@/command/heap-snapshot/program';
 import LighthouseRegister from '@/command/lighthouse/program';
 import NpmInstallRegister from '@/command/npm-install/program';
 import UnusedSourceRegister from '@/command/unused-source/program';
+import Config from '@/config';
+import { getOptionsFromCommand } from '@/utils/command';
 import log from '@/utils/logger';
 
 const gimbal = fs.readFileSync(path.join(__dirname, 'ascii_art/gimbal.txt'), 'utf8');
@@ -19,7 +21,6 @@ program
   .version('0.0.1')
   .description('A CLI tool for monitoring web performance in modern web projects')
   // global options all command will receive
-  .option('-c, --config [dir]', 'Path to the configuration file.')
   .option('--cwd [dir]', 'The directory to work in. Defaults to where the command was executed from.')
   .option('--output-html [file]', 'The path to write the results as HTML to.')
   .option('--output-json [file]', 'The path to write the results as JSON to.')
@@ -38,6 +39,25 @@ UnusedSourceRegister();
 program.parse(process.argv);
 
 if (!program.args.length) {
-  // if no args, present help screen automatically
-  program.help();
+  // if no args (aka commands) were passed
+  // let's load the config file to see if
+  // there are any jobs configured
+  (async (): Promise<void> => {
+    const options = getOptionsFromCommand();
+
+    const config = await Config.load(options.cwd);
+
+    if (config) {
+      const { jobs } = config;
+
+      if (jobs) {
+        // TODO
+        log(JSON.stringify(jobs, null, 2));
+      } else {
+        // no jobs so there is nothing to execute
+        // so let's show the help screen
+        program.help();
+      }
+    }
+  })();
 }

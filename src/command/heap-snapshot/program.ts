@@ -1,6 +1,7 @@
 import program from 'commander';
 import figlet from 'figlet';
 import heapSnapshot from './index';
+import Config from '@/config';
 import cliOutput from '@/module/heap-snapshot/output/cli';
 import output from '@/output';
 import { getOptionsFromCommand } from '@/utils/command';
@@ -11,6 +12,9 @@ const HeapSnapshotRegister = (): void => {
     async (cmd): Promise<void> => {
       try {
         const commandOptions = getOptionsFromCommand(cmd);
+
+        await Config.load(commandOptions.cwd);
+
         const report = await heapSnapshot(commandOptions);
 
         log(figlet.textSync('Heap Snapshot Checks'));

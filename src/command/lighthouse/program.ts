@@ -1,6 +1,7 @@
 import program from 'commander';
 import figlet from 'figlet';
 import lighthouse from './index';
+import Config from '@/config';
 import cliOutput from '@/module/lighthouse/output/cli';
 import output from '@/output';
 import { LighthouseOptions } from '@/typings/command/lighthouse';
@@ -24,6 +25,9 @@ const LighthouseRegister = (): void => {
             artifactDir: artifactDir ? resolvePath(artifactDir) : resolvePath(cwd, '../artifacts'),
           }),
         );
+
+        await Config.load(commandOptions.cwd);
+
         const report = await lighthouse(commandOptions);
 
         if (report) {
