@@ -10,7 +10,6 @@ export interface BundleConfig {
 
 export interface ParsedBundleConfig {
   failures: ParsedFile[];
-  files: ParsedFile[];
   fullPath: string;
   maxSize: string;
   maxSizeBytes: number;

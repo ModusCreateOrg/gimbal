@@ -68,6 +68,7 @@ class UnusedCSS {
       js: parsedJs,
       total,
       used,
+      url,
     };
   }
 }

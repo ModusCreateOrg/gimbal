@@ -17,7 +17,9 @@
       "${workspaceFolder}/src/index.ts",
       "bundle-size",
       "--cwd",
-      "../test-react-app"
+      "../test-react-app",
+      "--output-json",
+      "../test/me.json"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"
@@ -75,6 +77,44 @@
       "npm-install",
       "--cwd",
       "../test-react-app"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "Test heap-snapshot",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/src/index.ts",
+      "heap-snapshot",
+      "--cwd",
+      "../test-react-app/build"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "Test unused-source",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/src/index.ts",
+      "unused-source",
+      "--cwd",
+      "../test-react-app/build"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"

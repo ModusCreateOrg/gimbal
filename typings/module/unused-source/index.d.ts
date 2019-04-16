@@ -15,4 +15,5 @@ export interface UnusedRet {
   js: Entry[];
   total: number;
   used: number;
+  url: string;
 }

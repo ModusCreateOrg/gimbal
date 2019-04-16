@@ -3,7 +3,7 @@ import brotliSize from 'brotli-size';
 import bytes from 'bytes';
 import globby from 'globby';
 import gzipSize from 'gzip-size';
-import { BundleConfig, BundleConfigs, ParsedBundleConfig, ParsedFile } from '@/typings/module/bundlesize';
+import { BundleConfig, BundleConfigs, ParsedBundleConfig, ParsedFile } from '@/typings/module/bundle-size';
 import { readFile, resolvePath } from '@/utils/fs';
 
 export const defaultConfig: BundleConfig = {
@@ -53,7 +53,7 @@ const getFileResult = async (
   const failures: ParsedFile[] = [];
   const successes: ParsedFile[] = [];
 
-  const completeFiles = await Promise.all(
+  await Promise.all(
     files.map(
       async (file: string): Promise<ParsedFile> => {
         const source = await getFileSource(file);
@@ -79,7 +79,6 @@ const getFileResult = async (
   return {
     ...config,
     failures,
-    files: completeFiles,
     fullPath,
     maxSizeBytes,
     successes,

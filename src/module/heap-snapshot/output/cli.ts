@@ -1,69 +1,38 @@
-import figlet from 'figlet';
+import Table, { HorizontalTable } from 'cli-table3';
 import { Metrics } from 'puppeteer';
+import { CliOutputOptions } from '@/typings/output/cli';
+import { CommandOptions } from '@/typings/utils/command';
 import log from '@/utils/logger';
-import { pad } from '@/utils/string';
 
 const keysToCareAbout = [
   'Documents',
   'Frames',
-  'Nodes',
-  'LayoutCount',
-  'RecalcStyleCount',
-  'JSHeapUsedSize',
   'JSHeapTotalSize',
+  'JSHeapUsedSize',
+  'LayoutCount',
+  'Nodes',
+  'RecalcStyleCount',
 ];
 
-const { length: longestKeyLength } = keysToCareAbout.reduce(
-  (last: string, next: string): string => (last.length > next.length ? last : next),
-  '',
-);
+const cliOutput = (report: Metrics, commandOptions: CommandOptions, options?: CliOutputOptions): void => {
+  const table =
+    options && options.table ? options.table : (new Table({ head: ['Category', 'Value'] }) as HorizontalTable);
 
-interface ParsedMetric {
-  key: string;
-  value: string;
-}
+  const keys = commandOptions.verbose ? Object.keys(report).sort() : keysToCareAbout;
 
-const cliOutput = (report: Metrics): void => {
-  let longestValueLength = 0;
-
-  const map = keysToCareAbout.map(
-    (key: string): ParsedMetric => {
+  keys.forEach(
+    (key: string): void => {
       // @ts-ignore
-      const value = String(report[key]);
-
-      if (value.length > longestValueLength) {
-        longestValueLength = value.length;
-      }
-
-      return {
-        key,
-        value,
-      };
+      table.push([key, report[key]]);
     },
   );
 
-  const messages: string[] = [
-    figlet.textSync('Heap Snapshot Report'),
-    ` ${pad(103, '─')}`,
-    '',
-    `┌─${pad(longestKeyLength, '─')}─┬─${pad(longestValueLength, '─')}─┐`,
-    // 'Category'.length === 8, 'Value'.length === 5
-    `│ Category${pad(longestKeyLength - 8)} │ Value${pad(longestValueLength - 5)} │`,
-    `├─${pad(longestKeyLength, '─')}─┼─${pad(longestValueLength, '─')}─┤`,
-  ];
-
-  map.forEach(
-    ({ key, value }: ParsedMetric): void => {
-      const titlePad = pad(longestKeyLength - key.length);
-      const valuePad = pad(longestValueLength - value.length);
-
-      messages.push(`│ ${key}${titlePad} │ ${value}${valuePad} │`);
-    },
-  );
-
-  messages.push(`└─${pad(longestKeyLength, '─')}─┴─${pad(longestValueLength, '─')}─┘`);
-
-  log(messages.join('\n'));
+  if (!options || !options.table) {
+    // if a table wasn't passed in, output table
+    // otherwise let whatever passed the table in
+    // manage outputting the table
+    log(table.toString());
+  }
 };
 
 export default cliOutput;

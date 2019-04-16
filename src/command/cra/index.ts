@@ -1,6 +1,8 @@
+import Table, { HorizontalTable } from 'cli-table3';
+import figlet from 'figlet';
 import { Metrics } from 'puppeteer';
-import bundlesizeModule from '@/module/bundlesize';
-import bundlesizeCliOutput from '@/module/bundlesize/output/cli';
+import bundlesizeModule from '@/module/bundle-size';
+import bundlesizeCliOutput from '@/module/bundle-size/output/cli';
 import LighthouseModule from '@/module/lighthouse';
 import lighthouseCliOutput from '@/module/lighthouse/output/cli';
 import Chrome from '@/module/chrome';
@@ -9,12 +11,13 @@ import HeapSnapshotCliOutput from '@/module/heap-snapshot/output/cli';
 import UnusedSource from '@/module/unused-source';
 import unusedSourceCliOutput from '@/module/unused-source/output/cli';
 import Serve from '@/module/serve';
-import { ParsedBundleConfig } from '@/typings/module/bundlesize';
+import { ParsedBundleConfig } from '@/typings/module/bundle-size';
 import { Result } from '@/typings/module/lighthouse';
 import { UnusedRet } from '@/typings/module/unused-source';
+import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
 import { mkdirp, writeFile } from '@/utils/fs';
-// import log from '@/utils/logger';
+import log from '@/utils/logger';
 import findPort from '@/utils/port';
 
 interface LighthouseCRAConfig {
@@ -78,8 +81,10 @@ const runLighthouse = async (options: CommandOptions, config: LighthouseCRAConfi
   return ret;
 };
 
-const cra = async (options: CommandOptions): Promise<void> => {
+const cra = async (options: CommandOptions): Promise<Rets> => {
   const rets: Rets = {};
+  const table = new Table() as HorizontalTable;
+  const cliOptions: CliOutputOptions = { table };
   // if we are going to calculate unused CSS, take heap snapshot(s) or run lighthouse audits
   // we need to host the app and use chrome
   const needChromeAndServe = options.calculateUnusedCss || options.heapSnapshot || options.lighthouse;
@@ -101,7 +106,9 @@ const cra = async (options: CommandOptions): Promise<void> => {
     // TODO make configurable
     const report = await bundlesizeModule(options.cwd);
 
-    bundlesizeCliOutput(report);
+    table.push([{ colSpan: 2, content: 'Bundle Size' }]);
+
+    bundlesizeCliOutput(report, options, cliOptions);
 
     rets.bundleSizes = report;
   }
@@ -115,16 +122,20 @@ const cra = async (options: CommandOptions): Promise<void> => {
       localUri,
     );
 
-    lighthouseCliOutput(report, options);
+    table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Lighthouse' }]);
+
+    lighthouseCliOutput(report, cliOptions);
 
     rets.lighthouse = report;
   }
 
-  if (options.calculateUnusedCss && chrome && localUri) {
+  if (options.calculateUnusedSource && chrome && localUri) {
     const ret = await calculateUnusedSource(chrome, localUri);
 
     if (ret) {
-      unusedSourceCliOutput(ret);
+      table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Unused Source' }]);
+
+      unusedSourceCliOutput(ret, options, cliOptions);
 
       rets.unusedSource = ret;
     }
@@ -134,7 +145,9 @@ const cra = async (options: CommandOptions): Promise<void> => {
     const ret = await takeHeapSnapshot(chrome, localUri);
 
     if (ret) {
-      HeapSnapshotCliOutput(ret);
+      table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Heap Snapshot' }]);
+
+      HeapSnapshotCliOutput(ret, options, cliOptions);
 
       rets.heapSnapshots = ret;
     }
@@ -148,8 +161,13 @@ const cra = async (options: CommandOptions): Promise<void> => {
     await serve.stop();
   }
 
-  // do something with the rets
-  // log(JSON.stringify(rets, null, 2));
+  const craBanner = figlet.textSync('Create React App');
+
+  log(craBanner);
+
+  log(table.toString());
+
+  return rets;
 };
 
 export default cra;

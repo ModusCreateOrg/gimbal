@@ -6,6 +6,7 @@ import { resolvePath } from '@/utils/fs';
 const defaultConfig: CommandOptions = {
   config: './gimbal.config.json',
   cwd: resolvePath(),
+  verbose: false,
 };
 
 const getOptions = (cmd: any, existingOptions?: CommandOptions): CommandOptions => {
@@ -34,6 +35,18 @@ const getOptions = (cmd: any, existingOptions?: CommandOptions): CommandOptions 
 
     // maybe load config here?
     options.config = resolvePath(options.cwd, options.config);
+
+    if (options.outputHtml) {
+      options.outputHtml = resolvePath(options.cwd, options.outputHtml);
+    }
+
+    if (options.outputJson) {
+      options.outputJson = resolvePath(options.cwd, options.outputJson);
+    }
+
+    if (options.outputMarkdown) {
+      options.outputMarkdown = resolvePath(options.cwd, options.outputMarkdown);
+    }
   }
 
   return options;

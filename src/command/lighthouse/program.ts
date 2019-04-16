@@ -1,10 +1,13 @@
 import program from 'commander';
+import figlet from 'figlet';
 import lighthouse from './index';
 import cliOutput from '@/module/lighthouse/output/cli';
-import { getOptionsFromCommand } from '@/utils/command';
-import { resolvePath } from '@/utils/fs';
+import output from '@/output';
 import { LighthouseOptions } from '@/typings/command/lighthouse';
 import { CommandOptions } from '@/typings/utils/command';
+import { getOptionsFromCommand } from '@/utils/command';
+import { resolvePath } from '@/utils/fs';
+import log from '@/utils/logger';
 
 const LighthouseRegister = (): void => {
   program
@@ -15,7 +18,7 @@ const LighthouseRegister = (): void => {
     )
     .action(
       async (cmd): Promise<void> => {
-        const commandOptions: CommandOptions = getOptionsFromCommand(
+        const commandOptions: LighthouseOptions & CommandOptions = getOptionsFromCommand(
           cmd,
           ({ artifactDir, cwd }: LighthouseOptions & CommandOptions): LighthouseOptions => ({
             artifactDir: artifactDir ? resolvePath(artifactDir) : resolvePath(cwd, '../artifacts'),
@@ -24,7 +27,15 @@ const LighthouseRegister = (): void => {
         const report = await lighthouse(commandOptions);
 
         if (report) {
-          cliOutput(report, commandOptions);
+          log(figlet.textSync('Bundle Size Checks'));
+
+          cliOutput(report);
+
+          await output(report, commandOptions);
+
+          if (commandOptions.artifactDir) {
+            log(`Artifacts written to: ${resolvePath(commandOptions.artifactDir)}`);
+          }
         }
       },
     );

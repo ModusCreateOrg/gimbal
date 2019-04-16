@@ -1,56 +1,78 @@
 import bytes from 'bytes';
-import figlet from 'figlet';
+import Table, { HorizontalTable } from 'cli-table3';
 import { Entry, UnusedRet } from '@/typings/module/unused-source';
+import { CommandOptions } from '@/typings/utils/command';
 import log from '@/utils/logger';
-import { pad } from '@/utils/string';
+import { CliOutputOptions } from '@/typings/output/cli';
 
 const bytesConfig = { unitSeparator: ' ' };
 
-const formatMetrics = (entry: Entry | UnusedRet, padding: number = 2): string => {
+const formatUnused = (entry: Entry | UnusedRet): string => {
   const unused = entry.total - entry.used;
   const totalUnusedPercentage = ((unused / entry.total) * 100).toFixed(2);
 
-  return `${pad(padding)}Total Bytes: ${bytes(entry.total, bytesConfig)}
-${pad(padding)}Total Used Bytes: ${bytes(entry.used, bytesConfig)}
-${pad(padding)}Total Unused Bytes: ${bytes(unused, bytesConfig)} (${totalUnusedPercentage}%)`;
+  return `${bytes(unused, bytesConfig)} (${totalUnusedPercentage}%)`;
 };
 
-const formatFile = (entry: Entry): string => `  ${entry.url}
-${formatMetrics(entry, 4)}`;
+const formatVerbose = (entry: Entry | UnusedRet): string =>
+  `  Total: ${bytes(entry.total, bytesConfig)}  |  Used: ${bytes(entry.used, bytesConfig)}`;
 
-const cliOutput = (report: UnusedRet): void => {
-  const messages: string[] = [
-    figlet.textSync('Unused Source Report'),
-    ` ${pad(100, '─')}`,
-    '',
-    'Page:',
-    formatMetrics(report),
-    '',
-  ];
+const outputTable = (report: UnusedRet, verbose: boolean, options?: CliOutputOptions): HorizontalTable => {
+  const table =
+    options && options.table ? options.table : (new Table({ head: ['File URI', 'Unused Size'] }) as HorizontalTable);
+
+  table.push([{ colSpan: 2, content: 'Page Totals' }]);
+
+  table.push([report.url, { content: formatUnused(report), hAlign: 'right' }]);
+
+  if (verbose) {
+    table.push([{ colSpan: 2, content: formatVerbose(report) }]);
+  }
+
+  table.push([{ colSpan: 2, content: 'CSS' }]);
 
   if (report.css.length) {
-    messages.push('CSS:');
-
     report.css.forEach(
       (entry: Entry): void => {
-        messages.push(formatFile(entry));
+        table.push([entry.url, formatUnused(entry)]);
+
+        if (verbose) {
+          table.push([{ colSpan: 2, content: formatVerbose(entry) }]);
+        }
       },
     );
-
-    messages.push('');
+  } else {
+    table.push([{ colSpan: 2, content: '  none' }]);
   }
 
-  if (report.js.length) {
-    messages.push('JS:');
+  table.push([{ colSpan: 2, content: 'JavaScript' }]);
 
+  if (report.css.length) {
     report.js.forEach(
       (entry: Entry): void => {
-        messages.push(formatFile(entry));
+        table.push([entry.url, formatUnused(entry)]);
+
+        if (verbose) {
+          table.push([{ colSpan: 2, content: formatVerbose(entry) }]);
+        }
       },
     );
+  } else {
+    table.push([{ colSpan: 2, content: '  none' }]);
   }
 
-  log(messages.join('\n'));
+  return table;
+};
+
+const cliOutput = (report: UnusedRet, commandOptions: CommandOptions, options?: CliOutputOptions): void => {
+  const table = outputTable(report, commandOptions.verbose, options);
+
+  if (!options || !options.table) {
+    // if a table wasn't passed in, output table
+    // otherwise let whatever passed the table in
+    // manage outputting the table
+    log(table.toString());
+  }
 };
 
 export default cliOutput;
