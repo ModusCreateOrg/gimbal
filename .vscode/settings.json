@@ -5,5 +5,9 @@
     "javascriptreact",
     "typescript",
     "typescriptreact"
+  ],
+  "cSpell.words": [
+    "directorysize",
+    "promisify"
   ]
 }

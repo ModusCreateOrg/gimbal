@@ -53,6 +53,7 @@
     "cli-table3": "0.5.1",
     "commander": "2.20.0",
     "figlet": "1.2.1",
+    "get-folder-size": "2.0.1",
     "get-port": "5.0.0",
     "globby": "9.2.0",
     "gzip-size": "5.1.0",
@@ -66,6 +67,7 @@
   "devDependencies": {
     "@types/bytes": "3.0.0",
     "@types/figlet": "1.2.0",
+    "@types/get-folder-size": "2.0.0",
     "@types/globby": "9.1.0",
     "@types/js-yaml": "3.12.1",
     "@types/mkdirp": "0.5.2",

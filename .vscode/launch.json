@@ -45,6 +45,25 @@
   }, {
     "type": "node",
     "request": "launch",
+    "name": "Test directory-size",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/src/index.ts",
+      "directory-size",
+      "--cwd",
+      "../test-react-app/build"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
     "name": "Test CRA",
     "runtimeArgs": [
       "-r",

@@ -12,6 +12,7 @@ import UnusedSourceRegister from '@/command/unused-source/program';
 import Config from '@/config';
 import { getOptionsFromCommand } from '@/utils/command';
 import log from '@/utils/logger';
+import DirectorySizeRegister from './command/directory-size/program';
 
 const gimbal = fs.readFileSync(path.join(__dirname, 'ascii_art/gimbal.txt'), 'utf8');
 
@@ -33,6 +34,7 @@ BundleSizeRegister();
 HeapSnapshotRegister();
 LighthouseRegister();
 NpmInstallRegister();
+DirectorySizeRegister();
 UnusedSourceRegister();
 
 // kick off commander
