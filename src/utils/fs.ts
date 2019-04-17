@@ -9,6 +9,7 @@ export const mkdirp = promisify(mkdirpMod);
 export const readDir = promisify(fs.readdir);
 export const readFile = promisify(fs.readFile);
 export const stats = promisify(fs.stat);
+export const exists = promisify(fs.exists);
 export const writeFile = promisify(fs.writeFile);
 
 export const resolvePath = (...paths: string[]): string => {

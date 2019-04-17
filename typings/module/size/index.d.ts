@@ -1,14 +1,14 @@
-export interface BundleConfigs {
+export interface SizeConfigs {
   maxSize: string;
   path: string;
 }
 
-export interface BundleConfig {
+export interface SizeConfig {
   compression?: 'brotli' | 'gzip';
-  configs: BundleConfigs[];
+  configs: SizeConfigs[];
 }
 
-export interface ParsedBundleConfig {
+export interface ParsedSizeConfig {
   failures: ParsedFile[];
   fullPath: string;
   maxSize: string;

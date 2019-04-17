@@ -1,7 +1,7 @@
 import bytes from 'bytes';
 import figlet from 'figlet';
 import Table, { HorizontalTable } from 'cli-table3';
-import { ParsedBundleConfig, ParsedFile } from '@/typings/module/bundle-size';
+import { ParsedSizeConfig, ParsedFile } from '@/typings/module/size';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
 import log from '@/utils/logger';
@@ -20,7 +20,7 @@ const formatFile = (file: ParsedFile, maxSizeBytes: number): string => {
      Size: ${bytes(file.size, bytesConfig)}  │  Difference: ${difference}`;
 };
 
-const formatConfig = (config: ParsedBundleConfig, failures: boolean): string => {
+const formatConfig = (config: ParsedSizeConfig, failures: boolean): string => {
   const files = failures ? config.failures : config.successes;
   const label = failures ? `failure${files.length === 1 ? '' : 's'}` : `success${files.length === 1 ? '' : 'es'}`;
 
@@ -29,19 +29,19 @@ const formatConfig = (config: ParsedBundleConfig, failures: boolean): string => 
    ${files.map((file: ParsedFile): string => formatFile(file, config.maxSizeBytes)).join('\n')}`;
 };
 
-const outputVerbose = (failures: ParsedBundleConfig[], successes: ParsedBundleConfig[]): string[] => {
-  const messages: string[] = [figlet.textSync('Bundle Size Check'), ` ${pad(80, '─')}`, ''];
+const outputVerbose = (failures: ParsedSizeConfig[], successes: ParsedSizeConfig[]): string[] => {
+  const messages: string[] = [figlet.textSync('Size Check'), ` ${pad(80, '─')}`, ''];
 
   if (failures.length) {
     const message = failures
-      .map((parsedConfig: ParsedBundleConfig): string => formatConfig(parsedConfig, true))
+      .map((parsedConfig: ParsedSizeConfig): string => formatConfig(parsedConfig, true))
       .join('\n');
 
     messages.push('FAILURES:', message, '');
   }
 
   const message = successes
-    .map((parsedConfig: ParsedBundleConfig): string => formatConfig(parsedConfig, false))
+    .map((parsedConfig: ParsedSizeConfig): string => formatConfig(parsedConfig, false))
     .join('\n');
 
   messages.push('SUCCESSES:', message);
@@ -50,8 +50,8 @@ const outputVerbose = (failures: ParsedBundleConfig[], successes: ParsedBundleCo
 };
 
 const outputTable = (
-  failures: ParsedBundleConfig[],
-  successes: ParsedBundleConfig[],
+  failures: ParsedSizeConfig[],
+  successes: ParsedSizeConfig[],
   options?: CliOutputOptions,
 ): HorizontalTable => {
   const table = options && options.table ? options.table : (new Table({ head: ['File', 'Size'] }) as HorizontalTable);
@@ -60,7 +60,7 @@ const outputTable = (
 
   if (failures.length) {
     failures.forEach(
-      (failureConfig: ParsedBundleConfig): void => {
+      (failureConfig: ParsedSizeConfig): void => {
         failureConfig.failures.forEach(
           (failure: ParsedFile): void => {
             table.push([failure.path, { content: bytes(failure.size, bytesConfig), hAlign: 'right' }]);
@@ -76,7 +76,7 @@ const outputTable = (
 
   if (successes.length) {
     successes.forEach(
-      (successConfig: ParsedBundleConfig): void => {
+      (successConfig: ParsedSizeConfig): void => {
         successConfig.successes.forEach(
           (success: ParsedFile): void => {
             table.push([success.path, { content: bytes(success.size, bytesConfig), hAlign: 'right' }]);
@@ -91,14 +91,14 @@ const outputTable = (
   return table;
 };
 
-const cliOutput = (reports: ParsedBundleConfig[], commandOptions: CommandOptions, options?: CliOutputOptions): void => {
+const cliOutput = (reports: ParsedSizeConfig[], commandOptions: CommandOptions, options?: CliOutputOptions): void => {
   if (reports.length) {
-    const failures: ParsedBundleConfig[] = [];
-    const successes: ParsedBundleConfig[] = [];
+    const failures: ParsedSizeConfig[] = [];
+    const successes: ParsedSizeConfig[] = [];
     const { verbose } = commandOptions;
 
     reports.forEach(
-      (report: ParsedBundleConfig): void => {
+      (report: ParsedSizeConfig): void => {
         if (report.failures.length > 0) {
           failures.push(report);
         } else {

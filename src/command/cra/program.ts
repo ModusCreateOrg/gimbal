@@ -8,8 +8,8 @@ export default new Command({
   command: 'cra',
   options: [
     {
-      description: 'Disable checking bundle sizes',
-      flag: '--no-bundle-size',
+      description: 'Disable checking resource sizes',
+      flag: '--no-size',
     },
     {
       description: 'Disable calculating unused CSS and JavaScript',

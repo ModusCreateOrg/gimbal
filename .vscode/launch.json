@@ -24,7 +24,7 @@
   }, {
     "type": "node",
     "request": "launch",
-    "name": "Test bundle-size",
+    "name": "Test size",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -33,30 +33,9 @@
     ],
     "args": [
       "${workspaceFolder}/src/index.ts",
-      "bundle-size",
+      "size",
       "--cwd",
-      "./sample",
-      "--output-json",
-      "../test/me.json"
-    ],
-    "skipFiles": [
-      "<node_internals>/**/*.js"
-    ]
-  }, {
-    "type": "node",
-    "request": "launch",
-    "name": "Test directory-size",
-    "runtimeArgs": [
-      "-r",
-      "ts-node/register",
-      "-r",
-      "tsconfig-paths/register"
-    ],
-    "args": [
-      "${workspaceFolder}/src/index.ts",
-      "directory-size",
-      "--cwd",
-      "./sample/build"
+      "./sample"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"

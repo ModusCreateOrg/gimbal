@@ -1,8 +1,8 @@
 import Table, { HorizontalTable } from 'cli-table3';
 import figlet from 'figlet';
 import { Metrics } from 'puppeteer';
-import bundlesizeModule from '@/module/bundle-size';
-import bundlesizeCliOutput from '@/module/bundle-size/output/cli';
+import sizeModule from '@/module/size';
+import sizeCliOutput from '@/module/size/output/cli';
 import LighthouseModule from '@/module/lighthouse';
 import lighthouseCliOutput from '@/module/lighthouse/output/cli';
 import Chrome from '@/module/chrome';
@@ -11,7 +11,7 @@ import HeapSnapshotCliOutput from '@/module/heap-snapshot/output/cli';
 import UnusedSource from '@/module/unused-source';
 import unusedSourceCliOutput from '@/module/unused-source/output/cli';
 import Serve from '@/module/serve';
-import { ParsedBundleConfig } from '@/typings/module/bundle-size';
+import { ParsedSizeConfig } from '@/typings/module/size';
 import { Result } from '@/typings/module/lighthouse';
 import { UnusedRet } from '@/typings/module/unused-source';
 import { CliOutputOptions } from '@/typings/output/cli';
@@ -20,7 +20,7 @@ import log from '@/utils/logger';
 import findPort from '@/utils/port';
 
 interface Rets {
-  bundleSizes?: ParsedBundleConfig[];
+  sizes?: ParsedSizeConfig[];
   heapSnapshots?: Metrics;
   lighthouse?: Result | void;
   unusedSource?: UnusedRet;
@@ -73,14 +73,14 @@ const cra = async (options: CommandOptions): Promise<Rets> => {
     await chrome.launch();
   }
 
-  if (options.bundleSize) {
-    const report = await bundlesizeModule(options.cwd);
+  if (options.size) {
+    const report = await sizeModule(options.cwd);
 
-    table.push([{ colSpan: 2, content: 'Bundle Size' }]);
+    table.push([{ colSpan: 2, content: 'Size' }]);
 
-    bundlesizeCliOutput(report, options, cliOptions);
+    sizeCliOutput(report, options, cliOptions);
 
-    rets.bundleSizes = report;
+    rets.sizes = report;
   }
 
   if (options.lighthouse && chrome && localUri) {

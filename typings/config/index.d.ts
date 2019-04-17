@@ -1,9 +1,9 @@
 // @ts-ignore
 import lighthouse from 'lighthouse';
-import { BundleConfigs } from '@/typings/module/bundle-size';
+import { SizeConfigs } from '@/typings/module/size';
 
 export interface Configs {
-  'bundle-size': BundleConfigs[];
+  size: SizeConfigs[];
   lighthouse: lighthouse.Config.Json;
 }
 
