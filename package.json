@@ -14,6 +14,7 @@
     "lint": "eslint 'src/**/*.ts'",
     "lint-staged": "lint-staged",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
+    "setup": "create-react-app sample && cd sample && SKIP_PREFLIGHT_CHECK=true npm run build",
     "start": "node -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "start:break": "node --inspect-brk -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "start:debug": "node --inspect -r ts-node/register -r tsconfig-paths/register src/index.ts",
@@ -30,7 +31,7 @@
     "webdevelopment",
     "javascript"
   ],
-  "author": "Ahsan Ayaz <ahsan.ayaz@moduscreate.com>, Adaobi Frank <adaobi.frank@moduscreate.com>, Mitchell Simoens <mitchell.simoens@moduscreate.com>",
+  "author": "Ahsan Ayaz <ahsan.ayaz@moduscreate.com>, Adaobi Frank <adaobi.frank@moduscreate.com>, Mitchell Simoens <mitchell.simoens@moduscreate.com>, Seth Lemmons <seth.lemmons@moduscreate.com>, Matthew Kelch <matthew.kelch@moduscreate.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ModusCreateOrg/webperf-ci/issues"
@@ -75,6 +76,7 @@
     "@types/pidusage": "2.0.1",
     "@types/puppeteer": "1.12.3",
     "@typescript-eslint/eslint-plugin": "1.6.0",
+    "create-react-app": "2.1.8",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "17.1.0",
     "eslint-config-prettier": "4.1.0",

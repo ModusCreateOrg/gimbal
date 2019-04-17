@@ -16,7 +16,7 @@
     "args": [
       "${workspaceFolder}/src/index.ts",
       "--cwd",
-      "../test-react-app"
+      "./sample"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"
@@ -35,7 +35,7 @@
       "${workspaceFolder}/src/index.ts",
       "bundle-size",
       "--cwd",
-      "../test-react-app",
+      "./sample",
       "--output-json",
       "../test/me.json"
     ],
@@ -56,7 +56,7 @@
       "${workspaceFolder}/src/index.ts",
       "directory-size",
       "--cwd",
-      "../test-react-app/build"
+      "./sample/build"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"
@@ -75,7 +75,7 @@
       "${workspaceFolder}/src/index.ts",
       "cra",
       "--cwd",
-      "../test-react-app"
+      "./sample"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"
@@ -94,7 +94,7 @@
       "${workspaceFolder}/src/index.ts",
       "lighthouse",
       "--cwd",
-      "../test-react-app/build"
+      "./sample/build"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"
@@ -113,7 +113,7 @@
       "${workspaceFolder}/src/index.ts",
       "npm-install",
       "--cwd",
-      "../test-react-app"
+      "./sample"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"
@@ -132,7 +132,7 @@
       "${workspaceFolder}/src/index.ts",
       "heap-snapshot",
       "--cwd",
-      "../test-react-app/build"
+      "./sample/build"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"
@@ -151,7 +151,7 @@
       "${workspaceFolder}/src/index.ts",
       "unused-source",
       "--cwd",
-      "../test-react-app/build"
+      "./sample/build"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"

@@ -29,6 +29,13 @@
 
 This should show the help screen.
 
+### Sample App
+
+To keep everyone in sync, there is a `setup` script defined in `package.json` that will create a
+sample react app using [create-react-app](https://facebook.github.io/create-react-app/) and builds it.
+This allows the default VSCode launch configs to always target it. This sample app is git ignored also.
+Just run `npm run setup` or `yarn setup` to create and build the app.
+
 ### CLI
 
 To run a command, you can pass the different arguments after `--`:
