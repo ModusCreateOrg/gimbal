@@ -2,8 +2,9 @@ import Table, { HorizontalTable } from 'cli-table3';
 import { Result } from '@/typings/module/lighthouse';
 import log from '@/utils/logger';
 import { CliOutputOptions } from '@/typings/output/cli';
+import { CommandOptions } from '@/typings/utils/command';
 
-const cliOutput = (report: Result, options?: CliOutputOptions): void => {
+const cliOutput = (report: Result, _commandOptions: CommandOptions, options?: CliOutputOptions): void => {
   const table =
     options && options.table ? options.table : (new Table({ head: ['Category', 'Score'] }) as HorizontalTable);
 

@@ -3,7 +3,7 @@ import Lighthouse from '@/module/lighthouse';
 import Serve from '@/module/serve';
 import { Result } from '@/typings/module/lighthouse';
 import { CommandOptions } from '@/typings/utils/command';
-import { mkdirp, writeFile } from '@/utils/fs';
+import { mkdirp } from '@/utils/fs';
 import findPort from '@/utils/port';
 
 const lighthouseRunner = async (options: CommandOptions): Promise<Result | void> => {
@@ -25,8 +25,6 @@ const lighthouseRunner = async (options: CommandOptions): Promise<Result | void>
     const ret = await Lighthouse(`http://localhost:${servePort}`, {
       chromePort: chrome.port as string,
     });
-
-    await writeFile(`${options.artifactDir}/lighthouse.json`, JSON.stringify(ret, null, 2));
 
     await chrome.kill();
     await serve.stop();

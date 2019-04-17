@@ -1,31 +1,13 @@
-import program from 'commander';
-import directorysize from './index';
+import action from './index';
+import Command from '@/command';
 import cliOutput from '@/module/directory-size/output/cli';
-import { getOptionsFromCommand } from '@/utils/command';
-import log from '@/utils/logger';
-import { ParsedDirectoryConfig } from '@/typings/module/directory-size';
+import output from '@/output';
 
-const DirectorySizeRegister = (): void => {
-  program.command('directory-size').action(
-    async (cmd): Promise<void> => {
-      try {
-        const commandOptions = getOptionsFromCommand(cmd);
-        const report: ParsedDirectoryConfig = await directorysize(commandOptions);
-        const hasFailure = report.failures.length;
-
-        cliOutput(report, commandOptions);
-        // await output(report, commandOptions);
-
-        if (hasFailure) {
-          process.exit(1);
-        }
-      } catch (error) {
-        log(error);
-
-        process.exit(1);
-      }
-    },
-  );
-};
-
-export default DirectorySizeRegister;
+// eslint-disable-next-line no-new
+export default new Command({
+  action,
+  cliOutput,
+  command: 'directory-size',
+  output,
+  title: 'Directory Size Checks',
+});

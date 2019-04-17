@@ -1,35 +1,29 @@
-import program from 'commander';
-import cra from './index';
-import Config from '@/config';
+import action from './index';
+import Command from '@/command';
 import output from '@/output';
-import { CRAOptions } from '@/typings/command/cra';
-import { CommandOptions } from '@/typings/utils/command';
-import { getOptionsFromCommand } from '@/utils/command';
-import { resolvePath } from '@/utils/fs';
 
-const CRARegister = (): void => {
-  program
-    .command('cra')
-    .option('--no-lighthouse', 'Disable the lighthouse auditing')
-    .option('--no-bundle-size', 'Disable checking bundle sizes')
-    .option('--no-calculate-unused-source', 'Disable calculating unused CSS and JavaScript')
-    .option('--no-heap-snapshot', 'Disable getting a heap snapshot')
-    .action(
-      async (cmd): Promise<void> => {
-        const commandOptions = getOptionsFromCommand(
-          cmd,
-          ({ cwd }: CommandOptions): CRAOptions => ({
-            artifactDir: resolvePath(cwd, './artifacts'),
-          }),
-        );
-
-        await Config.load(commandOptions.cwd);
-
-        const report = await cra(commandOptions);
-
-        await output(report, commandOptions);
-      },
-    );
-};
-
-export default CRARegister;
+// eslint-disable-next-line no-new
+export default new Command({
+  action,
+  command: 'cra',
+  options: [
+    {
+      description: 'Disable checking bundle sizes',
+      flag: '--no-bundle-size',
+    },
+    {
+      description: 'Disable calculating unused CSS and JavaScript',
+      flag: '--no-calculate-unused-source',
+    },
+    {
+      description: 'Disable getting a heap snapshot',
+      flag: '--no-heap-snapshot',
+    },
+    {
+      description: 'Disable the lighthouse auditing',
+      flag: '--no-lighthouse',
+    },
+  ],
+  output,
+  title: 'Create React App',
+});

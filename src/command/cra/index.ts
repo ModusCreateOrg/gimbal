@@ -16,13 +16,8 @@ import { Result } from '@/typings/module/lighthouse';
 import { UnusedRet } from '@/typings/module/unused-source';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
-import { mkdirp, writeFile } from '@/utils/fs';
 import log from '@/utils/logger';
 import findPort from '@/utils/port';
-
-interface LighthouseCRAConfig {
-  chromePort: string;
-}
 
 interface Rets {
   bundleSizes?: ParsedBundleConfig[];
@@ -57,20 +52,6 @@ const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<Metrics | 
   throw new Error('Could not open page to get heap snapshot');
 };
 
-const runLighthouse = async (options: CommandOptions, config: LighthouseCRAConfig, url: string): Promise<Result> => {
-  const artifactDir = `${options.cwd}/artifacts`;
-
-  await mkdirp(artifactDir);
-
-  const ret = await LighthouseModule(url, {
-    chromePort: config.chromePort,
-  });
-
-  await writeFile(`${artifactDir}/lighthouse.json`, JSON.stringify(ret, null, 2));
-
-  return ret;
-};
-
 const cra = async (options: CommandOptions): Promise<Rets> => {
   const rets: Rets = {};
   const table = new Table() as HorizontalTable;
@@ -103,17 +84,13 @@ const cra = async (options: CommandOptions): Promise<Rets> => {
   }
 
   if (options.lighthouse && chrome && localUri) {
-    const report = await runLighthouse(
-      options,
-      {
-        chromePort: chrome.port as string,
-      },
-      localUri,
-    );
+    const report = await LighthouseModule(localUri, {
+      chromePort: chrome.port as string,
+    });
 
     table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Lighthouse' }]);
 
-    lighthouseCliOutput(report, cliOptions);
+    lighthouseCliOutput(report, options, cliOptions);
 
     rets.lighthouse = report;
   }
