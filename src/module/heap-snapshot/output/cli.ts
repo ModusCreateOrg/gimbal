@@ -1,5 +1,5 @@
 import Table, { HorizontalTable } from 'cli-table3';
-import { Metrics } from 'puppeteer';
+import { CommandReturn } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
 import log from '@/utils/logger';
@@ -14,16 +14,16 @@ const keysToCareAbout = [
   'RecalcStyleCount',
 ];
 
-const cliOutput = (report: Metrics, commandOptions: CommandOptions, options?: CliOutputOptions): void => {
+const cliOutput = (report: CommandReturn, commandOptions: CommandOptions, options?: CliOutputOptions): void => {
   const table =
     options && options.table ? options.table : (new Table({ head: ['Category', 'Value'] }) as HorizontalTable);
 
-  const keys = commandOptions.verbose ? Object.keys(report).sort() : keysToCareAbout;
+  const keys = commandOptions.verbose ? Object.keys(report.data).sort() : keysToCareAbout;
 
   keys.forEach(
     (key: string): void => {
       // @ts-ignore
-      table.push([key, report[key]]);
+      table.push([key, report.data[key]]);
     },
   );
 

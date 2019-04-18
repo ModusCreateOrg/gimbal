@@ -1,5 +1,6 @@
 import path from 'path';
 import Config from '@/config';
+import { CommandReturn } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { mkdirp, resolvePath } from '@/utils/fs';
 import log from '@/utils/logger';
@@ -7,8 +8,7 @@ import htmlOutput from './html';
 import jsonOutput from './json';
 import markdownOutput from './markdown';
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-const output = async (data: any, commandOptions: CommandOptions): Promise<void> => {
+const output = async (report: CommandReturn, commandOptions: CommandOptions): Promise<void> => {
   const { html, json, markdown } = Config.get('outputs', {});
 
   if (html || commandOptions.outputHtml) {
@@ -17,7 +17,7 @@ const output = async (data: any, commandOptions: CommandOptions): Promise<void> 
     if (file) {
       await mkdirp(path.dirname(file));
 
-      await htmlOutput(file, data);
+      await htmlOutput(file, report.data);
 
       log(`HTML report written to: ${file}`);
     }
@@ -29,7 +29,7 @@ const output = async (data: any, commandOptions: CommandOptions): Promise<void> 
     if (file) {
       await mkdirp(path.dirname(file));
 
-      await jsonOutput(file, data);
+      await jsonOutput(file, report.data);
 
       log(`JSON report written to: ${file}`);
     }
@@ -41,7 +41,7 @@ const output = async (data: any, commandOptions: CommandOptions): Promise<void> 
     if (file) {
       await mkdirp(path.dirname(file));
 
-      await markdownOutput(file, data);
+      await markdownOutput(file, report.data);
 
       log(`Markdown report written to: ${file}`);
     }

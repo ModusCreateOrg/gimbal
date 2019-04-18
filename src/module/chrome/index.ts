@@ -16,8 +16,7 @@ class Chrome {
 
   public async launch(): Promise<void> {
     this.browser = await puppeteer.launch({
-      headless: false,
-      defaultViewport: null,
+      // headless: false,
     });
   }
 

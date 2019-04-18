@@ -1,6 +1,7 @@
 import bytes from 'bytes';
 import figlet from 'figlet';
 import Table, { HorizontalTable } from 'cli-table3';
+import { CommandReturn } from '@/typings/command';
 import { ParsedSizeConfig, ParsedFile } from '@/typings/module/size';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
@@ -91,13 +92,13 @@ const outputTable = (
   return table;
 };
 
-const cliOutput = (reports: ParsedSizeConfig[], commandOptions: CommandOptions, options?: CliOutputOptions): void => {
-  if (reports.length) {
+const cliOutput = (reports: CommandReturn, commandOptions: CommandOptions, options?: CliOutputOptions): void => {
+  if (reports.data.length) {
     const failures: ParsedSizeConfig[] = [];
     const successes: ParsedSizeConfig[] = [];
     const { verbose } = commandOptions;
 
-    reports.forEach(
+    reports.data.forEach(
       (report: ParsedSizeConfig): void => {
         if (report.failures.length > 0) {
           failures.push(report);

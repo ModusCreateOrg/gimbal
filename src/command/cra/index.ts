@@ -1,48 +1,38 @@
-import Table, { HorizontalTable } from 'cli-table3';
-import figlet from 'figlet';
-import { Metrics } from 'puppeteer';
 import sizeModule from '@/module/size';
-import sizeCliOutput from '@/module/size/output/cli';
 import LighthouseModule from '@/module/lighthouse';
-import lighthouseCliOutput from '@/module/lighthouse/output/cli';
 import Chrome from '@/module/chrome';
 import HeapSnapshot from '@/module/heap-snapshot';
-import HeapSnapshotCliOutput from '@/module/heap-snapshot/output/cli';
 import UnusedSource from '@/module/unused-source';
-import unusedSourceCliOutput from '@/module/unused-source/output/cli';
 import Serve from '@/module/serve';
-import { ParsedSizeConfig } from '@/typings/module/size';
-import { Result } from '@/typings/module/lighthouse';
-import { UnusedRet } from '@/typings/module/unused-source';
-import { CliOutputOptions } from '@/typings/output/cli';
+import { CommandReturn } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import log from '@/utils/logger';
 import findPort from '@/utils/port';
 
 interface Rets {
-  sizes?: ParsedSizeConfig[];
-  heapSnapshots?: Metrics;
-  lighthouse?: Result | void;
-  unusedSource?: UnusedRet;
+  heapSnapshots?: CommandReturn;
+  lighthouse?: CommandReturn;
+  sizes?: CommandReturn;
+  unusedSource?: CommandReturn;
 }
 
-const calculateUnusedSource = async (chrome: Chrome, url: string): Promise<UnusedRet | void> => {
+const calculateUnusedSource = async (chrome: Chrome, url: string): Promise<CommandReturn | void> => {
   const page = await chrome.newPage();
 
   if (page) {
-    const unused = new UnusedSource();
-
-    const ret = await unused.calculate(page, url);
+    const data = await UnusedSource(page, url);
 
     await page.close();
 
-    return ret;
+    return {
+      data,
+      success: data.success,
+    };
   }
 
   throw new Error('Could not open page to calculate unused source');
 };
 
-const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<Metrics | void> => {
+const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<CommandReturn | void> => {
   const page = await chrome.newPage();
 
   if (page) {
@@ -52,10 +42,11 @@ const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<Metrics | 
   throw new Error('Could not open page to get heap snapshot');
 };
 
-const cra = async (options: CommandOptions): Promise<Rets> => {
+// success is if the object doesn't exist or if success property is true
+const isSuccess = (obj?: CommandReturn): boolean => obj == null || obj.success;
+
+const cra = async (options: CommandOptions): Promise<CommandReturn> => {
   const rets: Rets = {};
-  const table = new Table() as HorizontalTable;
-  const cliOptions: CliOutputOptions = { table };
   // if we are going to calculate unused CSS, take heap snapshot(s) or run lighthouse audits
   // we need to host the app and use chrome
   const needChromeAndServe = options.calculateUnusedCss || options.heapSnapshot || options.lighthouse;
@@ -76,46 +67,33 @@ const cra = async (options: CommandOptions): Promise<Rets> => {
   if (options.size) {
     const report = await sizeModule(options.cwd);
 
-    table.push([{ colSpan: 2, content: 'Size' }]);
-
-    sizeCliOutput(report, options, cliOptions);
-
     rets.sizes = report;
   }
 
   if (options.lighthouse && chrome && localUri) {
-    const report = await LighthouseModule(localUri, {
+    const data = await LighthouseModule(localUri, {
       chromePort: chrome.port as string,
     });
 
-    table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Lighthouse' }]);
-
-    lighthouseCliOutput(report, options, cliOptions);
-
-    rets.lighthouse = report;
+    rets.lighthouse = {
+      data,
+      success: data.success,
+    };
   }
 
   if (options.calculateUnusedSource && chrome && localUri) {
-    const ret = await calculateUnusedSource(chrome, localUri);
+    const report = await calculateUnusedSource(chrome, localUri);
 
-    if (ret) {
-      table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Unused Source' }]);
-
-      unusedSourceCliOutput(ret, options, cliOptions);
-
-      rets.unusedSource = ret;
+    if (report) {
+      rets.unusedSource = report;
     }
   }
 
   if (options.heapSnapshot && chrome && localUri) {
-    const ret = await takeHeapSnapshot(chrome, localUri);
+    const report = await takeHeapSnapshot(chrome, localUri);
 
-    if (ret) {
-      table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Heap Snapshot' }]);
-
-      HeapSnapshotCliOutput(ret, options, cliOptions);
-
-      rets.heapSnapshots = ret;
+    if (report) {
+      rets.heapSnapshots = report;
     }
   }
 
@@ -127,13 +105,14 @@ const cra = async (options: CommandOptions): Promise<Rets> => {
     await serve.stop();
   }
 
-  const craBanner = figlet.textSync('Create React App');
-
-  log(craBanner);
-
-  log(table.toString());
-
-  return rets;
+  return {
+    data: rets,
+    success:
+      isSuccess(rets.sizes) &&
+      isSuccess(rets.lighthouse) &&
+      isSuccess(rets.unusedSource) &&
+      isSuccess(rets.heapSnapshots),
+  };
 };
 
 export default cra;

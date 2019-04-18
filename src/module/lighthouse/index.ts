@@ -1,24 +1,14 @@
 // @ts-ignore
 import lighthouse from 'lighthouse';
 import Config from '@/config';
-import { Result } from '@/typings/module/lighthouse';
-
-const defaultConfig: lighthouse.Config.Json = {
-  extends: 'lighthouse:default',
-  settings: {
-    skipAudits: ['uses-http2', 'redirects-http', 'uses-long-cache-ttl'],
-  },
-};
-
-interface LighthouseOptions {
-  chromePort: string;
-  flags?: lighthouse.Flags[];
-}
+import { Category, Config as LighthouseConfig, Options, Result } from '@/typings/module/lighthouse';
+import checkThresholds from '@/utils/threshold';
+import defaultConfig from './default-config';
 
 const lighthouseRunner = async (
   url: string,
-  options: LighthouseOptions,
-  config: lighthouse.Config.Json = Config.get('configs.lighthouse', defaultConfig),
+  options: Options,
+  config: LighthouseConfig = Config.get('configs.lighthouse', defaultConfig),
 ): Promise<Result> => {
   const results = await lighthouse(
     url,
@@ -29,7 +19,13 @@ const lighthouseRunner = async (
     config,
   );
 
-  return results.lhr;
+  return {
+    ...results.lhr,
+    success: checkThresholds(results.lhr.categories, config.threshold, {
+      mode: 'above',
+      parser: (obj: Category): number => obj.score * 100,
+    }),
+  };
 };
 
 export default lighthouseRunner;

@@ -1,3 +1,5 @@
+import { Threshold } from '@/typings/utils/threshold';
+
 export interface AuditRef {
   group?: string;
   id: string;
@@ -17,6 +19,20 @@ export interface Categories {
   [name: string]: Category;
 }
 
+export interface ConfigSettings {
+  skipAudits?: string[];
+}
+
+export interface Config {
+  extends?: string;
+  settings?: ConfigSettings;
+  threshold: Threshold;
+}
+
+export interface Options {
+  chromePort: string;
+}
+
 export interface Result {
   audits: {};
   categories: Categories;
@@ -29,6 +45,7 @@ export interface Result {
   lighthouseVersion: string;
   requestedUrl: string;
   runWarnings: string[];
+  success: boolean;
   timing: {};
   userAgent: string;
 }

@@ -1,5 +1,6 @@
 import bytes from 'bytes';
 import Table, { HorizontalTable } from 'cli-table3';
+import { CommandReturn } from '@/typings/command';
 import { Entry, UnusedRet } from '@/typings/module/unused-source';
 import { CommandOptions } from '@/typings/utils/command';
 import log from '@/utils/logger';
@@ -64,8 +65,8 @@ const outputTable = (report: UnusedRet, verbose: boolean, options?: CliOutputOpt
   return table;
 };
 
-const cliOutput = (report: UnusedRet, commandOptions: CommandOptions, options?: CliOutputOptions): void => {
-  const table = outputTable(report, commandOptions.verbose, options);
+const cliOutput = (report: CommandReturn, commandOptions: CommandOptions, options?: CliOutputOptions): void => {
+  const table = outputTable(report.data, commandOptions.verbose, options);
 
   if (!options || !options.table) {
     // if a table wasn't passed in, output table

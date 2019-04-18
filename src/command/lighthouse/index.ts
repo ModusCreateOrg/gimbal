@@ -1,12 +1,13 @@
 import Chrome from '@/module/chrome';
 import Lighthouse from '@/module/lighthouse';
 import Serve from '@/module/serve';
+import { CommandReturn } from '@/typings/command';
 import { Result } from '@/typings/module/lighthouse';
 import { CommandOptions } from '@/typings/utils/command';
 import { mkdirp } from '@/utils/fs';
 import findPort from '@/utils/port';
 
-const lighthouseRunner = async (options: CommandOptions): Promise<Result | void> => {
+const lighthouseRunner = async (options: CommandOptions): Promise<CommandReturn> => {
   if (options.artifactDir) {
     await mkdirp(options.artifactDir as string);
   }
@@ -22,20 +23,26 @@ const lighthouseRunner = async (options: CommandOptions): Promise<Result | void>
   await chrome.launch();
 
   try {
-    const ret = await Lighthouse(`http://localhost:${servePort}`, {
+    const data: Result = await Lighthouse(`http://localhost:${servePort}`, {
       chromePort: chrome.port as string,
     });
 
     await chrome.kill();
     await serve.stop();
 
-    return ret;
-  } catch (e) {
-    // need to catch a lighthouse error in order to stop the http server
+    return {
+      data,
+      success: data.success,
+    };
+  } catch (error) {
+    // need to catch a lighthouse error in order to stop the http server and chrome
     await chrome.kill();
     await serve.stop();
 
-    throw e;
+    return {
+      error,
+      success: false,
+    };
   }
 };
 

@@ -2,6 +2,7 @@ import program, { Command as CommandType } from 'commander';
 import figlet from 'figlet';
 import path from 'path';
 import Config from '@/config';
+import { CommandReturn } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
@@ -95,9 +96,6 @@ class Command {
   public async run(...actionArgs: ActionCreatorArg[]): Promise<void> {
     let cmd: CommandType;
     let args: string[] = [];
-    let hasFailure: Error | boolean = false;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    let reports: any;
 
     if (actionArgs.length === 1) {
       cmd = actionArgs[0] as CommandType;
@@ -112,27 +110,19 @@ class Command {
       await Config.load(commandOptions.cwd);
     }
 
-    try {
-      reports = await this.action(commandOptions, args);
-    } catch (error) {
-      hasFailure = error;
-    }
-
     log(figlet.textSync(this.title));
 
+    const report: CommandReturn = await this.action(commandOptions, args);
+
     if (this.cliOutput) {
-      this.cliOutput(reports, commandOptions);
+      this.cliOutput(report, commandOptions);
     }
 
     if (this.output) {
-      await this.output(reports, commandOptions);
+      await this.output(report, commandOptions);
     }
 
-    if (hasFailure) {
-      // need to prettify the error?
-      /* eslint-disable-next-line no-console */
-      console.log(hasFailure);
-
+    if (!report.success) {
       process.exit(1);
     }
   }

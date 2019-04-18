@@ -24,26 +24,7 @@
   }, {
     "type": "node",
     "request": "launch",
-    "name": "Test size",
-    "runtimeArgs": [
-      "-r",
-      "ts-node/register",
-      "-r",
-      "tsconfig-paths/register"
-    ],
-    "args": [
-      "${workspaceFolder}/src/index.ts",
-      "size",
-      "--cwd",
-      "./sample"
-    ],
-    "skipFiles": [
-      "<node_internals>/**/*.js"
-    ]
-  }, {
-    "type": "node",
-    "request": "launch",
-    "name": "Test CRA",
+    "name": "CRA",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -62,45 +43,7 @@
   }, {
     "type": "node",
     "request": "launch",
-    "name": "Test lighthouse",
-    "runtimeArgs": [
-      "-r",
-      "ts-node/register",
-      "-r",
-      "tsconfig-paths/register"
-    ],
-    "args": [
-      "${workspaceFolder}/src/index.ts",
-      "lighthouse",
-      "--cwd",
-      "./sample/build"
-    ],
-    "skipFiles": [
-      "<node_internals>/**/*.js"
-    ]
-  }, {
-    "type": "node",
-    "request": "launch",
-    "name": "Test npm-install",
-    "runtimeArgs": [
-      "-r",
-      "ts-node/register",
-      "-r",
-      "tsconfig-paths/register"
-    ],
-    "args": [
-      "${workspaceFolder}/src/index.ts",
-      "npm-install",
-      "--cwd",
-      "./sample"
-    ],
-    "skipFiles": [
-      "<node_internals>/**/*.js"
-    ]
-  }, {
-    "type": "node",
-    "request": "launch",
-    "name": "Test heap-snapshot",
+    "name": "heap-snapshot",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -119,7 +62,64 @@
   }, {
     "type": "node",
     "request": "launch",
-    "name": "Test unused-source",
+    "name": "lighthouse",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/src/index.ts",
+      "lighthouse",
+      "--cwd",
+      "./sample/build"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "npm-install",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/src/index.ts",
+      "npm-install",
+      "--cwd",
+      "./sample"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "size",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/src/index.ts",
+      "size",
+      "--cwd",
+      "./sample"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "unused-source",
     "runtimeArgs": [
       "-r",
       "ts-node/register",

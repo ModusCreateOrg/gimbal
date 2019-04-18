@@ -4,31 +4,12 @@ import bytes from 'bytes';
 import globby from 'globby';
 import gzipSize from 'gzip-size';
 import Config from '@/config';
+import { CommandReturn } from '@/typings/command';
 import { SizeConfig, SizeConfigs, ParsedSizeConfig, ParsedFile } from '@/typings/module/size';
 import { readFile, resolvePath, stats, getDirectorySize } from '@/utils/fs';
+import defaultConfig from './default-config';
 
 type CompressionMechanisms = 'brotli' | 'gzip' | undefined;
-
-export const defaultConfig: SizeConfig = {
-  configs: [
-    {
-      path: './build/precache-*.js',
-      maxSize: '50 KB',
-    },
-    {
-      path: './build/static/js/*.chunk.js',
-      maxSize: '200 KB',
-    },
-    {
-      path: './build/static/js/runtime*.js',
-      maxSize: '30 KB',
-    },
-    {
-      path: './build/',
-      maxSize: '500 KB',
-    },
-  ],
-};
 
 const getBundleSize = (source: Buffer, compression?: CompressionMechanisms): number => {
   switch (compression) {
@@ -54,13 +35,7 @@ const getDirSize = async (path: string): Promise<number> => (await getDirectoryS
 const getFileResult = async (cwd: string, sizeConfig: SizeConfig, config: SizeConfigs): Promise<ParsedSizeConfig> => {
   const fullPath = resolvePath(cwd, config.path);
   const paths = await globby(fullPath, { expandDirectories: false, onlyFiles: false });
-
-  if (!paths.length) {
-    throw new Error('No files found for the size check');
-  }
-
   const maxSizeBytes = bytes(config.maxSize);
-
   const failures: ParsedFile[] = [];
   const successes: ParsedFile[] = [];
 
@@ -97,18 +72,28 @@ const getFileResult = async (cwd: string, sizeConfig: SizeConfig, config: SizeCo
 const sizeModule = async (
   cwd: string,
   sizeConfig: SizeConfig | SizeConfigs[] = Config.get('configs.size', defaultConfig),
-): Promise<ParsedSizeConfig[]> => {
+): Promise<CommandReturn> => {
   if (!sizeConfig) {
-    return Promise.resolve([]);
+    return Promise.resolve({
+      data: [],
+      success: true,
+    });
   }
 
   const configObject: SizeConfig = Array.isArray(sizeConfig) ? { configs: sizeConfig } : sizeConfig;
 
-  return Promise.all(
+  const data: ParsedSizeConfig[] = await Promise.all(
     configObject.configs.map(
       (config: SizeConfigs): Promise<ParsedSizeConfig> => getFileResult(cwd, configObject, config),
     ),
   );
+
+  const success: boolean = !data.some((config: ParsedSizeConfig): boolean => config.failures.length > 0);
+
+  return {
+    data,
+    success,
+  };
 };
 
 export default sizeModule;

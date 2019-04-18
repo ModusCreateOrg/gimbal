@@ -1,11 +1,11 @@
-import { Metrics } from 'puppeteer';
 import Chrome from '@/module/chrome';
 import Serve from '@/module/serve';
 import HeapSnapshot from '@/module/heap-snapshot';
+import { CommandReturn } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import findPort from '@/utils/port';
 
-const unusedSourceRunner = async (options: CommandOptions): Promise<Metrics | void> => {
+const unusedSourceRunner = async (options: CommandOptions): Promise<CommandReturn> => {
   const chrome = new Chrome();
   const servePort = await findPort();
   const localUri = `http://localhost:${servePort}`;
@@ -20,25 +20,31 @@ const unusedSourceRunner = async (options: CommandOptions): Promise<Metrics | vo
   try {
     const page = await chrome.newPage();
 
-    if (page) {
-      const ret = await HeapSnapshot(page, localUri);
-
-      await page.close();
-
-      await chrome.kill();
-      await serve.stop();
-
-      return ret;
+    if (!page) {
+      return {
+        data: {},
+        success: true,
+      };
     }
-  } catch (e) {
+
+    const report = await HeapSnapshot(page, localUri);
+
+    await page.close();
+
+    await chrome.kill();
+    await serve.stop();
+
+    return report;
+  } catch (error) {
     // need to catch any error in order to stop the http server
     await chrome.kill();
     await serve.stop();
 
-    throw e;
+    return {
+      error,
+      success: false,
+    };
   }
-
-  return undefined;
 };
 
 export default unusedSourceRunner;
