@@ -1,5 +1,5 @@
 {
-  "name": "webperf-ci",
+  "name": "@modus/gimbal",
   "version": "1.0.0",
   "description": "A CLI tool for monitoring web performance in modern web projects",
   "main": "./bin/index.js",
@@ -22,21 +22,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ModusCreateOrg/webperf-ci.git"
+    "url": "git+https://github.com/ModusCreateOrg/gimbal.git"
   },
   "keywords": [
     "web-performance",
     "ci",
     "performance",
     "webdevelopment",
-    "javascript"
+    "javascript",
+    "lighthouse",
+    "bundlesize"
   ],
   "author": "Ahsan Ayaz <ahsan.ayaz@moduscreate.com>, Adaobi Frank <adaobi.frank@moduscreate.com>, Mitchell Simoens <mitchell.simoens@moduscreate.com>, Seth Lemmons <seth.lemmons@moduscreate.com>, Matthew Kelch <matthew.kelch@moduscreate.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ModusCreateOrg/webperf-ci/issues"
+    "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
-  "homepage": "https://github.com/ModusCreateOrg/webperf-ci#readme",
+  "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint-staged"
