@@ -1,0 +1,5 @@
+const GLOBAL = {
+  CHILD_GIMBAL_PROCESS: 'CHILD_GIMBAL_PROCESS',
+};
+
+export default GLOBAL;
