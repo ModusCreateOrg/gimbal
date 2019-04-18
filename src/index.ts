@@ -1,5 +1,4 @@
-#!/usr/bin/env node
-
+import './preprocess';
 import program from 'commander';
 import fs from 'fs';
 import path from 'path';
@@ -51,6 +50,10 @@ import processJobs from './config/jobs';
         // so let's show the help screen
         program.help();
       }
+    } else {
+      // no config so there is nothing to execute
+      // so let's show the help screen
+      program.help();
     }
   }
 })();

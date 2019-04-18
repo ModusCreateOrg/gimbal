@@ -5,7 +5,7 @@
     "moduleResolution": "node",
     "lib": ["es6", "es2015", "dom"],
     "declaration": true,
-    "outDir": "bin",
+    "outDir": "lib",
     "rootDir": "src",
     "strict": true,
     "types": ["node"],
@@ -50,6 +50,10 @@
   },
   "exclude": [
     "bin",
+    "lib",
     "node_modules"
+  ],
+  "include": [
+    "./src/**/*"
   ]
 }

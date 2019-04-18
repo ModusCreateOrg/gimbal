@@ -7,9 +7,16 @@
     "gimbal": "./bin/index.js"
   },
   "types": "./bin/index.d.ts",
+  "files": [
+    "bin/**/*",
+    "lib/**/*"
+  ],
   "scripts": {
+    "prebuild": "rm -Rf lib",
     "build": "tsc -p .",
+    "postbuild": "npm run copy-static-assets",
     "check:compile": "tsc --noEmit -p .",
+    "copy-static-assets": "copyfiles -u 1 src/ascii_art/**/* lib/",
     "create": "npm run build && npm run start",
     "lint": "eslint 'src/**/*.ts'",
     "lint-staged": "lint-staged",
@@ -30,11 +37,33 @@
     "performance",
     "webdevelopment",
     "javascript",
+    "typescript",
     "lighthouse",
     "bundlesize"
   ],
-  "author": "Ahsan Ayaz <ahsan.ayaz@moduscreate.com>, Adaobi Frank <adaobi.frank@moduscreate.com>, Mitchell Simoens <mitchell.simoens@moduscreate.com>, Seth Lemmons <seth.lemmons@moduscreate.com>, Matthew Kelch <matthew.kelch@moduscreate.com>",
-  "license": "ISC",
+  "contributors": [
+    {
+      "name": "Ahsan Ayaz",
+      "email": "ahsan.ayaz@moduscreate.com"
+    },
+    {
+      "name": "Grgur de Grisogono",
+      "email": "grgur@moduscreate.com"
+    },
+    {
+      "name": "Matthew Kelch",
+      "email": "matthew.kelch@moduscreate.com"
+    },
+    {
+      "name": "Seth Lemmons",
+      "email": "seth.lemmons@moduscreate.com"
+    },
+    {
+      "name": "Mitchell Simoens",
+      "email": "mitchell.simoens@moduscreate.com"
+    }
+  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
@@ -63,21 +92,25 @@
     "js-yaml": "3.13.1",
     "lighthouse": "4.3.0",
     "mkdirp": "0.5.1",
+    "module-alias": "2.2.0",
     "pidusage": "2.0.17",
     "puppeteer": "1.14.0",
     "serve-handler": "6.0.0"
   },
   "devDependencies": {
     "@types/bytes": "3.0.0",
+    "@types/copyfiles": "2.1.0",
     "@types/figlet": "1.2.0",
     "@types/get-folder-size": "2.0.0",
     "@types/globby": "9.1.0",
     "@types/js-yaml": "3.12.1",
     "@types/mkdirp": "0.5.2",
-    "@types/node": "11.13.4",
+    "@types/module-alias": "2.0.0",
+    "@types/node": "11.13.5",
     "@types/pidusage": "2.0.1",
     "@types/puppeteer": "1.12.3",
     "@typescript-eslint/eslint-plugin": "1.6.0",
+    "copyfiles": "2.1.0",
     "create-react-app": "2.1.8",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "17.1.0",
