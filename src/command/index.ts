@@ -88,9 +88,7 @@ class Command {
   }
 
   private createAction(): ActionCreator {
-    return async (...actionArgs: ActionCreatorArg[]): Promise<void> => {
-      return this.run(...actionArgs);
-    };
+    return async (...actionArgs: ActionCreatorArg[]): Promise<void> => this.run(...actionArgs);
   }
 
   public async run(...actionArgs: ActionCreatorArg[]): Promise<void> {

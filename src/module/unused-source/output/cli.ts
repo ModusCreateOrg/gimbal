@@ -1,5 +1,5 @@
 import bytes from 'bytes';
-import Table, { HorizontalTable } from 'cli-table3';
+import Table, { CellOptions, HorizontalTable } from 'cli-table3';
 import { CommandReturn } from '@/typings/command';
 import { Entry, UnusedRet } from '@/typings/module/unused-source';
 import { CommandOptions } from '@/typings/utils/command';
@@ -8,11 +8,14 @@ import { CliOutputOptions } from '@/typings/output/cli';
 
 const bytesConfig = { unitSeparator: ' ' };
 
-const formatUnused = (entry: Entry | UnusedRet): string => {
+const formatUnused = (entry: Entry | UnusedRet): CellOptions => {
   const unused = entry.total - entry.used;
   const totalUnusedPercentage = ((unused / entry.total) * 100).toFixed(2);
 
-  return `${bytes(unused, bytesConfig)} (${totalUnusedPercentage}%)`;
+  return {
+    content: `${bytes(unused, bytesConfig)} (${totalUnusedPercentage}%)`,
+    hAlign: 'right',
+  };
 };
 
 const formatVerbose = (entry: Entry | UnusedRet): string =>
@@ -24,7 +27,7 @@ const outputTable = (report: UnusedRet, verbose: boolean, options?: CliOutputOpt
 
   table.push([{ colSpan: 2, content: 'Page Totals' }]);
 
-  table.push([report.url, { content: formatUnused(report), hAlign: 'right' }]);
+  table.push([report.url, formatUnused(report)]);
 
   if (verbose) {
     table.push([{ colSpan: 2, content: formatVerbose(report) }]);

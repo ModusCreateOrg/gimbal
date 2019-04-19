@@ -88,12 +88,15 @@ There are a few launch configs already setup to be able to run different command
 section of VSCode, choose the launch config you want and press the green play button. This allows you to set
 breakpoints and `debugger;` to step through the code within VSCode. You can look at [.vscode/launch.json](.vscode/launch.json) for more.
 
-## Building and Testing
+### Testing as an executable
 
-- Run `npm run build`
-- Run `npm link`
-- Run `gimbal` from anywhere in your machine
-- Run `gimbal --help` for reviewing help
+To simulate when Gimbal is installed from a npm repository but without publishing and installing, you first
+need to build and then you can tell npm to link it. This will install the build as a global module. Steps;
+
+- `npm run build` (or `yarn build`)
+- `npm link`
+
+Now you can run `gimbal` anywhere from your machine as if you installed it from a npm repository.
 
 ## Modus Create
 

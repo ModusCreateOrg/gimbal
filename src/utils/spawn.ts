@@ -1,40 +1,51 @@
 import { spawn } from 'child_process';
 import { CmdSpawnOptions, CmdSpawnRet } from '@/typings/utils/spawn';
-import log from '@/utils/logger';
 import OS from './Process';
 
-const cmdSpawn = (args: string[], options?: CmdSpawnOptions): Promise<CmdSpawnRet> => {
+interface CmdSpawnConfig {
+  noUsage?: boolean;
+}
+
+const cmdSpawn = (args: string[], options?: CmdSpawnOptions, config: CmdSpawnConfig = {}): Promise<CmdSpawnRet> => {
   return new Promise<CmdSpawnRet>(
     (resolve, reject): void => {
       const start = new Date();
 
-      const cwd = options && options.cwd ? options.cwd : process.cwd();
-      const env = options && options.env ? options.env : process.env;
-      const timeout = options && options.timeout ? options.timeout : 5 * 1000 * 60; // 5 minutes
+      const spawned = spawn(args[0], args.slice(1), {
+        cwd: process.cwd(),
+        env: process.env,
+        timeout: 5 * 1000 * 60, // 5 minutes
+        ...options,
+      });
+      const os = config.noUsage ? undefined : new OS(spawned.pid);
+      const logs: Buffer[] = [];
 
-      const spawned = spawn(args[0], args.slice(1), { cwd, env, timeout });
+      if (spawned.stderr && spawned.stdout) {
+        const onLog = (data: Buffer): void => {
+          if (os) {
+            os.capture();
+          }
 
-      const os = new OS(spawned.pid);
+          logs.push(data);
+        };
 
-      const onLog = (data: Buffer): void => {
-        os.capture();
-
-        log(data.toString());
-      };
-
-      spawned.stderr.on('data', onLog);
-      spawned.stdout.on('data', onLog);
+        spawned.stderr.on('data', (data: Buffer): void => onLog(data));
+        spawned.stdout.on('data', (data: Buffer): void => onLog(data));
+      }
 
       spawned.on(
         'close',
         (code: number): void => {
-          os.end();
+          if (os) {
+            os.end();
+          }
 
           const end = new Date();
 
           const ret: CmdSpawnRet = {
             code,
             end,
+            logs,
             os,
             start,
             success: code === 0,

@@ -14,6 +14,7 @@
   "scripts": {
     "prebuild": "rm -Rf lib",
     "build": "tsc -p .",
+    "build:watch": "tsc --watch -p .",
     "postbuild": "npm run copy-static-assets",
     "check:compile": "tsc --noEmit -p .",
     "copy-static-assets": "copyfiles -u 1 src/ascii_art/**/* lib/",
@@ -41,28 +42,22 @@
     "lighthouse",
     "bundlesize"
   ],
-  "contributors": [
-    {
-      "name": "Ahsan Ayaz",
-      "email": "ahsan.ayaz@moduscreate.com"
-    },
-    {
-      "name": "Grgur de Grisogono",
-      "email": "grgur@moduscreate.com"
-    },
-    {
-      "name": "Matthew Kelch",
-      "email": "matthew.kelch@moduscreate.com"
-    },
-    {
-      "name": "Seth Lemmons",
-      "email": "seth.lemmons@moduscreate.com"
-    },
-    {
-      "name": "Mitchell Simoens",
-      "email": "mitchell.simoens@moduscreate.com"
-    }
-  ],
+  "contributors": [{
+    "name": "Ahsan Ayaz",
+    "email": "ahsan.ayaz@moduscreate.com"
+  }, {
+    "name": "Grgur de Grisogono",
+    "email": "grgur@moduscreate.com"
+  }, {
+    "name": "Matthew Kelch",
+    "email": "matthew.kelch@moduscreate.com"
+  }, {
+    "name": "Seth Lemmons",
+    "email": "seth.lemmons@moduscreate.com"
+  }, {
+    "name": "Mitchell Simoens",
+    "email": "mitchell.simoens@moduscreate.com"
+  }],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
@@ -126,6 +121,6 @@
     "prettier": "1.17.0",
     "ts-node": "8.1.0",
     "tsconfig-paths": "3.8.0",
-    "typescript": "3.4.3"
+    "typescript": "3.4.4"
   }
 }

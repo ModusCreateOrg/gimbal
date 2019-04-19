@@ -23,7 +23,7 @@ const cliOutput = (report: CommandReturn, commandOptions: CommandOptions, option
   keys.forEach(
     (key: string): void => {
       // @ts-ignore
-      table.push([key, report.data[key]]);
+      table.push([key, { content: report.data[key], hAlign: 'right' }]);
     },
   );
 
