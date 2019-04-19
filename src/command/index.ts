@@ -110,9 +110,9 @@ class Command {
       await Config.load(commandOptions.cwd);
     }
 
-    log(figlet.textSync(this.title));
-
     const report: CommandReturn = await this.action(commandOptions, args);
+
+    log(figlet.textSync(this.title));
 
     if (this.cliOutput) {
       this.cliOutput(report, commandOptions);

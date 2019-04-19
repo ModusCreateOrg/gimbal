@@ -18,7 +18,7 @@
     "check:compile": "tsc --noEmit -p .",
     "copy-static-assets": "copyfiles -u 1 src/ascii_art/**/* lib/",
     "create": "npm run build && npm run start",
-    "lint": "eslint 'src/**/*.ts'",
+    "lint": "eslint 'bin/**/*.js' 'src/**/*.ts'",
     "lint-staged": "lint-staged",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install",
     "setup": "create-react-app sample && cd sample && SKIP_PREFLIGHT_CHECK=true npm run build",
@@ -74,7 +74,7 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx},!src/models": [
+    "bin/**/*.{js,jsx,ts,tsx},src/**/*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "git add"
     ]

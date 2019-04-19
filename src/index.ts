@@ -1,4 +1,3 @@
-import './preprocess';
 import program from 'commander';
 import fs from 'fs';
 import path from 'path';

@@ -9,7 +9,7 @@ const defaultConfig: Config = {
     accessibility: 75,
     'best-practices': 95,
     performance: 95,
-    pwa: 55,
+    pwa: 50,
     seo: 90,
   },
 };
