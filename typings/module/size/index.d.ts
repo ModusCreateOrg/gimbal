@@ -1,6 +1,7 @@
 export interface SizeConfigs {
   maxSize: string;
   path: string;
+  type?: string;
 }
 
 export interface SizeConfig {

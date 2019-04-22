@@ -17,6 +17,8 @@ class Chrome {
   public async launch(): Promise<void> {
     this.browser = await puppeteer.launch({
       // headless: false,
+      // args useful for headless CI instances
+      args: ['--no-sandbox', '–-disable-setuid-sandbox'],
     });
   }
 

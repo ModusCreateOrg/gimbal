@@ -1,5 +1,5 @@
 import { CommandOptions } from '@/typings/utils/command';
-import GLOBAL from '@/utils/constants';
+import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 import log from '@/utils/logger';
 import spawn from '@/utils/spawn';
 import { splitOnWhitespace } from '@/utils/string';
@@ -41,7 +41,7 @@ const processStringForm = async (job: string, commandOptions: CommandOptions): P
         cwd: commandOptions.cwd,
         env: {
           ...process.env,
-          [GLOBAL.CHILD_GIMBAL_PROCESS]: 'true',
+          [CHILD_GIMBAL_PROCESS]: 'true',
         },
         stdio: 'inherit',
       },

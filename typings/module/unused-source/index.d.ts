@@ -1,3 +1,5 @@
+import { SizeConfigs } from '@/typings/module/size';
+
 export interface CoverageRange {
   end: number;
   start: number;
@@ -5,17 +7,20 @@ export interface CoverageRange {
 
 export interface Entry {
   success: boolean;
+  threshold?: UnusedSourceThresholdSimple;
   total: number;
   url: string;
   unused: number;
   unusedPercentage: number;
   used: number;
+  [name: string]: number | string | boolean | void;
 }
 
 export interface UnusedRet {
   css: Entry[];
   js: Entry[];
   success: boolean;
+  threshold?: UnusedSourceThresholdSimple;
   total: number;
   unused: number;
   unusedPercentage: number;
@@ -23,7 +28,8 @@ export interface UnusedRet {
   url: string;
 }
 
-export type UnusedSourceThreshold = number | string;
+export type UnusedSourceThresholdSimple = number | string;
+export type UnusedSourceThreshold = UnusedSourceThresholdSimple | SizeConfigs[];
 
 export interface UnusedSourceConfig {
   threshold: UnusedSourceThreshold;

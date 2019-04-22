@@ -5,11 +5,11 @@ import Command from '@/command';
 import Config from '@/config';
 import { getOptionsFromCommand } from '@/utils/command';
 import log from '@/utils/logger';
-import GLOBAL from './utils/constants';
+import { CHILD_GIMBAL_PROCESS } from './utils/constants';
 import processJobs from './config/jobs';
 
 (async (): Promise<void> => {
-  if (!process.env[GLOBAL.CHILD_GIMBAL_PROCESS]) {
+  if (!process.env[CHILD_GIMBAL_PROCESS]) {
     const gimbal = fs.readFileSync(path.join(__dirname, 'ascii_art/gimbal.txt'), 'utf8');
 
     log(gimbal);
