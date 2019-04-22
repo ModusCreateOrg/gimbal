@@ -43,7 +43,11 @@ import processJobs from './config/jobs';
       const { jobs } = config;
 
       if (jobs) {
-        await processJobs(jobs, options);
+        try {
+          await processJobs(jobs, options);
+        } catch {
+          process.exit(1);
+        }
       } else {
         // no jobs so there is nothing to execute
         // so let's show the help screen

@@ -1,4 +1,5 @@
 import { CommandOptions } from '@/typings/utils/command';
+import { CmdSpawnRet } from '@/typings/utils/spawn';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 import log from '@/utils/logger';
 import spawn from '@/utils/spawn';
@@ -7,24 +8,26 @@ import { splitOnWhitespace } from '@/utils/string';
 interface Options {
   [key: string]: string;
 }
+
 interface OptionsCt {
   options: Options;
 }
+
 type ArrayJob = [string, OptionsCt];
 type Job = string | ArrayJob;
+type JobRet = CmdSpawnRet | void;
 
 const prependDashes = (option: string): string => `--${option.replace(/^-+/, '')}`;
 
-const processStringForm = async (job: string, commandOptions: CommandOptions): Promise<void> => {
+const processStringForm = async (job: string, commandOptions: CommandOptions): Promise<JobRet> => {
   const rest = splitOnWhitespace(job);
 
   // should never happen but an empty string was passed
   if (!rest.length) {
-    return;
+    return undefined;
   }
 
   const [node, script] = process.argv;
-  const [command] = rest;
 
   // Check if this was executed with a path ending in "/gimbal".
   // If it was, then we are in compiled code as in dev, it's
@@ -35,7 +38,7 @@ const processStringForm = async (job: string, commandOptions: CommandOptions): P
     : ['-r', 'ts-node/register', '-r', 'tsconfig-paths/register'];
 
   try {
-    await spawn(
+    return await spawn(
       [node, ...runtimeArgs, script, ...rest],
       {
         cwd: commandOptions.cwd,
@@ -43,18 +46,19 @@ const processStringForm = async (job: string, commandOptions: CommandOptions): P
           ...process.env,
           [CHILD_GIMBAL_PROCESS]: 'true',
         },
-        stdio: 'inherit',
+        stdio: 'pipe',
       },
       {
         noUsage: true,
       },
     );
-  } catch {
-    log(`Breaking issue discovered running ${command}`);
+  } catch (error) {
+    // pass the failure up but let the rejection happen upstream
+    return error;
   }
 };
 
-const processArrayForm = (job: ArrayJob, commandOptions: CommandOptions): Promise<void> | void => {
+const processArrayForm = (job: ArrayJob, commandOptions: CommandOptions): Promise<JobRet> => {
   const splitCommand = splitOnWhitespace(job[0]);
   const [command] = splitCommand;
 
@@ -72,18 +76,46 @@ const processArrayForm = (job: ArrayJob, commandOptions: CommandOptions): Promis
     }
   }
 
-  return undefined;
+  return Promise.resolve(undefined);
 };
 
-const processJobs = (jobs: Job[], commandOptions: CommandOptions): Promise<(void)[]> => {
+const handleResults = (ret: JobRet[]): JobRet[] => {
+  let hasFailure = false;
+
+  log(
+    ret
+      .map(
+        (item: void | CmdSpawnRet): string => {
+          if (item) {
+            if (!item.success) {
+              hasFailure = true;
+            }
+
+            return item.logs.map((logItem: Buffer): string => logItem.toString()).join('\n');
+          }
+
+          return '';
+        },
+      )
+      .join('\n'),
+  );
+
+  if (hasFailure) {
+    throw ret;
+  }
+
+  return ret;
+};
+
+const processJobs = (jobs: Job[], commandOptions: CommandOptions): Promise<JobRet[]> => {
   return Promise.all(
     jobs.map(
-      async (job: Job): Promise<void> =>
+      async (job: Job): Promise<CmdSpawnRet | void> =>
         Array.isArray(job)
           ? processArrayForm(job as ArrayJob, commandOptions)
           : processStringForm(job as string, commandOptions),
     ),
-  );
+  ).then(handleResults);
 };
 
 export default processJobs;

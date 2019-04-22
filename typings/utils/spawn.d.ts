@@ -12,7 +12,7 @@ export interface CmdSpawnOptions {
 export interface CmdSpawnRet {
   code: number;
   end: Date;
-  logs?: Buffer[];
+  logs: Buffer[];
   os?: OS;
   start: Date;
   success: boolean;
