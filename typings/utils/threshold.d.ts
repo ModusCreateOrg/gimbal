@@ -1,4 +1,12 @@
-export interface AdvancedThreshold {
+export interface LighthouseThreshold {
+  accessibility?: number;
+  'best-practices'?: number;
+  performance?: number;
+  pwa?: number;
+  seo?: number;
+}
+
+export interface AdvancedThreshold extends LighthouseThreshold {
   // heap-snapshot module
   Documents?: number;
   Frames?: number;
@@ -7,13 +15,6 @@ export interface AdvancedThreshold {
   LayoutCount?: number;
   Nodes?: number;
   RecalcStyleDuration?: number;
-
-  // lighthouse module
-  accessibility?: number;
-  'best-practices'?: number;
-  performance?: number;
-  pwa?: number;
-  seo?: number;
 
   [name: string]: number | void;
 }

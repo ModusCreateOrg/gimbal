@@ -21,6 +21,7 @@ const lighthouseRunner = async (
 
   return {
     ...results.lhr,
+    thresholdConfig: config.threshold,
     success: checkThresholds(results.lhr.categories, config.threshold, {
       mode: 'above',
       parser: (obj: Category): number => obj.score * 100,
