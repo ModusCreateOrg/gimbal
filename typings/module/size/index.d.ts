@@ -22,4 +22,5 @@ export interface ParsedFile {
   fail: boolean;
   path: string;
   size: number;
+  threshold: string;
 }

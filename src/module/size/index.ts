@@ -35,7 +35,8 @@ const getDirSize = async (path: string): Promise<number> => (await getDirectoryS
 const getFileResult = async (cwd: string, sizeConfig: SizeConfig, config: SizeConfigs): Promise<ParsedSizeConfig> => {
   const fullPath = resolvePath(cwd, config.path);
   const paths = await globby(fullPath, { expandDirectories: false, onlyFiles: false });
-  const maxSizeBytes = bytes(config.maxSize);
+  const { maxSize: threshold } = config;
+  const maxSizeBytes = bytes(threshold);
   const failures: ParsedFile[] = [];
   const successes: ParsedFile[] = [];
 
@@ -47,7 +48,7 @@ const getFileResult = async (cwd: string, sizeConfig: SizeConfig, config: SizeCo
           ? await getDirSize(path)
           : await getFileSize(path, sizeConfig.compression);
         const fail = size > maxSizeBytes;
-        const parsedFile: ParsedFile = { fail, path, size };
+        const parsedFile: ParsedFile = { fail, path, size, threshold };
 
         if (fail) {
           failures.push(parsedFile);
