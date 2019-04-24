@@ -1,6 +1,6 @@
 {
   "name": "@modus/gimbal",
-  "version": "1.0.0",
+  "version": "0.0.18",
   "description": "A CLI tool for monitoring web performance in modern web projects",
   "main": "./bin/index.js",
   "bin": {
