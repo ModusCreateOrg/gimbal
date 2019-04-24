@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import program from 'commander';
+import { existsSync } from 'fs';
 import { CommandOptions } from '@/typings/utils/command';
 import { resolvePath } from '@/utils/fs';
 
@@ -34,6 +35,10 @@ const getOptions = (cmd?: any, existingOptions?: CommandOptions): CommandOptions
 
   if (existingOptions) {
     options.cwd = resolvePath(options.cwd);
+
+    if (!existsSync(options.cwd)) {
+      throw new Error(`--cwd not found: ${options.cwd}`);
+    }
 
     if (options.outputHtml) {
       options.outputHtml = resolvePath(options.cwd, options.outputHtml);

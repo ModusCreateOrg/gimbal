@@ -102,25 +102,31 @@ class Command {
       cmd = actionArgs[1] as CommandType;
     }
 
-    const commandOptions = getOptionsFromCommand(cmd);
+    try {
+      const commandOptions = getOptionsFromCommand(cmd);
 
-    if (!Config.isLoaded) {
-      await Config.load(commandOptions.cwd);
-    }
+      if (!Config.isLoaded) {
+        await Config.load(commandOptions.cwd);
+      }
 
-    const report: CommandReturn = await this.action(commandOptions, args);
+      const report: CommandReturn = await this.action(commandOptions, args);
 
-    log(figlet.textSync(this.title));
+      log(figlet.textSync(this.title));
 
-    if (this.cliOutput) {
-      this.cliOutput(report, commandOptions);
-    }
+      if (this.cliOutput) {
+        this.cliOutput(report, commandOptions);
+      }
 
-    if (this.output) {
-      await this.output(report, commandOptions);
-    }
+      if (this.output) {
+        await this.output(report, commandOptions);
+      }
 
-    if (!report.success) {
+      if (!report.success) {
+        process.exit(1);
+      }
+    } catch (error) {
+      log(error);
+
       process.exit(1);
     }
   }
