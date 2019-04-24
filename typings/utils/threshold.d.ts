@@ -4,6 +4,7 @@ export interface LighthouseThreshold {
   performance?: number;
   pwa?: number;
   seo?: number;
+  [key: string]: number | void;
 }
 
 export interface AdvancedThreshold extends LighthouseThreshold {

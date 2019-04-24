@@ -9,40 +9,40 @@ import { CommandOptions } from '@/typings/utils/command';
 import log from '@/utils/logger';
 
 const cliOutput = (report: CommandReturn, options: CommandOptions): void => {
-  const table = new Table({ head: ['Category', 'Value'] }) as HorizontalTable;
+  const table = new Table({ head: ['Category', 'Value', 'Threshold'] }) as HorizontalTable;
   const { heapSnapshots, lighthouse, sizes, unusedSource } = report.data;
   const cliOptions: CliOutputOptions = { table };
 
   if (heapSnapshots) {
-    table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Heap Snapshot' }]);
+    table.push([{ colSpan: 3, content: '' }], [{ colSpan: 2, content: 'Heap Snapshot' }]);
 
     HeapSnapshotCliOutput(heapSnapshots, options, cliOptions);
 
-    table.push([{ colSpan: 2, content: `Success: ${heapSnapshots.success}`, hAlign: 'right' }]);
+    table.push([{ colSpan: 3, content: `Success: ${heapSnapshots.success}`, hAlign: 'right' }]);
   }
 
   if (lighthouse) {
-    table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Lighthouse' }]);
+    table.push([{ colSpan: 3, content: '' }], [{ colSpan: 2, content: 'Lighthouse' }]);
 
     lighthouseCliOutput(lighthouse, options, cliOptions);
 
-    table.push([{ colSpan: 2, content: `Success: ${lighthouse.success}`, hAlign: 'right' }]);
+    table.push([{ colSpan: 3, content: `Success: ${lighthouse.success}`, hAlign: 'right' }]);
   }
 
   if (sizes) {
-    table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Size' }]);
+    table.push([{ colSpan: 3, content: '' }], [{ colSpan: 2, content: 'Size' }]);
 
     sizeCliOutput(sizes, options, cliOptions);
 
-    table.push([{ colSpan: 2, content: `Success: ${sizes.success}`, hAlign: 'right' }]);
+    table.push([{ colSpan: 3, content: `Success: ${sizes.success}`, hAlign: 'right' }]);
   }
 
   if (unusedSource) {
-    table.push([{ colSpan: 2, content: '' }], [{ colSpan: 2, content: 'Unused Source' }]);
+    table.push([{ colSpan: 3, content: '' }], [{ colSpan: 2, content: 'Unused Source' }]);
 
     unusedSourceCliOutput(unusedSource, options, cliOptions);
 
-    table.push([{ colSpan: 2, content: `Success: ${unusedSource.success}`, hAlign: 'right' }]);
+    table.push([{ colSpan: 3, content: `Success: ${unusedSource.success}`, hAlign: 'right' }]);
   }
 
   log(table.toString());

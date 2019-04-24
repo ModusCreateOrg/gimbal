@@ -1,8 +1,8 @@
 import Table, { HorizontalTable } from 'cli-table3';
-import { CommandReturn } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
 import log from '@/utils/logger';
+import { HeapSnapshotReturn } from '@/typings/module/heap-snapshot';
 
 const keysToCareAbout = [
   'Documents',
@@ -14,16 +14,19 @@ const keysToCareAbout = [
   'RecalcStyleCount',
 ];
 
-const cliOutput = (report: CommandReturn, commandOptions: CommandOptions, options?: CliOutputOptions): void => {
+const cliOutput = (report: HeapSnapshotReturn, commandOptions: CommandOptions, options?: CliOutputOptions): void => {
+  const { thresholdConfig = {} } = report;
   const table =
-    options && options.table ? options.table : (new Table({ head: ['Category', 'Value'] }) as HorizontalTable);
+    options && options.table
+      ? options.table
+      : (new Table({ head: ['Category', 'Value', 'Threshold'] }) as HorizontalTable);
 
   const keys = commandOptions.verbose ? Object.keys(report.data).sort() : keysToCareAbout;
 
   keys.forEach(
     (key: string): void => {
-      // @ts-ignore
-      table.push([key, { content: report.data[key], hAlign: 'right' }]);
+      const threshold = thresholdConfig[key] || '';
+      table.push([key, { content: report.data[key], hAlign: 'right' }, { content: threshold, hAlign: 'right' }]);
     },
   );
 

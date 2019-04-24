@@ -5,6 +5,7 @@ import { Entry, UnusedRet } from '@/typings/module/unused-source';
 import { CommandOptions } from '@/typings/utils/command';
 import log from '@/utils/logger';
 import { CliOutputOptions } from '@/typings/output/cli';
+import { truncatePath } from '@/utils/string';
 
 const bytesConfig = { unitSeparator: ' ' };
 
@@ -23,46 +24,69 @@ const formatVerbose = (entry: Entry | UnusedRet): string =>
 
 const outputTable = (report: UnusedRet, verbose: boolean, options?: CliOutputOptions): HorizontalTable => {
   const table =
-    options && options.table ? options.table : (new Table({ head: ['File URI', 'Unused Size'] }) as HorizontalTable);
+    options && options.table
+      ? options.table
+      : (new Table({ head: ['File URI', 'Unused Size', 'Threshold'] }) as HorizontalTable);
 
-  table.push([{ colSpan: 2, content: 'Page Totals' }]);
+  table.push([{ colSpan: 3, content: 'Page Totals' }]);
 
-  table.push([report.url, formatUnused(report)]);
+  table.push([
+    truncatePath(report.url),
+    formatUnused(report),
+    {
+      content: report.threshold,
+      hAlign: 'right',
+    },
+  ]);
 
   if (verbose) {
-    table.push([{ colSpan: 2, content: formatVerbose(report) }]);
+    table.push([{ colSpan: 3, content: formatVerbose(report) }]);
   }
 
-  table.push([{ colSpan: 2, content: 'CSS' }]);
+  table.push([{ colSpan: 3, content: 'CSS' }]);
 
   if (report.css.length) {
     report.css.forEach(
       (entry: Entry): void => {
-        table.push([entry.url, formatUnused(entry)]);
+        table.push([
+          truncatePath(entry.url),
+          formatUnused(entry),
+          {
+            content: report.threshold,
+            hAlign: 'right',
+          },
+        ]);
 
         if (verbose) {
-          table.push([{ colSpan: 2, content: formatVerbose(entry) }]);
+          table.push([{ colSpan: 3, content: formatVerbose(entry) }]);
         }
       },
     );
   } else {
-    table.push([{ colSpan: 2, content: '  none' }]);
+    table.push([{ colSpan: 3, content: '  none' }]);
   }
 
-  table.push([{ colSpan: 2, content: 'JavaScript' }]);
+  table.push([{ colSpan: 3, content: 'JavaScript' }]);
 
   if (report.css.length) {
     report.js.forEach(
       (entry: Entry): void => {
-        table.push([entry.url, formatUnused(entry)]);
+        table.push([
+          truncatePath(entry.url),
+          formatUnused(entry),
+          {
+            content: report.threshold,
+            hAlign: 'right',
+          },
+        ]);
 
         if (verbose) {
-          table.push([{ colSpan: 2, content: formatVerbose(entry) }]);
+          table.push([{ colSpan: 3, content: formatVerbose(entry) }]);
         }
       },
     );
   } else {
-    table.push([{ colSpan: 2, content: '  none' }]);
+    table.push([{ colSpan: 3, content: '  none' }]);
   }
 
   return table;

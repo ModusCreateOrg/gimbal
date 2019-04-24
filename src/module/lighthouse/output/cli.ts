@@ -7,10 +7,12 @@ import log from '@/utils/logger';
 
 const cliOutput = (report: CommandReturn, _commandOptions: CommandOptions, options?: CliOutputOptions): void => {
   const { data }: { data?: Result } = report;
-
   if (data) {
+    const { thresholdConfig = {} } = data;
     const table =
-      options && options.table ? options.table : (new Table({ head: ['Category', 'Score'] }) as HorizontalTable);
+      options && options.table
+        ? options.table
+        : (new Table({ head: ['Category', 'Score', 'Threshold'] }) as HorizontalTable);
 
     let i = 0;
     const keys = Object.keys(data.categories).sort();
@@ -21,8 +23,13 @@ const cliOutput = (report: CommandReturn, _commandOptions: CommandOptions, optio
       const category = data.categories[key];
       const { score, title } = category;
       const parsedScore = (score * 100).toFixed(0);
+      let threshold: string | number = '';
 
-      table.push([title, { content: parsedScore, hAlign: 'right' }]);
+      if (thresholdConfig[key]) {
+        threshold = thresholdConfig[key] as number;
+      }
+
+      table.push([title, { content: parsedScore, hAlign: 'right' }, { content: threshold, hAlign: 'right' }]);
 
       i += 1;
     }

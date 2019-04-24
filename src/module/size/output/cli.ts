@@ -6,7 +6,7 @@ import { ParsedSizeConfig, ParsedFile } from '@/typings/module/size';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
 import log from '@/utils/logger';
-import { pad } from '@/utils/string';
+import { pad, truncatePath } from '@/utils/string';
 
 const bytesConfig = { unitSeparator: ' ' };
 
@@ -53,40 +53,51 @@ const outputVerbose = (failures: ParsedSizeConfig[], successes: ParsedSizeConfig
 const outputTable = (
   failures: ParsedSizeConfig[],
   successes: ParsedSizeConfig[],
+  commandOptions: CommandOptions,
   options?: CliOutputOptions,
 ): HorizontalTable => {
-  const table = options && options.table ? options.table : (new Table({ head: ['File', 'Size'] }) as HorizontalTable);
+  const { cwd } = commandOptions;
+  const table =
+    options && options.table ? options.table : (new Table({ head: ['File', 'Size', 'Threshold'] }) as HorizontalTable);
 
-  table.push([{ colSpan: 2, content: 'FAILURES' }]);
+  table.push([{ colSpan: 3, content: 'FAILURES' }]);
 
   if (failures.length) {
     failures.forEach(
       (failureConfig: ParsedSizeConfig): void => {
         failureConfig.failures.forEach(
           (failure: ParsedFile): void => {
-            table.push([failure.path, { content: bytes(failure.size, bytesConfig), hAlign: 'right' }]);
+            table.push([
+              truncatePath(failure.path, cwd),
+              { content: bytes(failure.size, bytesConfig), hAlign: 'right' },
+              { content: failure.threshold, hAlign: 'right' },
+            ]);
           },
         );
       },
     );
   } else {
-    table.push([{ colSpan: 2, content: '  none' }]);
+    table.push([{ colSpan: 3, content: '  none' }]);
   }
 
-  table.push([{ colSpan: 2, content: 'SUCCESSES' }]);
+  table.push([{ colSpan: 3, content: 'SUCCESSES' }]);
 
   if (successes.length) {
     successes.forEach(
       (successConfig: ParsedSizeConfig): void => {
         successConfig.successes.forEach(
           (success: ParsedFile): void => {
-            table.push([success.path, { content: bytes(success.size, bytesConfig), hAlign: 'right' }]);
+            table.push([
+              truncatePath(success.path, cwd),
+              { content: bytes(success.size, bytesConfig), hAlign: 'right' },
+              { content: success.threshold, hAlign: 'right' },
+            ]);
           },
         );
       },
     );
   } else {
-    table.push([{ colSpan: 2, content: '  none' }]);
+    table.push([{ colSpan: 3, content: '  none' }]);
   }
 
   return table;
@@ -114,7 +125,7 @@ const cliOutput = (reports: CommandReturn, commandOptions: CommandOptions, optio
       log(messages.join('\n'));
     }
 
-    const table = outputTable(failures, successes, options);
+    const table = outputTable(failures, successes, commandOptions, options);
 
     if (!options || !options.table) {
       // if a table wasn't passed in, output table
