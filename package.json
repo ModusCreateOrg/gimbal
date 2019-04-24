@@ -85,6 +85,7 @@
     "bytes": "3.1.0",
     "cli-table3": "0.5.1",
     "commander": "2.20.0",
+    "deepmerge": "3.2.0",
     "figlet": "1.2.1",
     "get-folder-size": "2.0.1",
     "get-port": "5.0.0",

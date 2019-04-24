@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 import globby from 'globby';
 import { extname } from 'path';
 import { resolvePath } from '@/utils/fs';
@@ -96,7 +97,14 @@ class Config {
       obj = obj[prop] as any;
     }
 
-    return obj == null ? defaultValue : obj;
+    /**
+     * It's ok if defaultValue is null/undefined, deepmerge handles that.
+     * obj does need to be defined so default to an object.
+     * Reason to always run this, it creates new objects instead of using
+     * the defaultValue that could be changed by something downstream
+     * which could pose an issue.
+     */
+    return deepmerge(defaultValue, obj || {});
   }
 }
 
