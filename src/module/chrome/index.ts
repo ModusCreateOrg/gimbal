@@ -1,5 +1,7 @@
+import deepmerge from 'deepmerge';
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { URL } from 'url';
+import Config from '@/config';
 
 class Chrome {
   private browser?: Browser;
@@ -15,11 +17,16 @@ class Chrome {
   }
 
   public async launch(): Promise<void> {
-    this.browser = await puppeteer.launch({
-      // headless: false,
-      // args useful for headless CI instances
-      args: ['--no-sandbox', '–-disable-setuid-sandbox'],
-    });
+    const config = deepmerge(
+      {
+        // args useful for headless CI instances
+        args: ['--no-sandbox', '–-disable-setuid-sandbox'],
+      },
+      // can accept anything from: https://github.com/GoogleChrome/puppeteer/blob/v1.14.0/docs/api.md#puppeteerlaunchoptions
+      Config.get('configs.puppeteer'),
+    );
+
+    this.browser = await puppeteer.launch(config);
   }
 
   public async kill(): Promise<void> {
