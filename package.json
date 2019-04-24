@@ -42,22 +42,28 @@
     "lighthouse",
     "bundlesize"
   ],
-  "contributors": [{
-    "name": "Ahsan Ayaz",
-    "email": "ahsan.ayaz@moduscreate.com"
-  }, {
-    "name": "Grgur de Grisogono",
-    "email": "grgur@moduscreate.com"
-  }, {
-    "name": "Matthew Kelch",
-    "email": "matthew.kelch@moduscreate.com"
-  }, {
-    "name": "Seth Lemmons",
-    "email": "seth.lemmons@moduscreate.com"
-  }, {
-    "name": "Mitchell Simoens",
-    "email": "mitchell.simoens@moduscreate.com"
-  }],
+  "contributors": [
+    {
+      "name": "Ahsan Ayaz",
+      "email": "ahsan.ayaz@moduscreate.com"
+    },
+    {
+      "name": "Grgur de Grisogono",
+      "email": "grgur@moduscreate.com"
+    },
+    {
+      "name": "Matthew Kelch",
+      "email": "matthew.kelch@moduscreate.com"
+    },
+    {
+      "name": "Seth Lemmons",
+      "email": "seth.lemmons@moduscreate.com"
+    },
+    {
+      "name": "Mitchell Simoens",
+      "email": "mitchell.simoens@moduscreate.com"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
@@ -114,7 +120,7 @@
     "eslint-config-prettier": "4.1.0",
     "eslint-import-resolver-typescript": "1.1.1",
     "eslint-plugin-import": "2.17.2",
-    "eslint-plugin-jest": "22.4.1",
+    "eslint-plugin-jest": "22.5.0",
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-prettier": "3.0.1",
     "eslint-plugin-react": "7.12.4",
