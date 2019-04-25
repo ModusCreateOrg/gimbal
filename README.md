@@ -105,7 +105,8 @@ be created using the [`npm version`](https://docs.npmjs.com/cli/version.html) co
 push the tag. Here are sample commands:
 
 ```bash
-$ npm version
+$ npm version patch
+v1.1.1
 $ git push --follow-tags
 ```
 
