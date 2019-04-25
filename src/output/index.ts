@@ -1,15 +1,22 @@
 import path from 'path';
 import Config from '@/config';
-import { CommandReturn } from '@/typings/command';
+import { CommandReturn, Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { mkdirp, resolvePath } from '@/utils/fs';
 import log from '@/utils/logger';
+import { outputTable } from './cli';
 import htmlOutput from './html';
 import jsonOutput from './json';
 import markdownOutput from './markdown';
 
-const output = async (report: CommandReturn, commandOptions: CommandOptions): Promise<void> => {
+const output = async (report: CommandReturn | Report, commandOptions: CommandOptions): Promise<void> => {
   const { html, json, markdown } = Config.get('outputs', {});
+
+  const table = outputTable(report as Report);
+
+  if (table) {
+    log(table.toString());
+  }
 
   if (html || commandOptions.outputHtml) {
     const file = html ? resolvePath(commandOptions.cwd, html) : commandOptions.outputHtml;

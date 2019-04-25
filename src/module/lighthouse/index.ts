@@ -1,15 +1,16 @@
 // @ts-ignore
 import lighthouse from 'lighthouse';
 import Config from '@/config';
-import { Category, Config as LighthouseConfig, Options, Result } from '@/typings/module/lighthouse';
-import checkThresholds from '@/utils/threshold';
+import { Report } from '@/typings/command';
+import { Config as LighthouseConfig, Options } from '@/typings/module/lighthouse';
 import defaultConfig from './default-config';
+import parseReport from './output';
 
 const lighthouseRunner = async (
   url: string,
   options: Options,
   config: LighthouseConfig = Config.get('configs.lighthouse', defaultConfig),
-): Promise<Result> => {
+): Promise<Report> => {
   const results = await lighthouse(
     url,
     {
@@ -19,14 +20,7 @@ const lighthouseRunner = async (
     config,
   );
 
-  return {
-    ...results.lhr,
-    thresholdConfig: config.threshold,
-    success: checkThresholds(results.lhr.categories, config.threshold, {
-      mode: 'above',
-      parser: (obj: Category): number => obj.score * 100,
-    }),
-  };
+  return parseReport(results.lhr, config);
 };
 
 export default lighthouseRunner;

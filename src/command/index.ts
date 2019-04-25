@@ -1,9 +1,9 @@
+import { Cell, GenericTable } from 'cli-table3';
 import program, { Command as CommandType } from 'commander';
 import figlet from 'figlet';
 import path from 'path';
 import Config from '@/config';
-import { CommandReturn } from '@/typings/command';
-import { CliOutputOptions } from '@/typings/output/cli';
+import { CommandReturn, Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
 import { readDir, stats } from '@/utils/fs';
@@ -14,8 +14,9 @@ type Action = (commandOptions: CommandOptions, args?: string[]) => Promise<any>;
 type ActionCreatorArg = string[] | CommandType;
 type ActionCreator = (...actionArgs: ActionCreatorArg[]) => Promise<void>;
 type DefaultValueFn = (options: CommandOptions) => CommandOptions;
+type OutputRet = void | GenericTable<Cell[]>;
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-type Output = (reports: any, commandOptions: CommandOptions, options?: CliOutputOptions) => Promise<void> | void;
+type Output = (reports: any, options: CommandOptions) => Promise<OutputRet> | OutputRet;
 
 interface Option {
   defaultValue?: string | DefaultValueFn;
@@ -25,7 +26,6 @@ interface Option {
 
 interface Config {
   action: Action;
-  cliOutput?: Output;
   command: string;
   options?: Option[];
   output?: Output;
@@ -34,8 +34,6 @@ interface Config {
 
 class Command {
   private action: Action;
-
-  private cliOutput?: Output;
 
   private command: string;
 
@@ -62,7 +60,6 @@ class Command {
 
   public constructor(config: Config) {
     this.action = config.action;
-    this.cliOutput = config.cliOutput;
     this.command = config.command;
     this.options = config.options;
     this.output = config.output;
@@ -109,13 +106,9 @@ class Command {
         await Config.load(commandOptions.cwd);
       }
 
-      const report: CommandReturn = await this.action(commandOptions, args);
+      const report: CommandReturn | Report = await this.action(commandOptions, args);
 
       log(figlet.textSync(this.title));
-
-      if (this.cliOutput) {
-        this.cliOutput(report, commandOptions);
-      }
 
       if (this.output) {
         await this.output(report, commandOptions);

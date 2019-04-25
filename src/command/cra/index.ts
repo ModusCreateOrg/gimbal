@@ -4,35 +4,25 @@ import Chrome from '@/module/chrome';
 import HeapSnapshot from '@/module/heap-snapshot';
 import UnusedSource from '@/module/unused-source';
 import Serve from '@/module/serve';
-import { CommandReturn } from '@/typings/command';
+import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import findPort from '@/utils/port';
 
-interface Rets {
-  heapSnapshots?: CommandReturn;
-  lighthouse?: CommandReturn;
-  sizes?: CommandReturn;
-  unusedSource?: CommandReturn;
-}
-
-const calculateUnusedSource = async (chrome: Chrome, url: string): Promise<CommandReturn | void> => {
+const calculateUnusedSource = async (chrome: Chrome, url: string): Promise<Report | void> => {
   const page = await chrome.newPage();
 
   if (page) {
-    const data = await UnusedSource(page, url);
+    const report = await UnusedSource(page, url);
 
     await page.close();
 
-    return {
-      data,
-      success: data.success,
-    };
+    return report;
   }
 
   throw new Error('Could not open page to calculate unused source');
 };
 
-const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<CommandReturn | void> => {
+const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<Report | void> => {
   const page = await chrome.newPage();
 
   if (page) {
@@ -42,11 +32,9 @@ const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<CommandRet
   throw new Error('Could not open page to get heap snapshot');
 };
 
-// success is if the object doesn't exist or if success property is true
-const isSuccess = (obj?: CommandReturn): boolean => obj == null || obj.success;
-
-const cra = async (options: CommandOptions): Promise<CommandReturn> => {
-  const rets: Rets = {};
+const cra = async (options: CommandOptions): Promise<Report> => {
+  const rets: ReportItem[] = [];
+  let success = true;
   // if we are going to calculate unused CSS, take heap snapshot(s) or run lighthouse audits
   // we need to host the app and use chrome
   const needChromeAndServe = options.calculateUnusedCss || options.heapSnapshot || options.lighthouse;
@@ -67,25 +55,49 @@ const cra = async (options: CommandOptions): Promise<CommandReturn> => {
   if (options.size) {
     const report = await sizeModule(options.cwd);
 
-    rets.sizes = report;
+    if (!report.success) {
+      success = false;
+    }
+
+    rets.push({
+      data: report.data,
+      label: 'Size',
+      rawLabel: 'Size',
+      success: report.success,
+    });
   }
 
   if (options.lighthouse && chrome && localUri) {
-    const data = await LighthouseModule(localUri, {
+    const report = await LighthouseModule(localUri, {
       chromePort: chrome.port as string,
     });
 
-    rets.lighthouse = {
-      data,
-      success: data.success,
-    };
+    if (!report.success) {
+      success = false;
+    }
+
+    rets.push({
+      data: report.data,
+      label: 'Heap Snapshot',
+      rawLabel: 'Heap Snapshot',
+      success: report.success,
+    });
   }
 
   if (options.calculateUnusedSource && chrome && localUri) {
     const report = await calculateUnusedSource(chrome, localUri);
 
     if (report) {
-      rets.unusedSource = report;
+      if (!report.success) {
+        success = false;
+      }
+
+      rets.push({
+        data: report.data,
+        label: 'Unused Source',
+        rawLabel: 'Unused Source',
+        success: report.success,
+      });
     }
   }
 
@@ -93,7 +105,16 @@ const cra = async (options: CommandOptions): Promise<CommandReturn> => {
     const report = await takeHeapSnapshot(chrome, localUri);
 
     if (report) {
-      rets.heapSnapshots = report;
+      if (!report.success) {
+        success = false;
+      }
+
+      rets.push({
+        data: report.data,
+        label: 'Heap Snapshot',
+        rawLabel: 'Heap Snapshot',
+        success: report.success,
+      });
     }
   }
 
@@ -107,11 +128,7 @@ const cra = async (options: CommandOptions): Promise<CommandReturn> => {
 
   return {
     data: rets,
-    success:
-      isSuccess(rets.sizes) &&
-      isSuccess(rets.lighthouse) &&
-      isSuccess(rets.unusedSource) &&
-      isSuccess(rets.heapSnapshots),
+    success,
   };
 };
 

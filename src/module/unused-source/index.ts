@@ -1,27 +1,21 @@
-import bytes from 'bytes';
 import minimatch from 'minimatch';
 import { CoverageEntry, Page } from 'puppeteer';
 import { URL } from 'url';
 import Config from '@/config';
+import { Report } from '@/typings/command';
 import { SizeConfigs } from '@/typings/module/size';
-import {
-  CoverageRange,
-  Entry,
-  UnusedRet,
-  UnusedSourceConfig,
-  UnusedSourceThresholdSimple,
-} from '@/typings/module/unused-source';
+import { CoverageRange, Entry, UnusedSourceConfig } from '@/typings/module/unused-source';
 import defaultConfig from './default-config';
+import parseReport from './output';
 
 interface CheckThresholdRet {
   success: boolean;
-  threshold?: UnusedSourceThresholdSimple;
+  threshold?: string;
 }
 
-const NUMBER_RE = /^\d+$/;
-const PERCENTAGE_RE = /^\d+%$/;
+type EntryType = 'css' | 'js' | undefined;
 
-const isThresholdMatch = (url: string, threshold: SizeConfigs, type?: 'css' | 'js'): boolean => {
+const isThresholdMatch = (url: string, threshold: SizeConfigs, type?: EntryType): boolean => {
   // only attempt to find a match if both types match
   if (threshold.type === type) {
     const info = new URL(url);
@@ -34,11 +28,7 @@ const isThresholdMatch = (url: string, threshold: SizeConfigs, type?: 'css' | 'j
   return false;
 };
 
-const getThreshold = (
-  url: string,
-  thresholds: SizeConfigs[],
-  type?: 'css' | 'js',
-): UnusedSourceThresholdSimple | void => {
+const getThreshold = (url: string, thresholds: SizeConfigs[], type?: EntryType): string | void => {
   // attempt to find a matching threshold
   const threshold = thresholds.find((item: SizeConfigs): boolean => isThresholdMatch(url, item, type));
 
@@ -51,11 +41,7 @@ const getThreshold = (
   return type ? getThreshold(url, thresholds) : undefined;
 };
 
-const checkThreshold = (
-  size: number,
-  percentage: number,
-  threshold: UnusedSourceThresholdSimple,
-): CheckThresholdRet => {
+const checkThreshold = (percentage: number, threshold?: string): CheckThresholdRet => {
   if (threshold == null) {
     // if no threshold, then this is valid
     return {
@@ -63,34 +49,12 @@ const checkThreshold = (
     };
   }
 
-  const isString = typeof threshold === 'string';
-  const isPercentage = isString && (threshold as string).match(PERCENTAGE_RE);
-  const isNumber = !isPercentage && (!isString || (threshold as string).match(NUMBER_RE));
-
-  if (isNumber) {
-    // threshold is a number either as a number or a string only containing digits
-    return {
-      success: size < threshold,
-      threshold,
-    };
-  }
-
-  if (isPercentage) {
-    // threshold is a percentage as a string
-    // remove % off end
-    const thresholdNum = (threshold as string).substr(0, (threshold as string).length - 1);
-
-    return {
-      success: percentage < Number(thresholdNum),
-      threshold,
-    };
-  }
-
-  // threshold is a byte string (like `10 KB`)
-  const bytesThreshold = bytes(threshold as string);
+  // threshold is a percentage as a string
+  // remove % off end
+  const thresholdNum = (threshold as string).substr(0, (threshold as string).length - 1);
 
   return {
-    success: size < bytesThreshold,
+    success: percentage < Number(thresholdNum),
     threshold,
   };
 };
@@ -102,11 +66,12 @@ const UnusedCSS = async (
   page: Page,
   url: string,
   config: UnusedSourceConfig = Config.get('configs.unused-source', defaultConfig),
-): Promise<UnusedRet> => {
+): Promise<Report> => {
   const sourceConfig = {
     ...defaultConfig,
     ...config,
   };
+
   const isThresholdArray = Array.isArray(sourceConfig.threshold);
 
   await Promise.all([page.coverage.startCSSCoverage(), page.coverage.startJSCoverage()]);
@@ -121,75 +86,51 @@ const UnusedCSS = async (
   let total = 0;
   let used = 0;
 
-  const parsedCss = css.map(
-    (entry: CoverageEntry): Entry => {
-      const entryTotal = entry.text.length;
-      const entryUsed = getEntryUsed(entry);
+  const parseEntry = (type: EntryType): ((entry: CoverageEntry) => Entry) => (entry: CoverageEntry): Entry => {
+    const entryTotal = entry.text.length;
+    const entryUsed = getEntryUsed(entry);
 
-      total += entryTotal;
-      used += entryUsed;
+    total += entryTotal;
+    used += entryUsed;
 
-      const unused = entryTotal - entryUsed;
-      const percentage = (unused / entryTotal) * 100;
-      const threshold = isThresholdArray
-        ? getThreshold(entry.url, sourceConfig.threshold as SizeConfigs[], 'css')
-        : sourceConfig.threshold;
-      const checked = checkThreshold(unused, percentage, threshold as UnusedSourceThresholdSimple);
+    const unused = entryTotal - entryUsed;
+    const percentage = (unused / entryTotal) * 100;
+    const threshold = isThresholdArray
+      ? getThreshold(entry.url, sourceConfig.threshold as SizeConfigs[], type)
+      : (sourceConfig.threshold as string);
+    const checked = checkThreshold(percentage, threshold as string);
 
-      return {
-        ...checked,
-        total: entryTotal,
-        unused,
-        unusedPercentage: percentage,
-        url: entry.url,
-        used: entryUsed,
-      };
-    },
-  );
+    return {
+      ...checked,
+      total: entryTotal,
+      unused,
+      unusedPercentage: `${percentage.toFixed(2)}%`,
+      url: entry.url,
+      used: entryUsed,
+    };
+  };
 
-  const parsedJs = js.map(
-    (entry: CoverageEntry): Entry => {
-      const entryTotal = entry.text.length;
-      const entryUsed = getEntryUsed(entry);
-
-      total += entryTotal;
-      used += entryUsed;
-
-      const unused = entryTotal - entryUsed;
-      const percentage = (unused / entryTotal) * 100;
-      const threshold = isThresholdArray
-        ? getThreshold(entry.url, sourceConfig.threshold as SizeConfigs[], 'js')
-        : sourceConfig.threshold;
-      const checked = checkThreshold(unused, percentage, threshold as UnusedSourceThresholdSimple);
-
-      return {
-        ...checked,
-        total: entryTotal,
-        unused,
-        unusedPercentage: percentage,
-        url: entry.url,
-        used: entryUsed,
-      };
-    },
-  );
+  const parsedCss = css.map(parseEntry('css'));
+  const parsedJs = js.map(parseEntry('js'));
 
   const unused = total - used;
   const percentage = (unused / total) * 100;
   const threshold = isThresholdArray
     ? getThreshold(url, sourceConfig.threshold as SizeConfigs[])
-    : sourceConfig.threshold;
-  const checked = checkThreshold(unused, percentage, threshold as UnusedSourceThresholdSimple);
-
-  return {
+    : (sourceConfig.threshold as string);
+  const checked = checkThreshold(percentage, threshold as string);
+  const pageTotal: Entry = {
     ...checked,
     total,
     unused,
-    unusedPercentage: percentage,
-    used,
+    unusedPercentage: `${percentage.toFixed(2)}%`,
     url,
-    css: parsedCss,
-    js: parsedJs,
+    used,
   };
+
+  const data: Entry[] = [pageTotal, ...parsedCss, ...parsedJs];
+
+  return parseReport(data);
 };
 
 export default UnusedCSS;

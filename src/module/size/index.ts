@@ -4,10 +4,11 @@ import bytes from 'bytes';
 import globby from 'globby';
 import gzipSize from 'gzip-size';
 import Config from '@/config';
-import { CommandReturn } from '@/typings/command';
+import { Report } from '@/typings/command';
 import { SizeConfig, SizeConfigs, ParsedSizeConfig, ParsedFile } from '@/typings/module/size';
 import { readFile, resolvePath, stats, getDirectorySize } from '@/utils/fs';
 import defaultConfig from './default-config';
+import parseReport from './output';
 
 type CompressionMechanisms = 'brotli' | 'gzip' | undefined;
 
@@ -73,7 +74,7 @@ const getFileResult = async (cwd: string, sizeConfig: SizeConfig, config: SizeCo
 const sizeModule = async (
   cwd: string,
   sizeConfig: SizeConfig | SizeConfigs[] = Config.get('configs.size', defaultConfig),
-): Promise<CommandReturn> => {
+): Promise<Report> => {
   if (!sizeConfig) {
     return Promise.resolve({
       data: [],
@@ -89,12 +90,7 @@ const sizeModule = async (
     ),
   );
 
-  const success: boolean = !data.some((config: ParsedSizeConfig): boolean => config.failures.length > 0);
-
-  return {
-    data,
-    success,
-  };
+  return parseReport(data, cwd);
 };
 
 export default sizeModule;

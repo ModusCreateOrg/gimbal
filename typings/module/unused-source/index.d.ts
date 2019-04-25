@@ -7,20 +7,19 @@ export interface CoverageRange {
 
 export interface Entry {
   success: boolean;
-  threshold?: UnusedSourceThresholdSimple;
+  threshold?: string;
   total: number;
   url: string;
   unused: number;
-  unusedPercentage: number;
+  unusedPercentage: string;
   used: number;
   [name: string]: number | string | boolean | void;
 }
 
 export interface UnusedRet {
-  css: Entry[];
-  js: Entry[];
+  entries: Entry[];
   success: boolean;
-  threshold?: UnusedSourceThresholdSimple;
+  threshold?: string;
   total: number;
   unused: number;
   unusedPercentage: number;
@@ -28,9 +27,6 @@ export interface UnusedRet {
   url: string;
 }
 
-export type UnusedSourceThresholdSimple = number | string;
-export type UnusedSourceThreshold = UnusedSourceThresholdSimple | SizeConfigs[];
-
 export interface UnusedSourceConfig {
-  threshold: UnusedSourceThreshold;
+  threshold: string | SizeConfigs[];
 }

@@ -1,4 +1,4 @@
-import { Threshold, LighthouseThreshold } from '@/typings/utils/threshold';
+import { Threshold } from '@/typings/utils/threshold';
 
 export interface AuditRef {
   group?: string;
@@ -45,8 +45,6 @@ export interface Result {
   lighthouseVersion: string;
   requestedUrl: string;
   runWarnings: string[];
-  success: boolean;
   timing: {};
   userAgent: string;
-  thresholdConfig: LighthouseThreshold;
 }

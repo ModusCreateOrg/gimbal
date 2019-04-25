@@ -1,11 +1,11 @@
 import Chrome from '@/module/chrome';
 import Serve from '@/module/serve';
 import HeapSnapshot from '@/module/heap-snapshot';
-import { CommandReturn } from '@/typings/command';
+import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import findPort from '@/utils/port';
 
-const unusedSourceRunner = async (options: CommandOptions): Promise<CommandReturn> => {
+const unusedSourceRunner = async (options: CommandOptions): Promise<Report> => {
   const chrome = new Chrome();
   const servePort = await findPort();
   const localUri = `http://localhost:${servePort}`;
@@ -22,7 +22,7 @@ const unusedSourceRunner = async (options: CommandOptions): Promise<CommandRetur
 
     if (!page) {
       return {
-        data: {},
+        data: [],
         success: true,
       };
     }
