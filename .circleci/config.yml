@@ -24,13 +24,6 @@ defaults: &defaults
   docker:
     - image: circleci/node:10
 
-publish-only: &publish-only
-  filters:
-    branches:
-      ignore: /.*/
-    tags:
-      only: /v[0-9]+(\.[0-9]+)*/
-
 version: 2
 jobs:
   build:
@@ -58,6 +51,13 @@ jobs:
       - restore_cache: *restore-npm-cache
       - run: yarn lint
 
+  lint-publish:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-npm-cache
+      - run: yarn lint
+
   publish:
     <<: *defaults
     steps:
@@ -71,16 +71,53 @@ jobs:
 
 workflows:
   version: 2
-  test-and-publish:
+  test-and-build:
     jobs:
-      - install-dependencies
+      - install-dependencies:
+          filters:
+            tags:
+              ignore: /v[0-9]+(\.[0-9]+)*/
       - lint:
           requires:
             - install-dependencies
+          filters:
+            tags:
+              ignore: /v[0-9]+(\.[0-9]+)*/
       - build:
           requires:
             - lint
+          filters:
+            tags:
+              ignore: /v[0-9]+(\.[0-9]+)*/
+  all-and-publish:
+    jobs:
+      - install-dependencies:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+      - lint-publish:
+          requires:
+            - install-dependencies
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+      - build:
+          requires:
+            - lint-publish
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
       - publish:
-          <<: *publish-only
           requires:
             - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
