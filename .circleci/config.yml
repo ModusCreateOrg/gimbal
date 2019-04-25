@@ -10,14 +10,6 @@ aliases:
     name: Saving node_modules/ cache
     paths:
       - node_modules
-  - &restore-build-cache
-    key: v1-build-buildcache-{{ .Revision }}
-    name: Restoring lib/ cache
-  - &save-build-cache
-    key: v1-build-buildcache-{{ .Revision }}
-    name: Saving lib/ cache
-    paths:
-      - lib
 
 defaults: &defaults
   working_directory: ~/repo
@@ -32,7 +24,6 @@ jobs:
       - checkout
       - restore_cache: *restore-npm-cache
       - run: yarn build
-      - save_cache: *save-build-cache
 
   install-dependencies:
     <<: *defaults
@@ -51,22 +42,17 @@ jobs:
       - restore_cache: *restore-npm-cache
       - run: yarn lint
 
-  lint-publish:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-npm-cache
-      - run: yarn lint
-
   publish:
     <<: *defaults
     steps:
       - checkout
       - restore_cache: *restore-npm-cache
-      - restore_cache: *restore-build-cache
       - run:
           name: Setup .npmrc
           command: printf "@modus:registry=https://npm.modus.app\n//npm.modus.app/:_authToken=\"%s\"" "$MODUS_NPM_TOKEN" >> ~/.npmrc
+      - run: npm i -ci
+      - run: yarn lint
+      - run: npm build
       - run: npm publish
 
 workflows:
@@ -89,33 +75,9 @@ workflows:
           filters:
             tags:
               ignore: /v[0-9]+(\.[0-9]+)*/
-  all-and-publish:
+  publish:
     jobs:
-      - install-dependencies:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
-      - lint-publish:
-          requires:
-            - install-dependencies
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
-      - build:
-          requires:
-            - lint-publish
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
       - publish:
-          requires:
-            - build
           filters:
             branches:
               ignore: /.*/
