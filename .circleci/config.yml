@@ -52,7 +52,7 @@ jobs:
           command: printf "@modus:registry=https://npm.modus.app\n//npm.modus.app/:_authToken=\"%s\"" "$MODUS_NPM_TOKEN" >> ~/.npmrc
       - run: npm i -ci
       - run: yarn lint
-      - run: npm build
+      - run: yarn build
       - run: npm publish
 
 workflows:
