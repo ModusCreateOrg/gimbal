@@ -98,6 +98,21 @@ need to build and then you can tell npm to link it. This will install the build 
 
 Now you can run `gimbal` anywhere from your machine as if you installed it from a npm repository.
 
+## Releasing
+
+We use the Modus internal npm repo and will only publish to it when a git tag is pushed. This git tag should
+be created using the [`npm version`](https://docs.npmjs.com/cli/version.html) command. Then you need to
+push the tag. Here are sample commands:
+
+```bash
+$ npm version
+$ git push --follow-tags
+```
+
+The CircleCI process will install dependencies and run the lint job as a sanity check before publishing. It
+will then do a real build and publish to npm via `npm publish`. CircleCI uses the `$MODUS_NPM_TOKEN` environment
+variable to create the `~/.npmrc` file in order to publish.
+
 ## Modus Create
 
 [Modus Create](https://moduscreate.com) is a digital product consultancy. We use a distributed team of the best talent in the world to offer a full suite of digital product design-build services; ranging from consumer facing apps, to digital migration, to agile development training, and business transformation.
