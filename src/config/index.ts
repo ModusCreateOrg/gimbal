@@ -123,7 +123,29 @@ class Config {
      * the defaultValue that could be changed by something downstream
      * which could pose an issue.
      */
-    return deepmerge(defaultValue, obj || {});
+    return this.maybeMerge(defaultValue, obj);
+  }
+
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  private maybeMerge(defaultValue?: any, obj?: any): any {
+    if (typeof defaultValue === 'object' || typeof obj === 'object') {
+      return deepmerge(defaultValue, obj || this.parseObject(defaultValue));
+    }
+
+    return obj || defaultValue;
+  }
+
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  private parseObject(defaultValue: any): any {
+    if (typeof defaultValue === 'object') {
+      if (Array.isArray(defaultValue)) {
+        return [];
+      }
+
+      return {};
+    }
+
+    return defaultValue;
   }
 }
 

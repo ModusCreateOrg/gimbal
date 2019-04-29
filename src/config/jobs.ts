@@ -1,7 +1,7 @@
+import Logger from '@/logger';
 import { CommandOptions } from '@/typings/utils/command';
 import { CmdSpawnRet } from '@/typings/utils/spawn';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
-import log from '@/utils/logger';
 import spawn from '@/utils/spawn';
 import { splitOnWhitespace } from '@/utils/string';
 
@@ -82,7 +82,7 @@ const processArrayForm = (job: ArrayJob, commandOptions: CommandOptions): Promis
 const handleResults = (ret: JobRet[]): JobRet[] => {
   let hasFailure = false;
 
-  log(
+  Logger.log(
     ret
       .map(
         (item: void | CmdSpawnRet): string => {

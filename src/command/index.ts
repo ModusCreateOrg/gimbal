@@ -3,11 +3,11 @@ import program, { Command as CommandType } from 'commander';
 import figlet from 'figlet';
 import path from 'path';
 import Config from '@/config';
+import Logger from '@/logger';
 import { CommandReturn, Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
 import { readDir, stats } from '@/utils/fs';
-import log from '@/utils/logger';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Action = (commandOptions: CommandOptions, args?: string[]) => Promise<any>;
@@ -108,7 +108,7 @@ class Command {
 
       const report: CommandReturn | Report = await this.action(commandOptions, args);
 
-      log(figlet.textSync(this.title));
+      Logger.log(figlet.textSync(this.title));
 
       if (this.output) {
         await this.output(report, commandOptions);
@@ -118,11 +118,22 @@ class Command {
         process.exit(1);
       }
     } catch (error) {
-      log(error);
+      Logger.log(error);
 
       process.exit(1);
     }
   }
 }
+
+export const preparseOptions = (): CommandOptions => {
+  const parsed = program.parseOptions(program.normalize(process.argv.slice(2)));
+  const cmd = parsed.args[0]
+    ? program.commands.find((command: CommandType): boolean => command.name() === parsed.args[0])
+    : program;
+
+  cmd.parseOptions(parsed.args); // this applies option values onto the command/program
+
+  return getOptionsFromCommand(cmd);
+};
 
 export default Command;

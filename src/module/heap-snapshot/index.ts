@@ -15,11 +15,6 @@ const heapSnapshot = async (
   const data: Metrics = await page.metrics();
 
   return parseReport(data as HeapMetrics, config);
-  // return {
-  //   data,
-  //   thresholdConfig: config.threshold,
-  //   success: checkThresholds(data, config.threshold),
-  // };
 };
 
 export default heapSnapshot;

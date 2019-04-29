@@ -1,10 +1,8 @@
 import program from 'commander';
 import fs from 'fs';
 import path from 'path';
-import Command from '@/command';
+import Command, { preparseOptions } from '@/command';
 import Config from '@/config';
-import { getOptionsFromCommand } from '@/utils/command';
-import log from '@/utils/logger';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 import processJobs from '@/config/jobs';
 
@@ -12,7 +10,8 @@ import processJobs from '@/config/jobs';
   if (!process.env[CHILD_GIMBAL_PROCESS]) {
     const gimbal = fs.readFileSync(path.join(__dirname, 'ascii_art/gimbal.txt'), 'utf8');
 
-    log(gimbal);
+    /* eslint-disable-next-line no-console */
+    console.log(gimbal);
   }
 
   program
@@ -30,9 +29,7 @@ import processJobs from '@/config/jobs';
 
   // need to parse the options before commander kicks off so the config file
   // is loaded. This way things like plugins will be ready
-  const parsed = program.parseOptions(program.normalize(process.argv.slice(2)));
-  const cmd = program.parseArgs(parsed.args, parsed.unknown);
-  const options = getOptionsFromCommand(cmd);
+  const options = preparseOptions();
   const config = await Config.load(options.cwd);
 
   // kick off commander

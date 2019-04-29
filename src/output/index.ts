@@ -1,9 +1,9 @@
 import path from 'path';
 import Config from '@/config';
+import Logger from '@/logger';
 import { CommandReturn, Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { mkdirp, resolvePath } from '@/utils/fs';
-import log from '@/utils/logger';
 import { outputTable } from './cli';
 import htmlOutput from './html';
 import jsonOutput from './json';
@@ -15,7 +15,7 @@ const output = async (report: CommandReturn | Report, commandOptions: CommandOpt
   const table = outputTable(report as Report);
 
   if (table) {
-    log(table.toString());
+    Logger.log(table.toString());
   }
 
   if (html || commandOptions.outputHtml) {
@@ -26,7 +26,7 @@ const output = async (report: CommandReturn | Report, commandOptions: CommandOpt
 
       await htmlOutput(file, report.data);
 
-      log(`HTML report written to: ${file}`);
+      Logger.log(`HTML report written to: ${file}`);
     }
   }
 
@@ -38,7 +38,7 @@ const output = async (report: CommandReturn | Report, commandOptions: CommandOpt
 
       await jsonOutput(file, report.data);
 
-      log(`JSON report written to: ${file}`);
+      Logger.log(`JSON report written to: ${file}`);
     }
   }
 
@@ -50,7 +50,7 @@ const output = async (report: CommandReturn | Report, commandOptions: CommandOpt
 
       await markdownOutput(file, report.data);
 
-      log(`Markdown report written to: ${file}`);
+      Logger.log(`Markdown report written to: ${file}`);
     }
   }
 };

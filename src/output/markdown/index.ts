@@ -1,8 +1,8 @@
-import log from '@/utils/logger';
+import Logger from '@/logger';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 const MarkdownOutput = (file: string, data: any): void => {
-  log(data);
+  Logger.log(data);
 };
 
 export default MarkdownOutput;
