@@ -1,6 +1,12 @@
-import Table, { Cell, GenericTable, HorizontalTable } from 'cli-table3';
+import Table, { Cell, CellOptions, GenericTable, HorizontalTable } from 'cli-table3';
 import { Report, ReportItem } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
+import { successOrFailure, sectionHeading } from '@/utils/colors';
+
+const defaultConfig = {
+  head: ['Label', 'Value', 'Threshold', 'Success'],
+  style: { head: ['white'] },
+};
 
 /* eslint-disable-next-line import/prefer-default-export */
 export const outputTable = (report: Report, options?: CliOutputOptions): GenericTable<Cell[]> | void => {
@@ -9,10 +15,7 @@ export const outputTable = (report: Report, options?: CliOutputOptions): Generic
     return undefined;
   }
 
-  const table =
-    options && options.table
-      ? options.table
-      : (new Table({ head: ['Label', 'Value', 'Threshold', 'Success'] }) as HorizontalTable);
+  const table = options && options.table ? options.table : (new Table(defaultConfig) as HorizontalTable);
   const {
     options: {
       head: { length: numColumns },
@@ -21,13 +24,16 @@ export const outputTable = (report: Report, options?: CliOutputOptions): Generic
 
   report.data.forEach(
     (item: ReportItem, index: number): void => {
-      const successColumn: Cell = {
+      const successColumn: CellOptions = {
         content: item.success ? '' : 'x',
         hAlign: 'center',
       };
 
       if (item.threshold != null && item.value != null) {
-        table.push([item.label, item.value, item.threshold, successColumn]);
+        table.push(successOrFailure(
+          [item.label as string, item.value as string, item.threshold as string, successColumn as CellOptions],
+          item.success,
+        ) as CellOptions[]);
       } else {
         if (index > 0) {
           table.push([
@@ -38,13 +44,16 @@ export const outputTable = (report: Report, options?: CliOutputOptions): Generic
           ]);
         }
 
-        table.push([
-          {
-            content: item.label,
-            colSpan: numColumns - 1,
-          },
-          successColumn,
-        ]);
+        table.push(successOrFailure(
+          [
+            {
+              content: sectionHeading(item.label),
+              colSpan: numColumns - 1,
+            },
+            successColumn,
+          ],
+          item.success,
+        ) as CellOptions[]);
       }
 
       if (item.data && item.data.length > 0) {
