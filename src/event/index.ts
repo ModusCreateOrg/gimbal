@@ -1,4 +1,5 @@
 import minimatch from 'minimatch';
+import { FireRet } from '@/typings/event';
 import { Callback, Config } from '@/typings/event/Event';
 import { Data } from '@/typings/utils/Queue';
 import Queue from '@/utils/Queue';
@@ -8,15 +9,10 @@ interface EventMap {
   [name: string]: Event[];
 }
 
-interface FireRet {
-  data: Data;
-  rets: (Data | void)[];
-}
-
 class Emitter {
   private events: EventMap = {};
 
-  public on(event: string, config: Callback | Config): Event | void {
+  public on(event: string, config: Callback | Config): Event {
     const { events } = this;
 
     if (!events[event]) {
@@ -67,7 +63,7 @@ class Emitter {
             return 0;
           },
         )
-        .map((eventInstance: Event): Data => eventInstance.createCallback());
+        .map((eventInstance: Event): Data => eventInstance.createCallback(event));
 
       queue.add(...args);
 

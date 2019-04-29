@@ -22,12 +22,12 @@ class Event {
     }
   }
 
-  public fire(data: Data): Data | void {
-    return this.fn(data);
+  public fire(event: string, data: Data): Data | void {
+    return this.fn(event, data);
   }
 
-  public createCallback(): Callback {
-    return this.fire.bind(this);
+  public createCallback(event: string): Callback {
+    return this.fire.bind(this, event);
   }
 }
 

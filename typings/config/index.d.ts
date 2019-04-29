@@ -1,10 +1,15 @@
 // @ts-ignore
 import lighthouse from 'lighthouse';
+import { Plugin, PluginFunction } from '@/typings/config/plugin';
+import { Config as HeapSnapshotConfig } from '@/typings/module/heap-snapshot';
 import { SizeConfigs } from '@/typings/module/size';
+import { UnusedSourceConfig } from '@/typings/module/unused-source';
 
 export interface Configs {
-  size: SizeConfigs[];
+  'heap-snapshot': HeapSnapshotConfig;
   lighthouse: lighthouse.Config.Json;
+  size: SizeConfigs[];
+  'unused-source': UnusedSourceConfig;
 }
 
 export interface Outputs {
@@ -18,6 +23,7 @@ export interface Config {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   jobs?: any; // still have to decide what this will look like fully
   outputs?: Outputs;
+  plugins?: (string | Plugin | PluginFunction)[];
 }
 
 export type LoaderFn = (file: string) => Promise<Config>;

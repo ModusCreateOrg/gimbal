@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import program from 'commander';
+import program, { Command } from 'commander';
 import { existsSync } from 'fs';
 import { CommandOptions } from '@/typings/utils/command';
 import { resolvePath } from '@/utils/fs';
@@ -10,7 +8,7 @@ const defaultConfig: CommandOptions = {
   verbose: false,
 };
 
-const getOptions = (cmd?: any, existingOptions?: CommandOptions): CommandOptions => {
+const getOptions = (cmd?: Command, existingOptions?: CommandOptions): CommandOptions => {
   const existing: CommandOptions = existingOptions || defaultConfig;
   const options: CommandOptions = {
     ...existing,
@@ -21,6 +19,7 @@ const getOptions = (cmd?: any, existingOptions?: CommandOptions): CommandOptions
 
     if (cmdOptions) {
       cmdOptions.forEach(
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         (option: any): void => {
           const name = option.attributeName();
           const value = cmd[name];
@@ -56,7 +55,7 @@ const getOptions = (cmd?: any, existingOptions?: CommandOptions): CommandOptions
   return options;
 };
 
-/* eslint-disable-next-line import/prefer-default-export */
+/* eslint-disable-next-line import/prefer-default-export, @typescript-eslint/no-explicit-any */
 export const getOptionsFromCommand = (cmd?: any, defaults?: any): CommandOptions => {
   // get command options first
   const cmdOptions: CommandOptions = getOptions(cmd);

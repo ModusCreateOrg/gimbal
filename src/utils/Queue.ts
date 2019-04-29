@@ -27,9 +27,9 @@ class Queue {
 
   private runSequential(queue: Data[], data: Data[]): Promise<Data[]> {
     return queue.reduce(
-      (promise: Promise<Data>, fn: Data): Promise<Data> =>
+      (promise: Promise<Data[]>, fn: Data): Promise<Data> =>
         promise.then(
-          async (rets: Data[]): Promise<Data> => {
+          async (rets: Data[]): Promise<Data[]> => {
             const ret = await fn(...data);
 
             rets.push(ret);

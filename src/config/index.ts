@@ -4,6 +4,7 @@ import { extname } from 'path';
 import { resolvePath } from '@/utils/fs';
 import jsLoader from './loader/js';
 import yamlLoader from './loader/yaml';
+import parsePlugins from './plugin';
 
 import { Config as ConfigType, LoaderMap } from '@/typings/config';
 
@@ -59,7 +60,25 @@ class Config {
     this.loaded = true;
     this.loading = false;
 
+    await this.onLoad(dir);
+
     return this.config;
+  }
+
+  private async onLoad(dir: string): Promise<void> {
+    const { config } = this;
+
+    if (!config) {
+      return undefined;
+    }
+
+    const { plugins } = config;
+
+    if (plugins && plugins.length) {
+      await parsePlugins(plugins, dir);
+    }
+
+    return undefined;
   }
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */

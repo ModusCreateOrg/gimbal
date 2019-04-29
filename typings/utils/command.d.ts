@@ -1,4 +1,3 @@
-/* eslint-disable-next-line import/prefer-default-export */
 export interface CommandOptions {
   cwd: string;
   outputHtml?: string;
@@ -7,3 +6,6 @@ export interface CommandOptions {
   verbose: boolean;
   [name: string]: string | number | boolean | undefined;
 }
+
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+export type GetOptionsFromCommand = (cmd?: any, defaults?: any) => CommandOptions;

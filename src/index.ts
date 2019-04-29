@@ -5,8 +5,8 @@ import Command from '@/command';
 import Config from '@/config';
 import { getOptionsFromCommand } from '@/utils/command';
 import log from '@/utils/logger';
-import { CHILD_GIMBAL_PROCESS } from './utils/constants';
-import processJobs from './config/jobs';
+import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
+import processJobs from '@/config/jobs';
 
 (async (): Promise<void> => {
   if (!process.env[CHILD_GIMBAL_PROCESS]) {
@@ -28,17 +28,17 @@ import processJobs from './config/jobs';
   // register commands with commander
   await Command.registerCommands();
 
+  // need to parse the options before commander kicks off so the config file
+  // is loaded. This way things like plugins will be ready
+  const parsed = program.parseOptions(program.normalize(process.argv.slice(2)));
+  const cmd = program.parseArgs(parsed.args, parsed.unknown);
+  const options = getOptionsFromCommand(cmd);
+  const config = await Config.load(options.cwd);
+
   // kick off commander
   program.parse(process.argv);
 
   if (!program.args.length) {
-    // if no args (aka commands) were passed
-    // let's load the config file to see if
-    // there are any jobs configured
-    const options = getOptionsFromCommand();
-
-    const config = await Config.load(options.cwd);
-
     if (config) {
       const { jobs } = config;
 
