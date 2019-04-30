@@ -1,6 +1,5 @@
-import { writeFile } from '@/utils/fs';
+import { Report } from '@/typings/command';
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-const JsonOutput = async (file: string, data: any): Promise<void> => writeFile(file, JSON.stringify(data, null, 2));
+const JsonOutput = (report: Report): string => JSON.stringify(report, null, 2);
 
 export default JsonOutput;

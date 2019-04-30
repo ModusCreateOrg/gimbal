@@ -1,10 +1,3 @@
-export interface CommandReturn {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  data?: any;
-  error?: Error;
-  success: boolean;
-}
-
 export type ReportThresholdLimit = 'lower' | 'upper';
 
 export interface ReportError {

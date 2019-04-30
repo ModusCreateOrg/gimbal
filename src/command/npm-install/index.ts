@@ -1,13 +1,24 @@
 import NpmInstall from '@/module/npm-install';
-import { CommandReturn } from '@/typings/command';
+import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 
-const npmInstall = async (options: CommandOptions, args?: string[]): Promise<CommandReturn> => {
+const npmInstall = async (options: CommandOptions, args?: string[]): Promise<Report> => {
   try {
     const data = await NpmInstall(options, args);
 
     return {
-      data,
+      data: [
+        {
+          label: 'NPM Install',
+          rawLabel: 'NPM Install',
+          rawThreshold: 0,
+          rawValue: data.code,
+          success: true,
+          threshold: 0,
+          thresholdLimit: 'upper',
+          value: data.code,
+        },
+      ],
       success: true,
     };
   } catch (error) {

@@ -4,7 +4,7 @@ import figlet from 'figlet';
 import path from 'path';
 import Config from '@/config';
 import Logger from '@/logger';
-import { CommandReturn, Report } from '@/typings/command';
+import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
 import { readDir, stats } from '@/utils/fs';
@@ -106,7 +106,7 @@ class Command {
         await Config.load(commandOptions.cwd);
       }
 
-      const report: CommandReturn | Report = await this.action(commandOptions, args);
+      const report: Report = await this.action(commandOptions, args);
 
       Logger.log(figlet.textSync(this.title));
 

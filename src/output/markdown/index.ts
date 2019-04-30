@@ -1,8 +1,7 @@
 import Table, { Cell, GenericTable, HorizontalTable } from 'cli-table3';
+import stripAnsi from 'strip-ansi';
 import { Report, ReportItem } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
-import fs from 'fs';
-import stripAnsi from 'strip-ansi';
 
 const markdownTableOptions = {
   chars: {
@@ -48,11 +47,9 @@ const outputTable = (report: Report, options?: CliOutputOptions): GenericTable<C
   return table;
 };
 
-/* eslint-disable-next-line consistent-return */
-const MarkdownOutput = (file: string, report: Report): boolean => {
+const MarkdownOutput = (report: Report): string => {
   if (!report.data) {
-    // TODO handle error?
-    return false;
+    return '';
   }
 
   let markdown = '# Gimbal Report';
@@ -67,17 +64,7 @@ ${outputTable(item)}`;
     },
   );
 
-  if (markdown) {
-    try {
-      fs.writeFileSync(file, stripAnsi(markdown), 'utf8');
-
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  return false;
+  return stripAnsi(markdown);
 };
 
 export default MarkdownOutput;

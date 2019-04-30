@@ -20,7 +20,7 @@ const parseReport = (raw: Result, { threshold }: Config): Report => {
       }
 
       return {
-        label,
+        label: obj.title,
         rawLabel: label,
         rawThreshold: thresholdNumber,
         rawValue: obj.score,

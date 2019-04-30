@@ -1,18 +1,32 @@
 import path from 'path';
 import Config from '@/config';
 import Logger from '@/logger';
-import { CommandReturn, Report } from '@/typings/command';
+import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import { mkdirp, resolvePath } from '@/utils/fs';
+import { mkdirp, resolvePath, writeFile } from '@/utils/fs';
 import { outputTable } from './cli';
 import htmlOutput from './html';
 import jsonOutput from './json';
 import markdownOutput from './markdown';
 
-const output = async (report: CommandReturn | Report, commandOptions: CommandOptions): Promise<void> => {
+const writeReport = async (file: string, type: string, contents: string): Promise<boolean> => {
+  try {
+    await writeFile(file, contents, 'utf8');
+
+    Logger.log(`${type} report written to: ${file}`);
+
+    return true;
+  } catch {
+    Logger.log(`${type} report could not be written to: ${file}`);
+
+    return false;
+  }
+};
+
+const output = async (report: Report, commandOptions: CommandOptions): Promise<void> => {
   const { html, json, markdown } = Config.get('outputs', {});
 
-  const table = outputTable(report as Report);
+  const table = outputTable(report);
 
   if (table) {
     Logger.log(table.toString());
@@ -24,9 +38,9 @@ const output = async (report: CommandReturn | Report, commandOptions: CommandOpt
     if (file) {
       await mkdirp(path.dirname(file));
 
-      await htmlOutput(file, report.data);
+      const contents = await htmlOutput(report);
 
-      Logger.log(`HTML report written to: ${file}`);
+      await writeReport(file, 'HTML', contents);
     }
   }
 
@@ -36,9 +50,9 @@ const output = async (report: CommandReturn | Report, commandOptions: CommandOpt
     if (file) {
       await mkdirp(path.dirname(file));
 
-      await jsonOutput(file, report.data);
+      const contents = await jsonOutput(report);
 
-      Logger.log(`JSON report written to: ${file}`);
+      await writeReport(file, 'JSON', contents);
     }
   }
 
@@ -48,13 +62,9 @@ const output = async (report: CommandReturn | Report, commandOptions: CommandOpt
     if (file) {
       await mkdirp(path.dirname(file));
 
-      const success = await markdownOutput(file, report as Report);
+      const contents = await markdownOutput(report);
 
-      if (success) {
-        Logger.log(`Markdown report written to: ${file}`);
-      } else {
-        Logger.log('Markdown report could not be written');
-      }
+      await writeReport(file, 'Markdown', contents);
     }
   }
 };
