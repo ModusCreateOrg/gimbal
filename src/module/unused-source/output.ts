@@ -18,7 +18,14 @@ const parseReport = (raw: Entry[]): Report => {
   );
 
   return {
-    data,
+    data: [
+      {
+        data,
+        label: 'Unused Source Checks',
+        rawLabel: 'Unused Source Checks',
+        success,
+      },
+    ],
     raw,
     success,
   };

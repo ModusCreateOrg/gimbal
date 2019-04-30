@@ -59,12 +59,9 @@ const cra = async (options: CommandOptions): Promise<Report> => {
       success = false;
     }
 
-    rets.push({
-      data: report.data,
-      label: 'Size',
-      rawLabel: 'Size',
-      success: report.success,
-    });
+    if (report.data) {
+      rets.push(...report.data);
+    }
   }
 
   if (options.lighthouse && chrome && localUri) {
@@ -76,12 +73,9 @@ const cra = async (options: CommandOptions): Promise<Report> => {
       success = false;
     }
 
-    rets.push({
-      data: report.data,
-      label: 'Heap Snapshot',
-      rawLabel: 'Heap Snapshot',
-      success: report.success,
-    });
+    if (report.data) {
+      rets.push(...report.data);
+    }
   }
 
   if (options.calculateUnusedSource && chrome && localUri) {
@@ -92,12 +86,9 @@ const cra = async (options: CommandOptions): Promise<Report> => {
         success = false;
       }
 
-      rets.push({
-        data: report.data,
-        label: 'Unused Source',
-        rawLabel: 'Unused Source',
-        success: report.success,
-      });
+      if (report.data) {
+        rets.push(...report.data);
+      }
     }
   }
 
@@ -109,12 +100,9 @@ const cra = async (options: CommandOptions): Promise<Report> => {
         success = false;
       }
 
-      rets.push({
-        data: report.data,
-        label: 'Heap Snapshot',
-        rawLabel: 'Heap Snapshot',
-        success: report.success,
-      });
+      if (report.data) {
+        rets.push(...report.data);
+      }
     }
   }
 

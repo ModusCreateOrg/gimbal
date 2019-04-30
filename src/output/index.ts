@@ -48,9 +48,13 @@ const output = async (report: CommandReturn | Report, commandOptions: CommandOpt
     if (file) {
       await mkdirp(path.dirname(file));
 
-      await markdownOutput(file, report.data);
+      const success = await markdownOutput(file, report as Report);
 
-      Logger.log(`Markdown report written to: ${file}`);
+      if (success) {
+        Logger.log(`Markdown report written to: ${file}`);
+      } else {
+        Logger.log('Markdown report could not be written');
+      }
     }
   }
 };

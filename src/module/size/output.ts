@@ -39,7 +39,14 @@ const parseReport = (raw: ParsedSizeConfig[], cwd: string): Report => {
   );
 
   return {
-    data,
+    data: [
+      {
+        data,
+        label: 'Size Checks',
+        rawLabel: 'Size Checks',
+        success,
+      },
+    ],
     raw,
     success,
   };

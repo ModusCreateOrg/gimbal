@@ -33,7 +33,14 @@ const parseReport = (raw: Result, { threshold }: Config): Report => {
   );
 
   return {
-    data,
+    data: [
+      {
+        data,
+        label: 'Lighthouse Audits',
+        rawLabel: 'Lighthouse Audits',
+        success,
+      },
+    ],
     raw,
     success,
   };

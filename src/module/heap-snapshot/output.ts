@@ -38,7 +38,14 @@ const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig): Repor
   );
 
   return {
-    data,
+    data: [
+      {
+        data,
+        label: 'Heap Snapshot Checks',
+        rawLabel: 'Heap Snapshot Checks',
+        success,
+      },
+    ],
     raw,
     success,
   };
