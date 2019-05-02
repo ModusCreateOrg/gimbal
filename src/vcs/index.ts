@@ -3,6 +3,8 @@ import Config from '@/config';
 import { Cls, VCS as VCSTypes } from '@/typings/vcs';
 import GitHubCls from './GitHub';
 
+const GIT_URL_RE = /((git|ssh|http(s)?)|(git@[\w.]+))(:(\/\/)?)([\w.@:/\-~]+)(\.git)(\/)?/;
+
 export const GitHub = 'GitHub';
 
 interface Tests {
@@ -27,13 +29,29 @@ const normalizeConfiguredVCS = (configuredVCS?: string | VCSConfig): VCSConfig |
   return undefined;
 };
 
+const gitUrlToHttpUrl = (gitUrl: string): string => {
+  const matches = gitUrl.match(GIT_URL_RE);
+
+  if (!matches) {
+    return gitUrl;
+  }
+
+  const ssh = Boolean(matches[4]);
+  // a ssh url has git@github.com, we just want github.com
+  const start = ssh ? matches[4].split('@')[1] : matches[7];
+  // https url has it part of the 7 index used in start
+  const end = ssh ? `/${matches[7]}` : '';
+
+  return `https://${start}${end}`;
+};
+
 const whichVCS = (repoUrl: string): VCSTypes | void => {
   if (vcs) {
     return vcs;
   }
 
   const configuredVCS = normalizeConfiguredVCS(Config.get('configs.vcs'));
-  const url = new URL(repoUrl);
+  const url = new URL(gitUrlToHttpUrl(repoUrl));
   const VCS = configuredVCS
     ? configuredVCS.provider
     : Object.keys(tests).find((key: string): boolean => tests[key].is(url));

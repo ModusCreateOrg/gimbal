@@ -8,7 +8,7 @@ const defaultConfig: Config = {
   threshold: {
     accessibility: 75,
     'best-practices': 95,
-    performance: 95,
+    performance: 50,
     pwa: 50,
     seo: 90,
   },

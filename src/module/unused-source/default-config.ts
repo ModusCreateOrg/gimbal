@@ -1,3 +1,4 @@
+import { SizeConfigs } from '@/typings/module/size';
 import { UnusedSourceConfig } from '@/typings/module/unused-source';
 
 const defaultConfig: UnusedSourceConfig = {
@@ -6,16 +7,38 @@ const defaultConfig: UnusedSourceConfig = {
    *
    * If a string, `n%` Will check based on unused percentage where n is a number like `30%`.
    */
-  threshold: '30%',
+  threshold: [
+    {
+      maxSize: '30%',
+      path: '**/*/*.css',
+    },
+    {
+      maxSize: '2%',
+      path: '**/*/main.*.js',
+    },
+    {
+      maxSize: '40%',
+      path: '**/*/*.js',
+    },
+    {
+      maxSize: '25%',
+      path: '/',
+      type: 'js',
+    },
+    {
+      maxSize: '40%',
+      path: '/',
+    },
+  ] as SizeConfigs[],
   // Examples:
 
   // The array of objects, the path is relative to the base url. If the url is `http://localhost/foo/bar.js`
   // then `/foo/bar.js` will be used to find a matching threshold based on the `path` within the object:
   // threshold: [
   //   {
-  //     maxSize: 800,
+  //     maxSize: '50%',
   //     path: '**/*/*.css',
-  //     type: 'js', // optional
+  //     type: 'css', // optional
   //   },
   //   {
   //     maxSize: '50%',
@@ -23,7 +46,7 @@ const defaultConfig: UnusedSourceConfig = {
   //     type: 'js', // optional
   //   },
   //   {
-  //     maxSize: '100 B',
+  //     maxSize: '50%',
   //     path: '/'
   //   }
   // ],

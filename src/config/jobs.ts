@@ -91,7 +91,7 @@ const handleResults = (ret: JobRet[]): JobRet[] => {
               hasFailure = true;
             }
 
-            return item.logs.map((logItem: Buffer): string => logItem.toString()).join('\n');
+            return item.logs.map((logItem: Buffer): string => logItem.toString()).join('');
           }
 
           return '';

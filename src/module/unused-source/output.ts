@@ -3,7 +3,7 @@ import { Entry } from '@/typings/module/unused-source';
 import { truncatePath } from '@/utils/string';
 
 const parseReport = (raw: Entry[]): Report => {
-  const success: boolean = !raw.some((entry: Entry): boolean => entry.success);
+  const success: boolean = raw.every((entry: Entry): boolean => entry.success);
   const data: ReportItem[] = raw.map(
     (entry: Entry): ReportItem => ({
       label: truncatePath(entry.url),

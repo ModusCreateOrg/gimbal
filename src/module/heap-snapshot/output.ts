@@ -18,7 +18,7 @@ const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig): Repor
     (label: string): ReportItem => {
       const objThreshold = threshold[label];
       const value = raw[label] as number;
-      const objSuccess = objThreshold == null || value < objThreshold;
+      const objSuccess = objThreshold == null || value <= objThreshold;
 
       if (!objSuccess) {
         success = false;
