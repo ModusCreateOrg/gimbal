@@ -135,5 +135,12 @@
     "skipFiles": [
       "<node_internals>/**/*.js"
     ]
+  }],
+  "inputs": [{
+    "type": "pickString",
+    "id": "envFileInput",
+    "description": "Which ENV file should be used?",
+    "options": ["CircleCI/commit.env", "CircleCI/pr.env", "TravisCI/commit.env", "TravisCI/pr.env"],
+    "default": "CircleCI/pr.env"
   }]
 }

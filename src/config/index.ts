@@ -128,11 +128,11 @@ class Config {
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   private maybeMerge(defaultValue?: any, obj?: any): any {
-    if (typeof defaultValue === 'object' || typeof obj === 'object') {
+    if ((typeof defaultValue === 'object' && defaultValue) || (typeof obj === 'object' && obj)) {
       return deepmerge(defaultValue, obj || this.parseObject(defaultValue));
     }
 
-    return obj || defaultValue;
+    return obj == null ? defaultValue : obj;
   }
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */

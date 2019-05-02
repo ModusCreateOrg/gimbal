@@ -81,6 +81,7 @@
     ]
   },
   "dependencies": {
+    "@octokit/rest": "16.25.1",
     "brotli-size": "0.0.3",
     "bytes": "3.1.0",
     "cli-table3": "0.5.1",
@@ -109,6 +110,7 @@
     "@types/figlet": "1.2.0",
     "@types/get-folder-size": "2.0.0",
     "@types/globby": "9.1.0",
+    "@types/jest": "24.0.12",
     "@types/js-yaml": "3.12.1",
     "@types/marked": "0.6.5",
     "@types/minimatch": "3.0.3",
@@ -130,10 +132,20 @@
     "eslint-plugin-prettier": "3.0.1",
     "eslint-plugin-react": "7.12.4",
     "husky": "2.1.0",
+    "jest": "24.7.1",
     "lint-staged": "8.1.5",
     "prettier": "1.17.0",
     "ts-node": "8.1.0",
     "tsconfig-paths": "3.8.0",
     "typescript": "3.4.5"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "coverage"
+    ],
+    "transform": {
+      ".*": "babel-jest"
+    }
   }
 }

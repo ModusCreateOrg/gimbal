@@ -19,6 +19,7 @@ import processJobs from '@/config/jobs';
     .description('A CLI tool for monitoring web performance in modern web projects')
     // global options all command will receive
     .option('--cwd [dir]', 'The directory to work in. Defaults to where the command was executed from.')
+    .option('--no-comment', 'Set to disable commenting results on the VCS')
     .option('--output-html [file]', 'The path to write the results as HTML to.')
     .option('--output-json [file]', 'The path to write the results as JSON to.')
     .option('--output-markdown [file]', 'The path to write the results as Markdown to.')

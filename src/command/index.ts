@@ -8,6 +8,7 @@ import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
 import { readDir, stats } from '@/utils/fs';
+import comment from '@/vcs/comment';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Action = (commandOptions: CommandOptions, args?: string[]) => Promise<any>;
@@ -113,6 +114,8 @@ class Command {
       if (this.output) {
         await this.output(report, commandOptions);
       }
+
+      await comment(report, commandOptions);
 
       if (!report.success) {
         process.exit(1);

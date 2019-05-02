@@ -5,6 +5,7 @@ import { resolvePath } from '@/utils/fs';
 
 const defaultConfig: CommandOptions = {
   cwd: resolvePath(),
+  comment: true,
   verbose: false,
 };
 

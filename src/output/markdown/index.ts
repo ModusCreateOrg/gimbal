@@ -1,4 +1,4 @@
-import Table, { Cell, GenericTable, HorizontalTable } from 'cli-table3';
+import Table, { HorizontalTable } from 'cli-table3';
 import stripAnsi from 'strip-ansi';
 import { Report, ReportItem } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
@@ -23,7 +23,7 @@ const markdownTableOptions = {
   },
 };
 
-const outputTable = (report: Report, options?: CliOutputOptions): GenericTable<Cell[]> | void => {
+export const outputTable = (report: Report, options?: CliOutputOptions): string | void => {
   if (!report.data) {
     // TODO handle error?
     return undefined;
@@ -44,7 +44,7 @@ const outputTable = (report: Report, options?: CliOutputOptions): GenericTable<C
     },
   );
 
-  return table;
+  return stripAnsi(table.toString());
 };
 
 const MarkdownOutput = (report: Report): string => {
