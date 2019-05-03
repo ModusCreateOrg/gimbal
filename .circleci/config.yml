@@ -52,8 +52,16 @@ jobs:
           command: printf "@modus:registry=https://npm.modus.app\n//npm.modus.app/:_authToken=\"%s\"" "$MODUS_NPM_TOKEN" >> ~/.npmrc
       - run: npm i -ci
       - run: yarn lint
+      - run: yarn test
       - run: yarn build
       - run: npm publish
+
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-npm-cache
+      - run: yarn test
 
 workflows:
   version: 2
@@ -69,9 +77,16 @@ workflows:
           filters:
             tags:
               ignore: /v[0-9]+(\.[0-9]+)*/
+      - test:
+          requires:
+            - install-dependencies
+          filters:
+            tags:
+              ignore: /v[0-9]+(\.[0-9]+)*/
       - build:
           requires:
             - lint
+            - test
           filters:
             tags:
               ignore: /v[0-9]+(\.[0-9]+)*/

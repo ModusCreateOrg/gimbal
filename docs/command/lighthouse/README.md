@@ -1,0 +1,3 @@
+# Gimbal `lighthouse` Command
+
+TODO

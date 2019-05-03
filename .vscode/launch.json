@@ -81,25 +81,6 @@
   }, {
     "type": "node",
     "request": "launch",
-    "name": "npm-install",
-    "runtimeArgs": [
-      "-r",
-      "ts-node/register",
-      "-r",
-      "tsconfig-paths/register"
-    ],
-    "args": [
-      "${workspaceFolder}/src/index.ts",
-      "npm-install",
-      "--cwd",
-      "./sample"
-    ],
-    "skipFiles": [
-      "<node_internals>/**/*.js"
-    ]
-  }, {
-    "type": "node",
-    "request": "launch",
     "name": "size",
     "runtimeArgs": [
       "-r",

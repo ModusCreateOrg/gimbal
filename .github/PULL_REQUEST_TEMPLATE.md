@@ -4,9 +4,9 @@
 
 Please check if your PR fulfills the following requirements:
 
-- [x] Tests for the changes have been added (for bug fixes / features) (disabled till we have some)
-- [ ] Docs have been reviewed and added / updated if needed (for bug fixes / features) (optional right now)
-- [ ] Build (`npm run check:compile` or `yarn check:compile`) was run locally and any changes were pushed
+- [ ] Tests for the changes have been added (for bug fixes / features)
+- [ ] Docs have been reviewed and added / updated if needed (for bug fixes / features)
+- [ ] Build (`npm run build:check` or `yarn build:check`) was run locally and any changes were pushed
 - [ ] Lint (`npm run lint` or `yarn lint`) has passed locally and any fixes were made for failures
 
 ## Pull request type
