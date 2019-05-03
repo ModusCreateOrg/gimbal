@@ -1,12 +1,15 @@
 import Octokit from '@octokit/rest';
 import { URL } from 'url';
+import Logger from '@/logger';
 import env from '@/utils/env';
 
 const GITHUB_RE = /(?:www\.)?github\.com$/i;
 
+const GITHUB_AUTH_TOKEN = 'GITHUB_AUTH_TOKEN';
+
 export default class GitHub {
   public api = new Octokit({
-    auth: env('GITHUB_AUTH_TOKEN'),
+    auth: env(GITHUB_AUTH_TOKEN),
   });
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -25,14 +28,20 @@ export default class GitHub {
   ): Promise<
     Octokit.Response<Octokit.ReposCreateCommitCommentResponse> | Octokit.Response<Octokit.IssuesCreateCommentResponse>
     /* eslint-disable-next-line @typescript-eslint/indent */
-  > {
-    const { ci } = this;
+  > | void {
+    if (env(GITHUB_AUTH_TOKEN)) {
+      const { ci } = this;
 
-    if (ci.mode === 'pr') {
-      return this.createPRComment(ci.pr, body);
+      if (ci.mode === 'pr') {
+        return this.createPRComment(ci.pr, body);
+      }
+
+      return this.createCommitComment(ci.sha, body);
     }
 
-    return this.createCommitComment(ci.sha, body);
+    Logger.log(`No ${GITHUB_AUTH_TOKEN} environment variable, skipping commenting`);
+
+    return undefined;
   }
 
   private createCommitComment(
