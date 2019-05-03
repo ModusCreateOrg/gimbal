@@ -4,6 +4,7 @@ import figlet from 'figlet';
 import path from 'path';
 import Config from '@/config';
 import Logger from '@/logger';
+import output from '@/output';
 import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
@@ -29,7 +30,6 @@ interface Config {
   action: Action;
   command: string;
   options?: Option[];
-  output?: Output;
   title: string;
 }
 
@@ -39,8 +39,6 @@ class Command {
   private command: string;
 
   private options?: Option[];
-
-  private output?: Output;
 
   private title: string;
 
@@ -63,7 +61,6 @@ class Command {
     this.action = config.action;
     this.command = config.command;
     this.options = config.options;
-    this.output = config.output;
     this.title = config.title;
 
     this.create();
@@ -111,9 +108,7 @@ class Command {
 
       Logger.log(figlet.textSync(this.title));
 
-      if (this.output) {
-        await this.output(report, commandOptions);
-      }
+      await output(report, commandOptions);
 
       await comment(report, commandOptions);
 

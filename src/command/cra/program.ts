@@ -1,6 +1,5 @@
 import action from './index';
 import Command from '@/command';
-import output from '@/output';
 
 // eslint-disable-next-line no-new
 export default new Command({
@@ -24,6 +23,5 @@ export default new Command({
       flag: '--no-lighthouse',
     },
   ],
-  output,
   title: 'Create React App',
 });
