@@ -17,7 +17,7 @@
     "build:check": "tsc --noEmit -p .",
     "build:watch": "tsc --watch -p .",
     "postbuild": "npm run copy-static-assets",
-    "copy-static-assets": "copyfiles -u 1 src/ascii_art/**/* lib/",
+    "copy-static-assets": "copyfiles -u 1 src/**/*/*.{html,txt} lib/",
     "create": "npm run build && npm run start",
     "lint": "eslint 'bin/**/*.js' 'src/**/*.ts'",
     "lint-staged": "lint-staged",
