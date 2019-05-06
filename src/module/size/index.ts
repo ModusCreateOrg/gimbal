@@ -12,7 +12,7 @@ import parseReport from './output';
 
 type CompressionMechanisms = 'brotli' | 'gzip' | undefined;
 
-const getBundleSize = (source: Buffer, compression?: CompressionMechanisms): number => {
+const getBundleSize = (source: Buffer, compression: CompressionMechanisms = 'gzip'): number => {
   switch (compression) {
     case 'brotli':
       return brotliSize.sync(source);
@@ -82,10 +82,10 @@ const sizeModule = async (
     });
   }
 
-  const configObject: SizeConfig = Array.isArray(sizeConfig) ? { configs: sizeConfig } : sizeConfig;
+  const configObject: SizeConfig = Array.isArray(sizeConfig) ? { threshold: sizeConfig } : sizeConfig;
 
   const data: ParsedSizeConfig[] = await Promise.all(
-    configObject.configs.map(
+    configObject.threshold.map(
       (config: SizeConfigs): Promise<ParsedSizeConfig> => getFileResult(cwd, configObject, config),
     ),
   );

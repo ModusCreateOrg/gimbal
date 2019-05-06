@@ -1,7 +1,7 @@
 import { SizeConfig } from '@/typings/module/size';
 
 const defaultConfig: SizeConfig = {
-  configs: [
+  threshold: [
     {
       path: './build/static/css/main.*.chunk.css',
       maxSize: '5 KB',

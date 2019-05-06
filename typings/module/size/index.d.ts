@@ -6,7 +6,7 @@ export interface SizeConfigs {
 
 export interface SizeConfig {
   compression?: 'brotli' | 'gzip';
-  configs: SizeConfigs[];
+  threshold: SizeConfigs[];
 }
 
 export interface ParsedSizeConfig {
