@@ -32,9 +32,11 @@
 [Code of Conduct](./CODE_OF_CONDUCT.md) |
 [Twitter](https://twitter.com/ModusCreate)
 
-Gimbal uses industry-standard audits to analyze application performance. Continuously track performance to ensure your apps are within acceptable budgets. Configure your own thresholds and report the status automatically as a foldable comment in [GitHub](https://github.com/) PRs. Gimbal ❤️ CIs like [Circle CI](https://circleci.com/) and [Travis CI](https://travis-ci.com/).
+Gimbal uses industry-standard audits to analyze application performance. Continuously track performance to ensure your apps are within acceptable 🏎performance budgets.
 
-**Audits:**
+Gimbal ❤️ CIs like [Circle CI](https://circleci.com/) and [Travis CI](https://travis-ci.com/).
+
+### Audits:
 
 - Lighthouse
 - File sizes
@@ -42,31 +44,123 @@ Gimbal uses industry-standard audits to analyze application performance. Continu
 - Heap memory
 - CSS and JS coverage
 
-## Installation and Usage
+---
 
-Prerequisites: [Node.js](https://nodejs.org/) (10.0.0+)
+**Note:** Gimbal focuses on **Create React App** (CRA) projects _currently_. The audits are universal to any web application, but some of the CRA defaults are assumed. We plan to remove this limitation very soon.
 
-You can install Gimbal using npm or yarn in your Node.js project:
+---
 
-```
-$ npm install --save-dev gimbal
-$ yarn add --dev gimbal
-```
+## Getting Started
 
-You can execute it via a npm script:
+You can install Gimbal globally using `npm` or `yarn`:
 
-```
-"gimbal": "gimbal --help"
-```
+```sh
+# with npm
+npm install --global @modus/gimbal
 
-You can also install it globally:
+# or with yarn
+yarn add global @modus/gimbal
 
-```
-$ npm install --global gimbal
-$ yarn add global gimbal
+gimbal --help
 ```
 
-Now the `gimbal` is executable throughout your system, not just your project.
+Now the `gimbal` is executable throughout your system for any projects you want to audit.
+
+You can also install it to a specific project as a development dependency.
+
+```sh
+# with npm
+npm install --save-dev @modus/gimbal
+
+# or with yarn
+yarn add --dev @modus/gimbal
+```
+
+You can execute it via a npm script: (`package.json`):
+
+```json
+{
+  "scripts": {
+    "perf": "gimbal cra"
+  }
+}
+```
+
+```sh
+# with npm
+npm run perf
+
+# or with yarn
+yarn perf
+```
+
+## Prerequisites
+
+- You should be using Create React App
+- Make sure you've built the app (`npm run build` or `yarn build`)
+- `build/` directory is assumed
+
+## Sample Output
+
+Expand audits below for more detail.
+
+<details><summary>Size Checks (2 failures)</summary>
+<p>
+
+| Label                                                           |   Value   | Threshold | Success |
+| --------------------------------------------------------------- | :-------: | :-------: | :-----: |
+| .../build/precache-manifest.380adf610922866d450d1a7155a60b54.js |   646 B   |    5 B    |    x    |
+| .../build/static/js/2.b41502e9.chunk.js                         | 115.99 KB |   50 KB   |    x    |
+| .../build/static/js/main.28647029.chunk.js                      |  1.09 KB  |   50 KB   |    ✓    |
+| .../build/static/js/runtime~main.a8a9905a.js                    |  1.47 KB  |   30 KB   |    ✓    |
+| .../build                                                       | 479.43 KB |  500 KB   |    ✓    |
+
+</p>
+</details>
+
+<details><summary>Lighthouse Audits (0 failures)</summary>
+<p>
+
+| Label               | Value | Threshold | Success |
+| ------------------- | :---: | :-------: | :-----: |
+| Performance         |  99   |    95     |    ✓    |
+| Accessibility       |  79   |    75     |    ✓    |
+| Best Practices      |  100  |    95     |    ✓    |
+| SEO                 |  90   |    90     |    ✓    |
+| Progressive Web App |  58   |    50     |    ✓    |
+
+</p>
+</details>
+
+<details><summary>Unused Source Checks (3 failures)</summary>
+<p>
+
+| Label                                 | Value  | Threshold | Success |
+| ------------------------------------- | :----: | :-------: | :-----: |
+| http://localhost:3000                 | 41.77% |    30%    |    x    |
+| ...static/css/main.584f321a.chunk.css | 34.36% |    30%    |    x    |
+| http://localhost:3000/                | 25.40% |    30%    |    ✓    |
+| ...static/js/2.b41502e9.chunk.js      | 42.40% |    30%    |    x    |
+| ...static/js/main.28647029.chunk.js   | 2.59%  |    30%    |    ✓    |
+
+</p>
+</details>
+
+<details><summary>Heap Snapshot Checks (0 failures)</summary>
+<p>
+
+| Label            |  Value  | Threshold | Success |
+| ---------------- | :-----: | :-------: | :-----: |
+| Documents        |    5    |           |    ✓    |
+| Frames           |    2    |           |    ✓    |
+| JSHeapTotalSize  | 4472832 |           |    ✓    |
+| JSHeapUsedSize   | 3399040 |           |    ✓    |
+| LayoutCount      |    3    |     5     |    ✓    |
+| Nodes            |   55    |           |    ✓    |
+| RecalcStyleCount |    3    |           |    ✓    |
+
+</p>
+</details>
 
 ## Configuration
 
@@ -83,7 +177,9 @@ outputs:
   markdown: ./artifacts/gimbal.md
 ```
 
-More about configurations can be found on the individual documentation pages of each commands and modules.
+More about configurations can be found on the individual documentation pages of each [commands](./docs/command) and [modules](./docs/module).
+
+We recommend going through the entire [📖documentation section](./docs).
 
 ## Thresholds
 
@@ -102,7 +198,24 @@ configs:
       maxSize: 18 MB
 ```
 
-More about configuring thresholds can be found on the individual documentation pages of each commands and modules.
+More about configuring thresholds can be found on the individual documentation pages of each [commands](./docs/command) and [modules](./docs/module).
+
+## Continous Integration
+
+Feel free to use our [sample configuration](./docs/ci) files for major CI systems.
+
+- [Circle CI](docs/ci/circleci/sample.yml)
+- [Travis](./docs/ci/travisci/sample.yml)
+
+## System Requirements
+
+Gimbal runs on any OS with [Node.js](https://nodejs.org/) (10.0.0+).
+
+Gimbal is built to support Cloud and CI environments. It can audit **1000 pages in under 10 seconds on AWS Lambda**.
+
+## Questions and Support
+
+If you have a problem running Gimbal, [please submit an issue](./issues). The more information you give us the faster we can get back with a good answer.
 
 ## Modus Create
 
