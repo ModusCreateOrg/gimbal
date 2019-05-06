@@ -1,0 +1,26 @@
+# must be xenial if xvfb is wanted per https://docs.travis-ci.com/user/gui-and-headless-browsers/#using-services
+dist: xenial
+
+services:
+  - xvfb
+
+language: node_js
+
+node_js:
+  - 10.15.3
+
+before_install:
+  - npm install @modus/gimbal
+
+env:
+  matrix:
+    - GITHUB_AUTH_TOKEN=<this should be a secure env var>
+
+jobs:
+  include:
+    - stage: test
+      name: "Execute Gimbal"
+      script:
+          - npm install
+          - npm run build
+          - gimbal

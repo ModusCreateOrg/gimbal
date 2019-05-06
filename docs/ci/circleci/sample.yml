@@ -1,0 +1,80 @@
+aliases:
+  - &restore-npm-cache
+    keys:
+      - v1-dependencies-{{ checksum "package-lock.json" }}
+      - v1-dependencies-master
+      - v1-dependencies-
+  - &restore-webpack-cache
+    keys:
+      - v1-webpackcache-{{ checksum "package.json" }}
+      - v1-webpackcache-master
+      - v1-webpackcache-
+  - &restore-dist-cache
+    keys:
+      - v1-dist-{{ .Environment.CIRCLE_SHA1 }}
+      - v1-dist-master
+      - v1-dist-
+
+defaults: &defaults
+  # this is key for restoring cache using different docker images
+  working_directory: /home/circleci/project/
+  docker:
+    - image: circleci/node:10
+
+version: 2.1
+jobs:
+  install-dependencies:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-npm-cache
+      - run:
+          name: Install Node modules
+          command: npm i -ci
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-npm-cache
+      - restore_cache: *restore-webpack-cache
+      - run:
+          name: Build Project
+          command: npm run build
+      - save_cache:
+          key: v1-dist-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - build
+      - save_cache:
+          key: v1-webpackcache-{{ checksum "package.json" }}
+          paths:
+            - node_modules/.cache
+
+  gimbal:
+    <<: *defaults
+    docker:
+      - image: moduscreate/gimbal:1.0.0
+    steps:
+      - checkout
+      - restore_cache: *restore-dist-cache
+      - run:
+          name: Run Gimbal
+          command: gimbal
+      - store_artifacts:
+          path: ./artifacts
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - install-dependencies
+      - build:
+          requires:
+            - install-dependencies
+      - gimbal:
+          requires:
+            - build
