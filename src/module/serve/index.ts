@@ -1,6 +1,7 @@
+import { existsSync } from 'fs';
+import http from 'http';
 // @ts-ignore
 import handler from 'serve-handler';
-import http from 'http';
 
 interface ServeOptions {
   port: number;
@@ -22,6 +23,10 @@ class Serve {
   public start(): Promise<void> {
     return new Promise(
       (resolve): void => {
+        if (!existsSync(this.public)) {
+          throw new Error(`Cannot host nonexistent directory: ${this.public}`);
+        }
+
         const server = http.createServer(
           (request, response): void =>
             handler(request, response, {
