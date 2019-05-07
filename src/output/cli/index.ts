@@ -25,7 +25,7 @@ export const outputTable = (report: Report, options?: CliOutputOptions): Generic
   report.data.forEach(
     (item: ReportItem, index: number): void => {
       const successColumn: CellOptions = {
-        content: item.success ? '' : 'x',
+        content: item.success ? '✓' : 'x',
         hAlign: 'center',
       };
 
