@@ -22,9 +22,13 @@ const lighthouseRunner = async (options: CommandOptions): Promise<Report> => {
   await chrome.launch();
 
   try {
-    const report: Report = await Lighthouse(`http://localhost:${servePort}`, {
-      chromePort: chrome.port as string,
-    });
+    const report: Report = await Lighthouse(
+      `http://localhost:${servePort}`,
+      {
+        chromePort: chrome.port as string,
+      },
+      options,
+    );
 
     await chrome.kill();
     await serve.stop();

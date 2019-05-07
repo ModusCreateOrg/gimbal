@@ -26,7 +26,7 @@ const unusedSourceRunner = async (options: CommandOptions): Promise<Report> => {
       };
     }
 
-    const report = await UnusedSource(page, localUri);
+    const report = await UnusedSource(page, localUri, options);
 
     await chrome.kill();
     await serve.stop();

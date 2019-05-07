@@ -4,7 +4,7 @@ import { outputTable } from '@/output/markdown';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 
-const renderItem = (item: ReportItem): string => {
+const renderItem = (item: ReportItem, options: CommandOptions): string => {
   if (!item.data) {
     return '';
   }
@@ -17,7 +17,7 @@ const renderItem = (item: ReportItem): string => {
   return `<details><summary>${item.label} (${numFailed} failure${numFailed === 1 ? '' : 's'})</summary>
 <p>
 
-${outputTable(item)}
+${outputTable(item, options)}
 
 </p>
 </details>`;
@@ -34,7 +34,7 @@ const vcsComment = async (report: Report, commandOptions: CommandOptions): Promi
         const { vcs } = ci;
 
         if (vcs) {
-          const markdown = report.data.map((item: ReportItem): string => renderItem(item)).join('\n\n');
+          const markdown = report.data.map((item: ReportItem): string => renderItem(item, commandOptions)).join('\n\n');
 
           if (markdown.trim()) {
             await vcs.comment(markdown.trim());

@@ -23,6 +23,7 @@ import readPkg from 'read-pkg';
     // global options all command will receive
     .option('--cwd [dir]', 'The directory to work in. Defaults to where the command was executed from.', process.cwd())
     .option('--no-comment', 'Set to disable commenting results on the VCS')
+    .option('--no-check-thresholds', 'Set to disable checking thresholds.')
     .option('--output-html [file]', 'The path to write the results as HTML to.')
     .option('--output-json [file]', 'The path to write the results as JSON to.')
     .option('--output-markdown [file]', 'The path to write the results as Markdown to.')

@@ -5,3 +5,7 @@ The `lighthouse` command will execute the [`lighthouse`](../../module/lighthouse
 ## Usage
 
 To run, execute `gimbal lighthouse` in the directory that contains the build.
+
+## Options
+
+- `--no-check-thresholds` by default, Gimbal will check values against thresholds. Setting this option will disable threshold checks.

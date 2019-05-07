@@ -1,6 +1,7 @@
 import bytes from 'bytes';
 import { Report, ReportItem } from '@/typings/command';
 import { ParsedSizeConfig, ParsedFile } from '@/typings/module/size';
+import { CommandOptions } from '@/typings/utils/command';
 import { truncatePath } from '@/utils/string';
 
 const bytesConfig = { unitSeparator: ' ' };
@@ -27,8 +28,11 @@ const parseArray = (files: ParsedFile[], config: ParsedSizeConfig, options: Pars
 const flatten = (arrays: ReportItem[][]): ReportItem[] =>
   arrays.reduce((acc: ReportItem[], val: ReportItem[]): ReportItem[] => acc.concat(val), []);
 
-const parseReport = (raw: ParsedSizeConfig[], cwd: string): Report => {
-  const success: boolean = !raw.some((config: ParsedSizeConfig): boolean => config.failures.length > 0);
+const parseReport = (raw: ParsedSizeConfig[], options: CommandOptions): Report => {
+  const { checkThresholds, cwd } = options;
+  const success: boolean = checkThresholds
+    ? !raw.some((config: ParsedSizeConfig): boolean => config.failures.length > 0)
+    : true;
   const data: ReportItem[] = flatten(
     raw.map(
       (config: ParsedSizeConfig): ReportItem[] => [

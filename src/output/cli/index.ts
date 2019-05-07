@@ -1,21 +1,40 @@
-import Table, { Cell, CellOptions, GenericTable, HorizontalTable } from 'cli-table3';
+import Table, { Cell, CellOptions, GenericTable, HorizontalTable, TableInstanceOptions } from 'cli-table3';
 import { Report, ReportItem } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
+import { CommandOptions } from '@/typings/utils/command';
 import { successOrFailure, sectionHeading } from '@/utils/colors';
 
 const defaultConfig = {
-  head: ['Label', 'Value', 'Threshold', 'Success'],
+  head: ['Label', 'Value'],
   style: { head: ['white'] },
 };
 
+export const createTable = (options: CommandOptions, extraConfig?: TableInstanceOptions): HorizontalTable => {
+  const config = {
+    ...defaultConfig,
+    ...extraConfig,
+  };
+
+  if (options.checkThresholds) {
+    config.head.push('Threshold', 'Success');
+  }
+
+  return new Table(config) as HorizontalTable;
+};
+
 /* eslint-disable-next-line import/prefer-default-export */
-export const outputTable = (report: Report, options?: CliOutputOptions): GenericTable<Cell[]> | void => {
+export const outputTable = (
+  report: Report,
+  commandOptions: CommandOptions,
+  options?: CliOutputOptions,
+): GenericTable<Cell[]> | void => {
   if (!report.data) {
     // TODO handle error?
     return undefined;
   }
 
-  const table = options && options.table ? options.table : (new Table(defaultConfig) as HorizontalTable);
+  const { checkThresholds } = commandOptions;
+  const table = options && options.table ? options.table : createTable(commandOptions);
   const {
     options: {
       head: { length: numColumns },
@@ -29,11 +48,14 @@ export const outputTable = (report: Report, options?: CliOutputOptions): Generic
         hAlign: 'center',
       };
 
-      if (item.threshold != null && item.value != null) {
-        table.push(successOrFailure(
-          [item.label as string, item.value as string, item.threshold as string, successColumn as CellOptions],
-          item.success,
-        ) as CellOptions[]);
+      if (item.value != null) {
+        const row: (string | CellOptions)[] = [item.label as string, item.value as string];
+
+        if (checkThresholds) {
+          row.push(item.threshold as string, successColumn as CellOptions);
+        }
+
+        table.push(successOrFailure(row, item.success) as CellOptions[]);
       } else {
         if (index > 0) {
           table.push([
@@ -44,20 +66,22 @@ export const outputTable = (report: Report, options?: CliOutputOptions): Generic
           ]);
         }
 
-        table.push(successOrFailure(
-          [
-            {
-              content: sectionHeading(item.label),
-              colSpan: numColumns - 1,
-            },
-            successColumn,
-          ],
-          item.success,
-        ) as CellOptions[]);
+        const row: (string | CellOptions)[] = [
+          {
+            content: sectionHeading(item.label),
+            colSpan: checkThresholds ? numColumns - 1 : numColumns,
+          },
+        ];
+
+        if (checkThresholds) {
+          row.push(successColumn as CellOptions);
+        }
+
+        table.push(successOrFailure(row, item.success) as CellOptions[]);
       }
 
       if (item.data && item.data.length > 0) {
-        outputTable(item, { table });
+        outputTable(item, commandOptions, { table });
       }
     },
   );

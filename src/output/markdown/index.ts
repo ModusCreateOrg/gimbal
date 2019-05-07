@@ -1,7 +1,9 @@
-import Table, { HorizontalTable } from 'cli-table3';
+import { TableInstanceOptions } from 'cli-table3';
 import stripAnsi from 'strip-ansi';
+import { createTable } from '../cli';
 import { Report, ReportItem } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
+import { CommandOptions } from '@/typings/utils/command';
 
 const markdownTableOptions = {
   chars: {
@@ -23,23 +25,40 @@ const markdownTableOptions = {
   },
 };
 
-export const outputTable = (report: Report, options?: CliOutputOptions): string | void => {
+export const outputTable = (
+  report: Report,
+  commandOptions: CommandOptions,
+  options?: CliOutputOptions,
+): string | void => {
   if (!report.data) {
     // TODO handle error?
     return undefined;
   }
 
+  const { checkThresholds } = commandOptions;
+
   const table =
     options && options.table
       ? options.table
-      : (new Table({ ...markdownTableOptions, head: ['Label', 'Value', 'Threshold', 'Success'] }) as HorizontalTable);
+      : createTable(commandOptions, markdownTableOptions as TableInstanceOptions);
+  const borderRow = ['----', ':---:'];
 
-  table.push(['----', ':---:', ':---:', ':---:']);
+  if (checkThresholds) {
+    borderRow.push(':---:', ':---:');
+  }
+
+  table.push(borderRow);
 
   report.data.forEach(
     (item: ReportItem): void => {
-      if (item.threshold != null && item.value != null) {
-        table.push([item.label, item.value, item.threshold, item.success ? '✓' : 'x']);
+      if (item.value != null) {
+        const row = [item.label, item.value];
+
+        if (checkThresholds) {
+          row.push(item.threshold as string, item.success ? '✓' : 'x');
+        }
+
+        table.push(row);
       }
     },
   );
@@ -47,7 +66,7 @@ export const outputTable = (report: Report, options?: CliOutputOptions): string 
   return stripAnsi(table.toString());
 };
 
-const MarkdownOutput = (report: Report): string => {
+const MarkdownOutput = (report: Report, commandOptions: CommandOptions): string => {
   if (!report.data) {
     return '';
   }
@@ -60,7 +79,7 @@ const MarkdownOutput = (report: Report): string => {
 
 ## ${item.label}
 
-${outputTable(item)}`;
+${outputTable(item, commandOptions)}`;
     },
   );
 

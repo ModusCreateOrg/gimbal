@@ -5,3 +5,7 @@ The `heap-snapshot` command will execute the [`heap-snapshot`](../../module/heap
 ## Usage
 
 To run, execute `gimbal heap-snapshot` in the directory that contains the build.
+
+## Options
+
+- `--no-check-thresholds` by default, Gimbal will check values against thresholds. Setting this option will disable threshold checks.

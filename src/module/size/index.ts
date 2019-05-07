@@ -6,6 +6,7 @@ import gzipSize from 'gzip-size';
 import Config from '@/config';
 import { Report } from '@/typings/command';
 import { SizeConfig, SizeConfigs, ParsedSizeConfig, ParsedFile } from '@/typings/module/size';
+import { CommandOptions } from '@/typings/utils/command';
 import { readFile, resolvePath, stats, getDirectorySize } from '@/utils/fs';
 import defaultConfig from './default-config';
 import parseReport from './output';
@@ -33,7 +34,13 @@ const getFileSize = async (path: string, compression: CompressionMechanisms): Pr
 
 const getDirSize = async (path: string): Promise<number> => (await getDirectorySize(path)) as number;
 
-const getFileResult = async (cwd: string, sizeConfig: SizeConfig, config: SizeConfigs): Promise<ParsedSizeConfig> => {
+const getFileResult = async (
+  cwd: string,
+  sizeConfig: SizeConfig,
+  config: SizeConfigs,
+  options: CommandOptions,
+): Promise<ParsedSizeConfig> => {
+  const { checkThresholds } = options;
   const fullPath = resolvePath(cwd, config.path);
   const paths = await globby(fullPath, { expandDirectories: false, onlyFiles: false });
   const { maxSize: threshold } = config;
@@ -48,7 +55,7 @@ const getFileResult = async (cwd: string, sizeConfig: SizeConfig, config: SizeCo
         const size: number = pathStats.isDirectory()
           ? await getDirSize(path)
           : await getFileSize(path, sizeConfig.compression);
-        const fail = size > maxSizeBytes;
+        const fail = checkThresholds ? size > maxSizeBytes : false;
         const parsedFile: ParsedFile = { fail, path, size, threshold };
 
         if (fail) {
@@ -72,7 +79,7 @@ const getFileResult = async (cwd: string, sizeConfig: SizeConfig, config: SizeCo
 };
 
 const sizeModule = async (
-  cwd: string,
+  options: CommandOptions,
   sizeConfig: SizeConfig | SizeConfigs[] = Config.get('configs.size', defaultConfig),
 ): Promise<Report> => {
   if (!sizeConfig) {
@@ -82,15 +89,17 @@ const sizeModule = async (
     });
   }
 
+  const { cwd } = options;
+
   const configObject: SizeConfig = Array.isArray(sizeConfig) ? { threshold: sizeConfig } : sizeConfig;
 
   const data: ParsedSizeConfig[] = await Promise.all(
     configObject.threshold.map(
-      (config: SizeConfigs): Promise<ParsedSizeConfig> => getFileResult(cwd, configObject, config),
+      (config: SizeConfigs): Promise<ParsedSizeConfig> => getFileResult(cwd, configObject, config, options),
     ),
   );
 
-  return parseReport(data, cwd);
+  return parseReport(data, options);
 };
 
 export default sizeModule;

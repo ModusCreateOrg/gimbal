@@ -26,7 +26,7 @@ const writeReport = async (file: string, type: string, contents: string): Promis
 const output = async (report: Report, commandOptions: CommandOptions): Promise<void> => {
   const { html, json, markdown } = Config.get('outputs', {});
 
-  const table = outputTable(report);
+  const table = outputTable(report, commandOptions);
 
   if (table) {
     Logger.log(table.toString());
@@ -38,7 +38,7 @@ const output = async (report: Report, commandOptions: CommandOptions): Promise<v
     if (file) {
       await mkdirp(path.dirname(file));
 
-      const contents = await htmlOutput(report);
+      const contents = await htmlOutput(report, commandOptions);
 
       await writeReport(file, 'HTML', contents);
     }
@@ -62,7 +62,7 @@ const output = async (report: Report, commandOptions: CommandOptions): Promise<v
     if (file) {
       await mkdirp(path.dirname(file));
 
-      const contents = await markdownOutput(report);
+      const contents = await markdownOutput(report, commandOptions);
 
       await writeReport(file, 'Markdown', contents);
     }

@@ -9,11 +9,11 @@ import { CommandOptions } from '@/typings/utils/command';
 import { resolvePath } from '@/utils/fs';
 import findPort from '@/utils/port';
 
-const calculateUnusedSource = async (chrome: Chrome, url: string): Promise<Report | void> => {
+const calculateUnusedSource = async (chrome: Chrome, url: string, options: CommandOptions): Promise<Report | void> => {
   const page = await chrome.newPage();
 
   if (page) {
-    const report = await UnusedSource(page, url);
+    const report = await UnusedSource(page, url, options);
 
     await page.close();
 
@@ -23,11 +23,11 @@ const calculateUnusedSource = async (chrome: Chrome, url: string): Promise<Repor
   throw new Error('Could not open page to calculate unused source');
 };
 
-const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<Report | void> => {
+const takeHeapSnapshot = async (chrome: Chrome, url: string, options: CommandOptions): Promise<Report | void> => {
   const page = await chrome.newPage();
 
   if (page) {
-    return HeapSnapshot(page, url);
+    return HeapSnapshot(page, url, options);
   }
 
   throw new Error('Could not open page to get heap snapshot');
@@ -55,7 +55,7 @@ const audit = async (options: CommandOptions): Promise<Report> => {
   }
 
   if (options.size) {
-    const report = await sizeModule(options.cwd);
+    const report = await sizeModule(options);
 
     if (!report.success) {
       success = false;
@@ -67,9 +67,13 @@ const audit = async (options: CommandOptions): Promise<Report> => {
   }
 
   if (options.lighthouse && chrome && localUri) {
-    const report = await LighthouseModule(localUri, {
-      chromePort: chrome.port as string,
-    });
+    const report = await LighthouseModule(
+      localUri,
+      {
+        chromePort: chrome.port as string,
+      },
+      options,
+    );
 
     if (!report.success) {
       success = false;
@@ -81,7 +85,7 @@ const audit = async (options: CommandOptions): Promise<Report> => {
   }
 
   if (options.calculateUnusedSource && chrome && localUri) {
-    const report = await calculateUnusedSource(chrome, localUri);
+    const report = await calculateUnusedSource(chrome, localUri, options);
 
     if (report) {
       if (!report.success) {
@@ -95,7 +99,7 @@ const audit = async (options: CommandOptions): Promise<Report> => {
   }
 
   if (options.heapSnapshot && chrome && localUri) {
-    const report = await takeHeapSnapshot(chrome, localUri);
+    const report = await takeHeapSnapshot(chrome, localUri, options);
 
     if (report) {
       if (!report.success) {

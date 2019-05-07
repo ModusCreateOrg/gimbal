@@ -27,7 +27,7 @@ const unusedSourceRunner = async (options: CommandOptions): Promise<Report> => {
       };
     }
 
-    const report = await HeapSnapshot(page, localUri);
+    const report = await HeapSnapshot(page, localUri, options);
 
     await page.close();
 

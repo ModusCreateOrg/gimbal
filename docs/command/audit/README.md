@@ -20,3 +20,4 @@ You can opt-out of running a module via these cli flags:
 The following are other options:
 
 - `--build-dir [dir]` By default, the build directory is specified as `build` but you can change it. This path is relative to the current working directory.
+- `--no-check-thresholds` by default, Gimbal will check values against thresholds. Setting this option will disable threshold checks.

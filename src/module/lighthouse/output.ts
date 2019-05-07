@@ -1,8 +1,10 @@
 import { Report, ReportItem } from '@/typings/command';
 import { Config, Result } from '@/typings/module/lighthouse';
+import { CommandOptions } from '@/typings/utils/command';
 import { AdvancedThreshold } from '@/typings/utils/threshold';
 
-const parseReport = (raw: Result, { threshold }: Config): Report => {
+const parseReport = (raw: Result, { threshold }: Config, options: CommandOptions): Report => {
+  const { checkThresholds } = options;
   const isComplexThreshold = typeof threshold === 'object';
   let success = true;
 
@@ -13,7 +15,7 @@ const parseReport = (raw: Result, { threshold }: Config): Report => {
       const thresholdNumber: number = (isComplexThreshold
         ? (threshold as AdvancedThreshold)[label]
         : threshold) as number;
-      const objSuccess = value >= thresholdNumber;
+      const objSuccess = checkThresholds ? value >= thresholdNumber : true;
 
       if (!objSuccess) {
         success = objSuccess;

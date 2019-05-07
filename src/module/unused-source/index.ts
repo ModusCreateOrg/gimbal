@@ -5,6 +5,7 @@ import Config from '@/config';
 import { Report } from '@/typings/command';
 import { SizeConfigs } from '@/typings/module/size';
 import { CoverageRange, Entry, UnusedSourceConfig } from '@/typings/module/unused-source';
+import { CommandOptions } from '@/typings/utils/command';
 import defaultConfig from './default-config';
 import parseReport from './output';
 
@@ -65,8 +66,10 @@ const getEntryUsed = (entry: CoverageEntry): number =>
 const UnusedCSS = async (
   page: Page,
   url: string,
+  options: CommandOptions,
   config: UnusedSourceConfig = Config.get('configs.unused-source', defaultConfig),
 ): Promise<Report> => {
+  const { checkThresholds } = options;
   const sourceConfig = {
     ...defaultConfig,
     ...config,
@@ -98,7 +101,7 @@ const UnusedCSS = async (
     const threshold = isThresholdArray
       ? getThreshold(entry.url, sourceConfig.threshold as SizeConfigs[], type)
       : (sourceConfig.threshold as string);
-    const checked = checkThreshold(percentage, threshold as string);
+    const checked = checkThresholds ? checkThreshold(percentage, threshold as string) : { success: true };
 
     return {
       ...checked,
@@ -118,7 +121,7 @@ const UnusedCSS = async (
   const threshold = isThresholdArray
     ? getThreshold(url, sourceConfig.threshold as SizeConfigs[])
     : (sourceConfig.threshold as string);
-  const checked = checkThreshold(percentage, threshold as string);
+  const checked = checkThresholds ? checkThreshold(percentage, threshold as string) : { success: true };
   const pageTotal: Entry = {
     ...checked,
     total,
@@ -130,7 +133,7 @@ const UnusedCSS = async (
 
   const data: Entry[] = [pageTotal, ...parsedCss, ...parsedJs];
 
-  return parseReport(data);
+  return parseReport(data, options);
 };
 
 export default UnusedCSS;
