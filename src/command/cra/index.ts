@@ -6,6 +6,7 @@ import UnusedSource from '@/module/unused-source';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
+import { resolvePath } from '@/utils/fs';
 import findPort from '@/utils/port';
 
 const calculateUnusedSource = async (chrome: Chrome, url: string): Promise<Report | void> => {
@@ -41,7 +42,8 @@ const cra = async (options: CommandOptions): Promise<Report> => {
 
   const servePort = needChromeAndServe ? await findPort() : null;
   const localUri = servePort ? `http://localhost:${servePort}` : null;
-  const serve = servePort ? new Serve({ port: servePort, public: `${options.cwd}/build` }) : null;
+  const buildDir = resolvePath(options.cwd, options.buildDir as string);
+  const serve = servePort ? new Serve({ port: servePort, public: buildDir }) : null;
   const chrome = needChromeAndServe ? new Chrome() : null;
 
   if (serve) {

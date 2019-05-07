@@ -60,3 +60,13 @@ module.exports = async () => {
   };
 };
 ```
+
+## Jobs
+
+A configuration file can also specify what commands to run. This means, if you have a configuration file that specifies what jobs, then all you need to do is execute `gimbal` in that directory and Gimbal will run those commands for you. Example:
+
+```yaml
+jobs:
+  - cra
+  - size --cwd ./foo/bar
+```

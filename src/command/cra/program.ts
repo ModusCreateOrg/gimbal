@@ -7,6 +7,11 @@ export default new Command({
   command: 'cra',
   options: [
     {
+      defaultValue: 'build',
+      description: 'Directory storing the build artifacts relative to the --cwd (defaults to "build")',
+      flag: '--build-dir [dir]',
+    },
+    {
       description: 'Disable checking resource sizes',
       flag: '--no-size',
     },

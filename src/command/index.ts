@@ -74,7 +74,7 @@ class Command {
     if (options) {
       options.forEach(
         (option: Option): void => {
-          cmd.option(option.flag, option.description);
+          cmd.option(option.flag, option.description, option.defaultValue);
         },
       );
     }

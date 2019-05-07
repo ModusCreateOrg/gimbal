@@ -16,3 +16,7 @@ You can opt-out of running a module via these cli flags:
 - `--no-lighthouse` Disabled the `lighthouse` module.
 - `--no-size` Disabled the `size` module.
 - `--no-calculate-unused-source` Disabled the `unused-source` module.
+
+The following are other options:
+
+- `--build-dir [dir]` By default, the build directory is specified as `build` but you can change it. This path is relative to the current working directory.
