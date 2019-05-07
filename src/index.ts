@@ -5,7 +5,7 @@ import Command, { preparseOptions } from '@/command';
 import Config from '@/config';
 import processJobs from '@/config/jobs';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
-import { readFile } from '@/utils/fs';
+import readPkg from 'read-pkg';
 
 (async (): Promise<void> => {
   if (!process.env[CHILD_GIMBAL_PROCESS]) {
@@ -15,9 +15,7 @@ import { readFile } from '@/utils/fs';
     console.log(gimbal);
   }
 
-  // cannot import package.json as it is not within the rootDir (aka, src/)
-  const rawPackageJson = await readFile(path.join(__dirname, '../package.json'), 'utf8');
-  const packageJson = JSON.parse(rawPackageJson);
+  const packageJson = await readPkg();
 
   program
     .version(packageJson.version)
