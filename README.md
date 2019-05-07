@@ -36,7 +36,7 @@ Gimbal uses industry-standard audits to analyze application performance. Continu
 
 Gimbal ❤️ CIs like [Circle CI](https://circleci.com/) and [Travis CI](https://travis-ci.com/).
 
-### Audits:
+## Audits
 
 - Lighthouse
 - File sizes
@@ -81,7 +81,7 @@ You can execute it via a npm script: (`package.json`):
 ```json
 {
   "scripts": {
-    "perf": "gimbal cra"
+    "perf": "gimbal audit"
   }
 }
 ```

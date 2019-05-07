@@ -4,7 +4,7 @@ import Command from '@/command';
 // eslint-disable-next-line no-new
 export default new Command({
   action,
-  command: 'cra',
+  command: 'audit',
   options: [
     {
       defaultValue: 'build',
@@ -28,5 +28,5 @@ export default new Command({
       flag: '--no-lighthouse',
     },
   ],
-  title: 'Create React App',
+  title: 'Web Performance Audit',
 });

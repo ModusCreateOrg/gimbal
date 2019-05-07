@@ -67,6 +67,6 @@ A configuration file can also specify what commands to run. This means, if you h
 
 ```yaml
 jobs:
-  - cra
+  - audit
   - size --cwd ./foo/bar
 ```

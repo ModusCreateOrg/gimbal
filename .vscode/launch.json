@@ -24,7 +24,7 @@
   }, {
     "type": "node",
     "request": "launch",
-    "name": "CRA",
+    "name": "audit",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -33,7 +33,7 @@
     ],
     "args": [
       "${workspaceFolder}/src/index.ts",
-      "cra",
+      "audit",
       "--cwd",
       "./sample"
     ],

@@ -33,7 +33,7 @@ const takeHeapSnapshot = async (chrome: Chrome, url: string): Promise<Report | v
   throw new Error('Could not open page to get heap snapshot');
 };
 
-const cra = async (options: CommandOptions): Promise<Report> => {
+const audit = async (options: CommandOptions): Promise<Report> => {
   const rets: ReportItem[] = [];
   let success = true;
   // if we are going to calculate unused CSS, take heap snapshot(s) or run lighthouse audits
@@ -122,4 +122,4 @@ const cra = async (options: CommandOptions): Promise<Report> => {
   };
 };
 
-export default cra;
+export default audit;
