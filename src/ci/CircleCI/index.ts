@@ -25,7 +25,21 @@ export default class CircleCI {
   public get pr(): number | void {
     const pr = env('CIRCLE_PR_NUMBER');
 
-    return pr ? (pr as number) : undefined;
+    if (pr) {
+      return pr as number;
+    }
+
+    const url = env('CIRCLE_PULL_REQUEST');
+
+    if (url) {
+      const num = url.split('/').pop();
+
+      if (num) {
+        return num as number;
+      }
+    }
+
+    return undefined;
   }
 
   public get repo(): string {
