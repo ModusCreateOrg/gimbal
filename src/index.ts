@@ -15,7 +15,7 @@ import processJobs from '@/config/jobs';
   }
 
   program
-    .version('0.0.1')
+    .version('1.0.0')
     .description('A CLI tool for monitoring web performance in modern web projects')
     // global options all command will receive
     .option('--cwd [dir]', 'The directory to work in. Defaults to where the command was executed from.', process.cwd())
