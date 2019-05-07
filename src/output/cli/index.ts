@@ -1,4 +1,5 @@
 import Table, { Cell, CellOptions, GenericTable, HorizontalTable, TableInstanceOptions } from 'cli-table3';
+import deepmerge from 'deepmerge';
 import { Report, ReportItem } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
@@ -10,10 +11,7 @@ const defaultConfig = {
 };
 
 export const createTable = (options: CommandOptions, extraConfig?: TableInstanceOptions): HorizontalTable => {
-  const config = {
-    ...defaultConfig,
-    ...extraConfig,
-  };
+  const config = deepmerge(defaultConfig, extraConfig || {});
 
   if (options.checkThresholds) {
     config.head.push('Threshold', 'Success');
@@ -49,10 +47,16 @@ export const outputTable = (
       };
 
       if (item.value != null) {
-        const row: (string | CellOptions)[] = [item.label as string, item.value as string];
+        const { value } = item;
+        const valueString = value == null ? '' : value;
+
+        const row: (string | CellOptions)[] = [item.label as string, valueString as string];
 
         if (checkThresholds) {
-          row.push(item.threshold as string, successColumn as CellOptions);
+          const { threshold } = item;
+          const thresholdString = threshold == null ? '' : threshold;
+
+          row.push(thresholdString as string, successColumn as CellOptions);
         }
 
         table.push(successOrFailure(row, item.success) as CellOptions[]);
