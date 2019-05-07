@@ -44,12 +44,6 @@ Gimbal ❤️ CIs like [Circle CI](https://circleci.com/) and [Travis CI](https:
 - Heap memory
 - CSS and JS coverage
 
----
-
-**Note:** Gimbal focuses on **Create React App** (CRA) projects _currently_. The audits are universal to any web application, but some of the CRA defaults are assumed. We plan to remove this limitation very soon.
-
----
-
 ## Getting Started
 
 You can install Gimbal globally using `npm` or `yarn`:
@@ -81,18 +75,23 @@ You can execute it via a npm script: (`package.json`):
 ```json
 {
   "scripts": {
-    "perf": "gimbal audit"
+    "audit": "gimbal audit"
   }
 }
 ```
 
 ```sh
 # with npm
-npm run perf
+npm run audit
 
 # or with yarn
-yarn perf
+yarn audit
 ```
+
+## Usage Examples
+
+- ⚛️ Create React App: `gimbal audit`
+- 🎩 Gatsby: `gimbal audit --build-dir ./public`
 
 ## Prerequisites
 
