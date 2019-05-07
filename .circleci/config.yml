@@ -117,26 +117,26 @@ workflows:
       - install-dependencies:
           filters:
             tags:
-              ignore: /v[0-9]+(\.[0-9]+)*/
+              ignore: /^v.*/
       - lint:
           requires:
             - install-dependencies
           filters:
             tags:
-              ignore: /v[0-9]+(\.[0-9]+)*/
+              ignore: /^v.*/
       - test:
           requires:
             - install-dependencies
           filters:
             tags:
-              ignore: /v[0-9]+(\.[0-9]+)*/
+              ignore: /^v.*/
       - build:
           requires:
             - lint
             - test
           filters:
             tags:
-              ignore: /v[0-9]+(\.[0-9]+)*/
+              ignore: /^v.*/
   publish:
     jobs:
       - publish:
@@ -145,7 +145,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /v[0-9]+(\.[0-9]+)*/
+              only: /^v.*/
       - build-docker:
           context: deploy-creds
           requires:
@@ -154,7 +154,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /v[0-9]+(\.[0-9]+)*/
+              only: /^v.*/
       - publish-docker:
           context: deploy-creds
           requires:
@@ -164,4 +164,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /v[0-9]+(\.[0-9]+)*/
+              only: /^v.*/
