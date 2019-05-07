@@ -33,6 +33,9 @@
     "type": "git",
     "url": "git+https://github.com/ModusCreateOrg/gimbal.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "web-performance",
     "ci",
@@ -41,7 +44,8 @@
     "javascript",
     "typescript",
     "lighthouse",
-    "bundlesize"
+    "bundlesize",
+    "audit"
   ],
   "contributors": [
     {
