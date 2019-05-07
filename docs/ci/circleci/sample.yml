@@ -17,6 +17,7 @@ aliases:
 
 defaults: &defaults
   # this is key for restoring cache using different docker images
+  # need to use full path, not using ~ as user home is different
   working_directory: /home/circleci/project/
   docker:
     - image: circleci/node:10
