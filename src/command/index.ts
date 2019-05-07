@@ -125,9 +125,13 @@ class Command {
 
 export const preparseOptions = (): CommandOptions => {
   const parsed = program.parseOptions(program.normalize(process.argv.slice(2)));
-  const cmd = parsed.args[0]
-    ? program.commands.find((command: CommandType): boolean => command.name() === parsed.args[0])
-    : program;
+  const match =
+    parsed.args[0] && program.commands.find((command: CommandType): boolean => command.name() === parsed.args[0]);
+  const cmd = match || program;
+
+  if (!match && parsed.args[0]) {
+    Logger.log(`The "${parsed.args[0]}" command was not found`);
+  }
 
   cmd.parseOptions(parsed.args); // this applies option values onto the command/program
 
