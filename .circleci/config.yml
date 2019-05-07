@@ -77,7 +77,7 @@ jobs:
       - checkout
       - run:
           name: Setup .npmrc
-          command: printf "@modus:registry=https://npm.modus.app\n//npm.modus.app/:_authToken=\"%s\"" "$MODUS_NPM_TOKEN" >> ~/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run: npm i -ci
       - run: yarn lint
       - run: yarn test

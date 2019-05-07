@@ -8,7 +8,7 @@ RUN	yum update  -y \
   && yum clean all \
   && curl -sL https://rpm.nodesource.com/setup_10.x | bash - \
   && yum install -y nodejs \
-  && npm install -g --unsafe-perm=true --allow-root @modus/gimbal@${GIMBAL_VERSION} --registry https://npm.modus.app
+  && npm install -g --unsafe-perm=true --allow-root @modus/gimbal@${GIMBAL_VERSION}
 
 RUN yum install ipa-gothic-fonts xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc  libXext cups-libs libXScrnSaver -y
 
