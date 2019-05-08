@@ -2,6 +2,15 @@ import deepmerge from 'deepmerge';
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { URL } from 'url';
 import Config from '@/config';
+import EventEmitter from '@/event';
+import {
+  LaunchStartEvent,
+  LaunchEndEvent,
+  KillStartEvent,
+  KillEndEvent,
+  NewPageStartEvent,
+  NewPageEndEvent,
+} from '@/typings/module/chrome';
 import defaultConfig from './default-config';
 
 class Chrome {
@@ -20,12 +29,42 @@ class Chrome {
   public async launch(): Promise<void> {
     const config = deepmerge(defaultConfig, Config.get('configs.puppeteer') || {});
 
-    this.browser = await puppeteer.launch(config);
+    const launchStartEvent: LaunchStartEvent = {
+      config,
+      mod: this,
+    };
+
+    await EventEmitter.fire(`module/puppeteer/launch/start`, launchStartEvent);
+
+    const browser = await puppeteer.launch(config);
+
+    const launchEndEvent: LaunchEndEvent = {
+      browser,
+      config,
+      mod: this,
+    };
+
+    this.browser = browser;
+
+    await EventEmitter.fire(`module/puppeteer/launch/end`, launchEndEvent);
   }
 
   public async kill(): Promise<void> {
     if (this.browser) {
+      const killStartEvent: KillStartEvent = {
+        browser: this.browser,
+        mod: this,
+      };
+
+      await EventEmitter.fire(`module/puppeteer/kill/start`, killStartEvent);
+
       await this.browser.close();
+
+      const killEndEvent: KillEndEvent = {
+        mod: this,
+      };
+
+      await EventEmitter.fire(`module/puppeteer/kill/end`, killEndEvent);
 
       this.browser = undefined;
     }
@@ -33,7 +72,24 @@ class Chrome {
 
   public async newPage(): Promise<Page | void> {
     if (this.browser) {
-      return this.browser.newPage();
+      const newPageStartEvent: NewPageStartEvent = {
+        browser: this.browser,
+        mod: this,
+      };
+
+      await EventEmitter.fire(`module/puppeteer/new-page/start`, newPageStartEvent);
+
+      const page = await this.browser.newPage();
+
+      const newPageEndEvent: NewPageEndEvent = {
+        browser: this.browser,
+        mod: this,
+        page,
+      };
+
+      await EventEmitter.fire(`module/puppeteer/new-page/end`, newPageEndEvent);
+
+      return page;
     }
 
     return undefined;

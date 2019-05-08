@@ -1,12 +1,20 @@
 import deepmerge from 'deepmerge';
 import globby from 'globby';
 import { extname } from 'path';
+import EventEmitter from '@/event';
 import { resolvePath } from '@/utils/fs';
 import jsLoader from './loader/js';
 import yamlLoader from './loader/yaml';
 import parsePlugins from './plugin';
 
-import { Config as ConfigType, LoaderMap } from '@/typings/config';
+import {
+  Config as ConfigType,
+  LoaderMap,
+  LoadStartEvent,
+  LoadEndEvent,
+  PluginStartEvent,
+  PluginEndEvent,
+} from '@/typings/config';
 
 class Config {
   private CONFIG_FILE_GLOB: string = '.gimbalrc.{js,json,yaml,yml}';
@@ -55,7 +63,24 @@ class Config {
 
     this.loading = true;
 
+    const loadStartEvent: LoadStartEvent = {
+      Config: this,
+      file,
+      force,
+    };
+
+    await EventEmitter.fire('config/load/start', loadStartEvent);
+
     this.config = await loader(file);
+
+    const loadEndEvent: LoadEndEvent = {
+      Config: this,
+      config: this.config,
+      file,
+      force,
+    };
+
+    await EventEmitter.fire('config/load/end', loadEndEvent);
 
     this.loaded = true;
     this.loading = false;
@@ -75,7 +100,23 @@ class Config {
     const { plugins } = config;
 
     if (plugins && plugins.length) {
+      const pluginStartEvent: PluginStartEvent = {
+        Config: this,
+        dir,
+        plugins,
+      };
+
+      await EventEmitter.fire('config/plugin/start', pluginStartEvent);
+
       await parsePlugins(plugins, dir);
+
+      const pluginEndEvent: PluginEndEvent = {
+        Config: this,
+        dir,
+        plugins,
+      };
+
+      await EventEmitter.fire('config/plugin/end', pluginEndEvent);
     }
 
     return undefined;

@@ -3,9 +3,10 @@ import program, { Command as CommandType } from 'commander';
 import figlet from 'figlet';
 import path from 'path';
 import Config from '@/config';
+import EventEmitter from '@/event';
 import Logger from '@/logger';
 import output from '@/output';
-import { Report } from '@/typings/command';
+import { StartEvent, EndEvent, ActionStartEvent, ActionEndEvent, Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
 import { readDir, stats } from '@/utils/fs';
@@ -100,17 +101,51 @@ class Command {
     try {
       const commandOptions = getOptionsFromCommand(cmd);
 
+      const startEvent: StartEvent = {
+        args,
+        commandOptions,
+        command: this,
+      };
+
+      await EventEmitter.fire(`command/${this.command}/start`, startEvent);
+
       if (!Config.isLoaded) {
         await Config.load(commandOptions.cwd);
       }
 
+      const actionStartEvent: ActionStartEvent = {
+        args,
+        commandOptions,
+        command: this,
+      };
+
+      await EventEmitter.fire(`command/${this.command}/action/start`, actionStartEvent);
+
       const report: Report = await this.action(commandOptions, args);
+
+      const actionEndEvent: ActionEndEvent = {
+        args,
+        commandOptions,
+        command: this,
+        report,
+      };
+
+      await EventEmitter.fire(`command/${this.command}/action/end`, actionEndEvent);
 
       Logger.log(figlet.textSync(this.title));
 
       await output(report, commandOptions);
 
       await comment(report, commandOptions);
+
+      const endEvent: EndEvent = {
+        args,
+        commandOptions,
+        command: this,
+        report,
+      };
+
+      await EventEmitter.fire(`command/${this.command}/end`, endEvent);
 
       if (!report.success) {
         process.exit(1);

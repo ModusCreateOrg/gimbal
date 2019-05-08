@@ -1,4 +1,7 @@
+import { CoverageEntry, Page } from 'puppeteer';
+import { Report } from '@/typings/command';
 import { SizeConfigs } from '@/typings/module/size';
+import { CommandOptions } from '@/typings/utils/command';
 
 export interface CoverageRange {
   end: number;
@@ -29,4 +32,70 @@ export interface UnusedRet {
 
 export interface UnusedSourceConfig {
   threshold: string | SizeConfigs[];
+}
+
+export interface NavigateStartEvent {
+  config: UnusedSourceConfig;
+  options: CommandOptions;
+  page: Page;
+  url: string;
+}
+
+export interface NavigateEndEvent {
+  config: UnusedSourceConfig;
+  options: CommandOptions;
+  page: Page;
+  url: string;
+}
+
+export interface AuditStartEvent {
+  config: UnusedSourceConfig;
+  options: CommandOptions;
+  page: Page;
+  url: string;
+}
+
+export interface AuditEndEvent {
+  config: UnusedSourceConfig;
+  css: CoverageEntry[];
+  js: CoverageEntry[];
+  options: CommandOptions;
+  page: Page;
+  url: string;
+}
+
+export interface AuditParseStartEvent {
+  config: UnusedSourceConfig;
+  css: CoverageEntry[];
+  js: CoverageEntry[];
+  options: CommandOptions;
+  page: Page;
+  url: string;
+}
+
+export interface AuditParseEndEvent {
+  config: UnusedSourceConfig;
+  css: CoverageEntry[];
+  js: CoverageEntry[];
+  options: CommandOptions;
+  pageTotal: Entry;
+  page: Page;
+  parsedCss: Entry[];
+  parsedJs: Entry[];
+  url: string;
+}
+
+export interface ReportStartEvent {
+  audit: Entry[];
+  config: UnusedSourceConfig;
+  options: CommandOptions;
+  url: string;
+}
+
+export interface ReportEndEvent {
+  audit: Entry[];
+  config: UnusedSourceConfig;
+  options: CommandOptions;
+  report: Report;
+  url: string;
 }

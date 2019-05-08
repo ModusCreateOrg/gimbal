@@ -1,10 +1,24 @@
+import deepmerge from 'deepmerge';
 import minimatch from 'minimatch';
 import { CoverageEntry, Page } from 'puppeteer';
 import { URL } from 'url';
 import Config from '@/config';
+import EventEmitter from '@/event';
 import { Report } from '@/typings/command';
 import { SizeConfigs } from '@/typings/module/size';
-import { CoverageRange, Entry, UnusedSourceConfig } from '@/typings/module/unused-source';
+import {
+  CoverageRange,
+  Entry,
+  UnusedSourceConfig,
+  AuditStartEvent,
+  AuditEndEvent,
+  AuditParseStartEvent,
+  AuditParseEndEvent,
+  NavigateStartEvent,
+  NavigateEndEvent,
+  ReportStartEvent,
+  ReportEndEvent,
+} from '@/typings/module/unused-source';
 import { CommandOptions } from '@/typings/utils/command';
 import defaultConfig from './default-config';
 import parseReport from './output';
@@ -70,21 +84,55 @@ const UnusedCSS = async (
   config: UnusedSourceConfig = Config.get('configs.unused-source', defaultConfig),
 ): Promise<Report> => {
   const { checkThresholds } = options;
-  const sourceConfig = {
-    ...defaultConfig,
-    ...config,
+  const sourceConfig = deepmerge(defaultConfig, config);
+  const isThresholdArray = Array.isArray(sourceConfig.threshold);
+
+  const auditStartEvent: AuditStartEvent = {
+    config: sourceConfig,
+    options,
+    page,
+    url,
   };
 
-  const isThresholdArray = Array.isArray(sourceConfig.threshold);
+  await EventEmitter.fire(`module/unused-source/audit/start`, auditStartEvent);
 
   await Promise.all([page.coverage.startCSSCoverage(), page.coverage.startJSCoverage()]);
 
+  const navigateStartEvent: NavigateStartEvent = {
+    config: sourceConfig,
+    options,
+    page,
+    url,
+  };
+
+  await EventEmitter.fire(`module/unused-source/navigate/start`, navigateStartEvent);
+
   await page.goto(url);
+
+  const navigateEndEvent: NavigateEndEvent = {
+    config: sourceConfig,
+    options,
+    page,
+    url,
+  };
+
+  await EventEmitter.fire(`module/unused-source/navigate/end`, navigateEndEvent);
 
   const [css, js]: [CoverageEntry[], CoverageEntry[]] = await Promise.all([
     page.coverage.stopCSSCoverage(),
     page.coverage.stopJSCoverage(),
   ]);
+
+  const auditEndEvent: AuditEndEvent = {
+    config: sourceConfig,
+    css,
+    js,
+    options,
+    page,
+    url,
+  };
+
+  await EventEmitter.fire(`module/unused-source/audit/end`, auditEndEvent);
 
   let total = 0;
   let used = 0;
@@ -113,6 +161,17 @@ const UnusedCSS = async (
     };
   };
 
+  const auditParseStartEvent: AuditParseStartEvent = {
+    config: sourceConfig,
+    css,
+    js,
+    options,
+    page,
+    url,
+  };
+
+  await EventEmitter.fire(`module/unused-source/audit/parse/start`, auditParseStartEvent);
+
   const parsedCss = css.map(parseEntry('css'));
   const parsedJs = js.map(parseEntry('js'));
 
@@ -131,9 +190,44 @@ const UnusedCSS = async (
     used,
   };
 
-  const data: Entry[] = [pageTotal, ...parsedCss, ...parsedJs];
+  const auditParseEndEvent: AuditParseEndEvent = {
+    config: sourceConfig,
+    css,
+    js,
+    options,
+    pageTotal,
+    page,
+    parsedCss,
+    parsedJs,
+    url,
+  };
 
-  return parseReport(data, options);
+  await EventEmitter.fire(`module/unused-source/audit/parse/end`, auditParseEndEvent);
+
+  const audit: Entry[] = [pageTotal, ...parsedCss, ...parsedJs];
+
+  const reportStartEvent: ReportStartEvent = {
+    audit,
+    config,
+    options,
+    url,
+  };
+
+  await EventEmitter.fire(`module/unused-source/report/start`, reportStartEvent);
+
+  const report = parseReport(audit, options);
+
+  const reportEndEvent: ReportEndEvent = {
+    audit,
+    config,
+    options,
+    report,
+    url,
+  };
+
+  await EventEmitter.fire(`module/unused-source/report/end`, reportEndEvent);
+
+  return report;
 };
 
 export default UnusedCSS;

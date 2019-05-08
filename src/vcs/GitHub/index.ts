@@ -1,6 +1,19 @@
-import Octokit from '@octokit/rest';
+import Octokit, {
+  IssuesCreateCommentParams,
+  IssuesCreateCommentResponse,
+  ReposCreateCommitCommentParams,
+  ReposCreateCommitCommentResponse,
+  Response,
+} from '@octokit/rest';
 import { URL } from 'url';
+import EventEmitter from '@/event';
 import Logger from '@/logger';
+import {
+  CommitCommentStartEvent,
+  CommitCommentEndEvent,
+  CommitPRStartEvent,
+  CommitPREndEvent,
+} from '@/typings/vcs/GitHub';
 import env from '@/utils/env';
 
 const GITHUB_RE = /(?:www\.)?github\.com$/i;
@@ -26,7 +39,7 @@ export default class GitHub {
   public comment(
     body: string,
   ): Promise<
-    Octokit.Response<Octokit.ReposCreateCommitCommentResponse> | Octokit.Response<Octokit.IssuesCreateCommentResponse>
+    Response<ReposCreateCommitCommentResponse> | Response<IssuesCreateCommentResponse>
     /* eslint-disable-next-line @typescript-eslint/indent */
   > | void {
     if (env(GITHUB_AUTH_TOKEN)) {
@@ -44,29 +57,64 @@ export default class GitHub {
     return undefined;
   }
 
-  private createCommitComment(
-    sha: string,
-    body: string,
-  ): Promise<Octokit.Response<Octokit.ReposCreateCommitCommentResponse>> {
-    return this.api.repos.createCommitComment({
+  private async createCommitComment(sha: string, body: string): Promise<Response<ReposCreateCommitCommentResponse>> {
+    const comment: ReposCreateCommitCommentParams = {
       body,
       sha,
       owner: this.ci.owner,
       repo: this.ci.repo,
-    });
+    };
+
+    const commitCommentStartEvent: CommitCommentStartEvent = {
+      comment,
+      vcs: this,
+    };
+
+    await EventEmitter.fire(`vcs/comment/github/commit/start`, commitCommentStartEvent);
+
+    const ret = await this.api.repos.createCommitComment(comment);
+
+    const commitCommentEndEvent: CommitCommentEndEvent = {
+      comment,
+      ret,
+      vcs: this,
+    };
+
+    await EventEmitter.fire(`vcs/comment/github/commit/end`, commitCommentEndEvent);
+
+    return ret;
   }
 
-  private createPRComment(
+  private async createPRComment(
     /* eslint-disable-next-line @typescript-eslint/camelcase,camelcase */
     issue_number: number,
     body: string,
-  ): Promise<Octokit.Response<Octokit.IssuesCreateCommentResponse>> {
-    return this.api.issues.createComment({
+  ): Promise<Response<IssuesCreateCommentResponse>> {
+    const comment: IssuesCreateCommentParams = {
       body,
       /* eslint-disable-next-line @typescript-eslint/camelcase */
       issue_number,
       owner: this.ci.owner,
       repo: this.ci.repo,
-    });
+    };
+
+    const commitPRStartEvent: CommitPRStartEvent = {
+      comment,
+      vcs: this,
+    };
+
+    await EventEmitter.fire(`vcs/comment/github/pr/start`, commitPRStartEvent);
+
+    const ret = await this.api.issues.createComment(comment);
+
+    const commitPREndEvent: CommitPREndEvent = {
+      comment,
+      ret,
+      vcs: this,
+    };
+
+    await EventEmitter.fire(`vcs/comment/github/pr/end`, commitPREndEvent);
+
+    return ret;
   }
 }

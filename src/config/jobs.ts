@@ -1,21 +1,11 @@
+import EventEmitter from '@/event';
 import Logger from '@/logger';
+import { ArrayJob, Job, JobRet, JobStartEvent, JobEndEvent, JobsStartEvent, JobsEndEvent } from '@/typings/config/jobs';
 import { CommandOptions } from '@/typings/utils/command';
 import { CmdSpawnRet } from '@/typings/utils/spawn';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 import spawn from '@/utils/spawn';
 import { splitOnWhitespace } from '@/utils/string';
-
-interface Options {
-  [key: string]: string;
-}
-
-interface OptionsCt {
-  options: Options;
-}
-
-type ArrayJob = [string, OptionsCt];
-type Job = string | ArrayJob;
-type JobRet = CmdSpawnRet | void;
 
 const prependDashes = (option: string): string => `--${option.replace(/^-+/, '')}`;
 
@@ -37,9 +27,18 @@ const processStringForm = async (job: string, commandOptions: CommandOptions): P
     ? []
     : ['-r', 'ts-node/register', '-r', 'tsconfig-paths/register'];
 
+  const args = [node, ...runtimeArgs, script, ...rest];
+
+  const jobStartEvent: JobStartEvent = {
+    args,
+    commandOptions,
+  };
+
+  await EventEmitter.fire('config/job/start', jobStartEvent);
+
   try {
-    return await spawn(
-      [node, ...runtimeArgs, script, ...rest],
+    const ret = await spawn(
+      args,
       {
         cwd: commandOptions.cwd,
         env: {
@@ -52,7 +51,25 @@ const processStringForm = async (job: string, commandOptions: CommandOptions): P
         noUsage: true,
       },
     );
+
+    const jobEndEvent: JobEndEvent = {
+      args,
+      commandOptions,
+      ret,
+    };
+
+    await EventEmitter.fire('config/job/end', jobEndEvent);
+
+    return ret;
   } catch (error) {
+    const jobEndEvent: JobEndEvent = {
+      args,
+      commandOptions,
+      error,
+    };
+
+    await EventEmitter.fire('config/job/end', jobEndEvent);
+
     // pass the failure up but let the rejection happen upstream
     return error;
   }
@@ -107,8 +124,15 @@ const handleResults = (ret: JobRet[]): JobRet[] => {
   return ret;
 };
 
-const processJobs = (jobs: Job[], commandOptions: CommandOptions): Promise<JobRet[]> => {
-  return Promise.all(
+const processJobs = async (jobs: Job[], commandOptions: CommandOptions): Promise<JobRet[]> => {
+  const startEvent: JobsStartEvent = {
+    commandOptions,
+    jobs,
+  };
+
+  await EventEmitter.fire('config/jobs/start', startEvent);
+
+  const ret: JobRet[] = await Promise.all(
     jobs.map(
       async (job: Job): Promise<CmdSpawnRet | void> =>
         Array.isArray(job)
@@ -116,6 +140,16 @@ const processJobs = (jobs: Job[], commandOptions: CommandOptions): Promise<JobRe
           : processStringForm(job as string, commandOptions),
     ),
   ).then(handleResults);
+
+  const endEvent: JobsEndEvent = {
+    commandOptions,
+    jobs,
+    ret,
+  };
+
+  await EventEmitter.fire('config/jobs/end', endEvent);
+
+  return ret;
 };
 
 export default processJobs;
