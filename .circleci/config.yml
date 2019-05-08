@@ -31,6 +31,12 @@ jobs:
       - checkout
       - restore_cache: *restore-npm-cache
       - run: yarn build
+      - run:
+          name: Test Help
+          command: node bin/index.js --help
+      - run:
+          name: Test Version
+          command: node bin/index.js --version
 
   build-docker:
       <<: *defaults

@@ -1,11 +1,11 @@
-import program from 'commander';
 import fs from 'fs';
 import path from 'path';
+import program from 'commander';
+import readPkg from 'read-pkg';
 import Command, { preparseOptions } from '@/command';
 import Config from '@/config';
 import processJobs from '@/config/jobs';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
-import readPkg from 'read-pkg';
 
 (async (): Promise<void> => {
   if (!process.env[CHILD_GIMBAL_PROCESS]) {

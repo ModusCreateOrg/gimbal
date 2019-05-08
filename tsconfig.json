@@ -18,6 +18,12 @@
       "@/*": ["./src/*"]
     },
 
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths"
+      }
+    ],
+
     /* Strict Type-Checking Options */
     /* Raise error on expressions and declarations with an implied 'any' type. */
     "noImplicitAny": true,

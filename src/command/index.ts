@@ -52,7 +52,7 @@ class Command {
           const itemPath = path.join(__dirname, item);
           const itemStats = await stats(itemPath);
 
-          return itemStats.isDirectory() ? import(`@/command/${item}/program`) : undefined;
+          return itemStats.isDirectory() ? import(`./${item}/program`) : undefined;
         },
       ),
     );
