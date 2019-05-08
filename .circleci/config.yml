@@ -1,9 +1,6 @@
 aliases:
   - &restore-npm-cache
-    keys:
-      - v1-dependencies-{{ checksum "package-lock.json" }}
-      - v1-dependencies-master
-      - v1-dependencies-
+    key: v1-dependencies-{{ checksum "package-lock.json" }}
     name: Restoring node_modules/ cache
   - &save-npm-cache
     key: v1-dependencies-{{ checksum "package-lock.json" }}

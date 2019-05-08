@@ -15,7 +15,9 @@ import readPkg from 'read-pkg';
     console.log(gimbal);
   }
 
-  const packageJson = await readPkg();
+  const packageJson = await readPkg({
+    cwd: path.join(__dirname, '..'),
+  });
 
   program
     .version(packageJson.version)
