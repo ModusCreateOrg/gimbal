@@ -1,4 +1,3 @@
-import deepmerge from 'deepmerge';
 import minimatch from 'minimatch';
 import { CoverageEntry, Page } from 'puppeteer';
 import { URL } from 'url';
@@ -81,10 +80,13 @@ const UnusedCSS = async (
   page: Page,
   url: string,
   options: CommandOptions,
-  config: UnusedSourceConfig = Config.get('configs.unused-source', defaultConfig),
+  config: UnusedSourceConfig = Config.get('configs.unused-source'),
 ): Promise<Report> => {
   const { checkThresholds } = options;
-  const sourceConfig = deepmerge(defaultConfig, config);
+  const sourceConfig = {
+    ...defaultConfig,
+    ...config,
+  };
   const isThresholdArray = Array.isArray(sourceConfig.threshold);
 
   const auditStartEvent: AuditStartEvent = {
