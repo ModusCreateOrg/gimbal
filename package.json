@@ -45,7 +45,9 @@
     "typescript",
     "lighthouse",
     "bundlesize",
-    "audit"
+    "audit",
+    "react",
+    "puppeteer"
   ],
   "contributors": [
     {
@@ -86,7 +88,7 @@
     ]
   },
   "dependencies": {
-    "@octokit/rest": "16.25.2",
+    "@octokit/rest": "16.25.3",
     "brotli-size": "0.1.0",
     "bytes": "3.1.0",
     "cli-table3": "0.5.1",
@@ -99,7 +101,7 @@
     "globby": "9.2.0",
     "gzip-size": "5.1.0",
     "js-yaml": "3.13.1",
-    "lighthouse": "4.3.1",
+    "lighthouse": "5.0.0",
     "marked": "0.6.2",
     "minimatch": "3.0.4",
     "mkdirp": "0.5.1",
