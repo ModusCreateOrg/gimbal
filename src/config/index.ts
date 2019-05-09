@@ -2,11 +2,6 @@ import deepmerge from 'deepmerge';
 import globby from 'globby';
 import { extname } from 'path';
 import EventEmitter from '@/event';
-import { resolvePath } from '@/utils/fs';
-import jsLoader from './loader/js';
-import yamlLoader from './loader/yaml';
-import parsePlugins from './plugin';
-
 import {
   Config as ConfigType,
   LoaderMap,
@@ -15,6 +10,11 @@ import {
   PluginStartEvent,
   PluginEndEvent,
 } from '@/typings/config';
+import { CommandOptions } from '@/typings/utils/command';
+import { resolvePath } from '@/utils/fs';
+import jsLoader from './loader/js';
+import yamlLoader from './loader/yaml';
+import parsePlugins from './plugin';
 
 class Config {
   private CONFIG_FILE_GLOB: string = '.gimbalrc.{js,json,yaml,yml}';
@@ -42,7 +42,7 @@ class Config {
     return this.loading;
   }
 
-  public async load(dir: string, force: boolean = false): Promise<ConfigType | void> {
+  public async load(dir: string, commandOptions: CommandOptions, force: boolean = false): Promise<ConfigType | void> {
     if (this.loaded && !force) {
       throw new Error('Configuration is already loaded!');
     }
@@ -85,12 +85,12 @@ class Config {
     this.loaded = true;
     this.loading = false;
 
-    await this.onLoad(dir);
+    await this.onLoad(dir, commandOptions);
 
     return this.config;
   }
 
-  private async onLoad(dir: string): Promise<void> {
+  private async onLoad(dir: string, commandOptions: CommandOptions): Promise<void> {
     const { config } = this;
 
     if (!config) {
@@ -108,7 +108,7 @@ class Config {
 
       await EventEmitter.fire('config/plugin/start', pluginStartEvent);
 
-      await parsePlugins(plugins, dir);
+      await parsePlugins(plugins, dir, commandOptions);
 
       const pluginEndEvent: PluginEndEvent = {
         Config: this,

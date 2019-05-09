@@ -110,7 +110,7 @@ class Command {
       await EventEmitter.fire(`command/${this.command}/start`, startEvent);
 
       if (!Config.isLoaded) {
-        await Config.load(commandOptions.cwd);
+        await Config.load(commandOptions.cwd, commandOptions);
       }
 
       const actionStartEvent: ActionStartEvent = {

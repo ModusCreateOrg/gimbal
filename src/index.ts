@@ -37,7 +37,7 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
   // need to parse the options before commander kicks off so the config file
   // is loaded. This way things like plugins will be ready
   const options = preparseOptions();
-  const config = await Config.load(options.cwd);
+  const config = await Config.load(options.cwd, options);
 
   // kick off commander
   program.parse(process.argv);
