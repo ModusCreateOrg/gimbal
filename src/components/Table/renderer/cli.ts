@@ -1,4 +1,4 @@
-import Table, { HorizontalTable } from 'cli-table3';
+import Table, { Cell, HorizontalTable } from 'cli-table3';
 import { Column, Data, RendererArgs } from '@/typings/components/Table';
 import { sectionHeading } from '@/utils/colors';
 
@@ -36,14 +36,25 @@ const renderItem = (table: HorizontalTable, item: Data, index: number, columns: 
   } else {
     table.push(
       columns.map(
-        (column: Column): string => {
+        (column: Column): string | Cell => {
           let { [column.key]: value } = item;
 
           if (column.renderer) {
             value = column.renderer(value, item);
           }
 
-          return value == null ? '' : value;
+          if (value == null) {
+            return '';
+          }
+
+          if (column.align && column.align !== 'left') {
+            return {
+              content: value,
+              hAlign: column.align,
+            };
+          }
+
+          return value;
         },
       ),
     );

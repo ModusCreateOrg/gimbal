@@ -9,7 +9,7 @@ class Queue {
 
   private queue: Data[] = [];
 
-  public consturctor(config: Config = {}): void {
+  public constructor(config: Config = {}) {
     if (config.mode) {
       this.mode = config.mode;
     }

@@ -1,6 +1,9 @@
 import { TableInstanceOptions } from 'cli-table3';
 
+export type Alignments = 'left' | 'center' | 'right';
+
 export interface Column {
+  align?: Alignments;
   header: string;
   key: string;
   renderer?: Renderer;

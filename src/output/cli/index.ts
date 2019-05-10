@@ -29,6 +29,7 @@ export const createTable = (commandOptions: CommandOptions, config?: Config): Ta
       {
         header: 'Value',
         key: 'value',
+        align: 'center',
         renderer: successColorizeRenderer,
       },
     ],
@@ -39,12 +40,14 @@ export const createTable = (commandOptions: CommandOptions, config?: Config): Ta
     table.addColumn({
       header: 'Threshold',
       key: 'threshold',
+      align: 'center',
       renderer: successColorizeRenderer,
     });
 
     table.addColumn({
       header: 'Success',
       key: 'success',
+      align: 'center',
       renderer: (value: boolean | string): string => {
         if (value === true) {
           return successOrFailure('✓', value);
