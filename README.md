@@ -161,6 +161,26 @@ Expand audits below for more detail.
 </p>
 </details>
 
+## Programmatic Usage
+
+You can use Gimbal from other node scripts as an external module. Note that [configuration file](#configuration) will be automatically parsed.
+
+```js
+const { audit } = require('@modus/gimbal');
+
+async function customAudits() {
+  const response = await audit({
+    cwd: process.cwd(),
+    buildDir: './public',
+    comment: true,
+    verbose: false,
+    checkThresholds: true,
+  });
+
+  return response;
+}
+```
+
 ## Configuration
 
 Gimbal supports configuration files in JavaScript, JSON and YAML formats. This configuration file will let Gimbal know what to execute, you can modify configurations for modules, and output reports in different formats (HTML, JSON, and Markdown). Just place a `.gimbalrc.yml` (or `.gimbalrc.js` or `.gimbalrc.json`) in the root of your project where you will execute Gimbal. An example configuration file would look like:
@@ -186,6 +206,21 @@ The main purpose of Gimbal is to run audits against an application. Each audit h
 
 ```yaml
 configs:
+  lighthouse:
+    threshold:
+      accessibility: 93
+      'best-practices': 90
+      performance: 50
+      pwa: 75
+      seo: 100
+  heap-snapshot:
+    threshold:
+      Documents: 5
+      Frames: 2
+      JSHeapTotalSize: 23356000
+      JSHeapUsedSize: 15068000
+      Nodes: 800
+      RecalcStyleCount: 9
   size:
     - path: ./build/precache-*.js
       maxSize: 500 B
