@@ -17,6 +17,7 @@ import {
   MarkdownReportStartEvent,
   MarkdownReportEndEvent,
 } from '@/typings/output';
+import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
 import { mkdirp, resolvePath, writeFile } from '@/utils/fs';
 import { outputTable } from './cli';
@@ -57,14 +58,17 @@ const writeReport = async (file: string, type: string, contents: string): Promis
 const output = async (report: Report, commandOptions: CommandOptions): Promise<void> => {
   const { html, json, markdown } = Config.get('outputs', {});
 
+  const cliOptions: CliOutputOptions = {};
+
   const cliReportStartEvent: CliReportStartEvent = {
     commandOptions,
+    cliOptions,
     report,
   };
 
   await EventEmitter.fire('output/cli/report/start', cliReportStartEvent);
 
-  const table = outputTable(report, commandOptions);
+  const table = outputTable(report, commandOptions, cliOptions);
 
   const cliReportEndEvent: CliReportEndEvent = {
     commandOptions,
@@ -74,28 +78,26 @@ const output = async (report: Report, commandOptions: CommandOptions): Promise<v
 
   await EventEmitter.fire('output/cli/report/end', cliReportEndEvent);
 
-  if (table) {
-    const cliWriteStartEvent: CliWriteStartEvent = {
-      commandOptions,
-      report,
-      table,
-    };
+  const cliWriteStartEvent: CliWriteStartEvent = {
+    commandOptions,
+    report,
+    table,
+  };
 
-    await EventEmitter.fire('output/cli/report/start', cliWriteStartEvent);
+  await EventEmitter.fire('output/cli/report/start', cliWriteStartEvent);
 
-    const contents = table.toString();
+  const cliContents = table.render('cli');
 
-    Logger.log(contents);
+  Logger.log(cliContents);
 
-    const cliWriteEndEvent: CliWriteEndEvent = {
-      commandOptions,
-      contents,
-      report,
-      table,
-    };
+  const cliWriteEndEvent: CliWriteEndEvent = {
+    commandOptions,
+    contents: cliContents,
+    report,
+    table,
+  };
 
-    await EventEmitter.fire('output/cli/write/end', cliWriteEndEvent);
-  }
+  await EventEmitter.fire('output/cli/write/end', cliWriteEndEvent);
 
   if (html || commandOptions.outputHtml) {
     const file = html ? resolvePath(commandOptions.cwd, html) : commandOptions.outputHtml;

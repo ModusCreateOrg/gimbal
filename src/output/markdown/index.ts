@@ -1,7 +1,7 @@
 import { TableInstanceOptions } from 'cli-table3';
-import stripAnsi from 'strip-ansi';
 import { createTable } from '../cli';
 import { Report, ReportItem } from '@/typings/command';
+import { Config } from '@/typings/components/Table';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
 
@@ -25,45 +25,24 @@ const markdownTableOptions = {
   },
 };
 
-export const outputTable = (
-  report: Report,
-  commandOptions: CommandOptions,
-  options?: CliOutputOptions,
-): string | void => {
-  if (!report.data) {
-    // TODO handle error?
-    return undefined;
-  }
+const tableConfig: Config = {
+  options: markdownTableOptions as TableInstanceOptions,
+};
 
-  const { checkThresholds } = commandOptions;
+export const outputTable = (report: Report, commandOptions: CommandOptions, options?: CliOutputOptions): string => {
+  const table = options && options.table ? options.table : createTable(commandOptions, tableConfig);
 
-  const table =
-    options && options.table
-      ? options.table
-      : createTable(commandOptions, markdownTableOptions as TableInstanceOptions);
-  const borderRow = ['----', ':---:'];
-
-  if (checkThresholds) {
-    borderRow.push(':---:', ':---:');
-  }
-
-  table.push(borderRow);
-
-  report.data.forEach(
-    (item: ReportItem): void => {
-      if (item.value != null) {
-        const row = [item.label, item.value];
-
-        if (checkThresholds) {
-          row.push(item.threshold as string, item.success ? '✓' : 'x');
+  if (report.data) {
+    report.data.forEach(
+      (item: ReportItem): void => {
+        if (item.value != null) {
+          table.add(item);
         }
+      },
+    );
+  }
 
-        table.push(row);
-      }
-    },
-  );
-
-  return stripAnsi(table.toString());
+  return table.render('markdown');
 };
 
 const MarkdownOutput = (report: Report, commandOptions: CommandOptions): string => {
@@ -83,7 +62,7 @@ ${outputTable(item, commandOptions)}`;
     },
   );
 
-  return stripAnsi(markdown);
+  return markdown;
 };
 
 export default MarkdownOutput;

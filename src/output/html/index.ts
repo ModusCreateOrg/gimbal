@@ -5,6 +5,8 @@ import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { readFile } from '@/utils/fs';
 
+// use table's html render type when we get to building real html
+
 const HtmlOutput = async (report: Report, options: CommandOptions): Promise<string> => {
   const markdown = generateMarkdown(report, options);
   const html = marked(markdown);

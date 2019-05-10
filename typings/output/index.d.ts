@@ -1,5 +1,6 @@
-import { Cell, GenericTable } from 'cli-table3';
+import Table from '@/components/Table';
 import { Report } from '@/typings/command';
+import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
 
 export interface FileWriteStartEvent {
@@ -16,26 +17,27 @@ export interface FileWriteEndEvent {
 
 export interface CliReportStartEvent {
   commandOptions: CommandOptions;
+  cliOptions: CliOutputOptions;
   report: Report;
 }
 
 export interface CliReportEndEvent {
   commandOptions: CommandOptions;
   report: Report;
-  table: GenericTable<Cell[]> | void;
+  table: Table | void;
 }
 
 export interface CliWriteStartEvent {
   commandOptions: CommandOptions;
   report: Report;
-  table: GenericTable<Cell[]> | void;
+  table: Table | void;
 }
 
 export interface CliWriteEndEvent {
   commandOptions: CommandOptions;
   contents: string;
   report: Report;
-  table: GenericTable<Cell[]> | void;
+  table: Table | void;
 }
 
 export interface HtmlReportStartEvent {

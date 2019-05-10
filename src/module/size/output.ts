@@ -5,6 +5,7 @@ import { CommandOptions } from '@/typings/utils/command';
 import { truncatePath } from '@/utils/string';
 
 const bytesConfig = { unitSeparator: ' ' };
+const type = 'size';
 
 interface ParseOptions {
   cwd: string;
@@ -22,6 +23,7 @@ const parseArray = (files: ParsedFile[], config: ParsedSizeConfig, options: Pars
       threshold: config.maxSize,
       thresholdLimit: 'upper',
       value: bytes(file.size, bytesConfig),
+      type,
     }),
   );
 
@@ -49,6 +51,7 @@ const parseReport = (raw: ParsedSizeConfig[], options: CommandOptions): Report =
         label: 'Size Checks',
         rawLabel: 'Size Checks',
         success,
+        type,
       },
     ],
     raw,

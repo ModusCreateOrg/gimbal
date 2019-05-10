@@ -12,6 +12,8 @@ const keysToCareAbout = [
   'RecalcStyleCount',
 ];
 
+const type = 'heap-snapshot';
+
 const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig, options: CommandOptions): Report => {
   const { checkThresholds } = options;
   let success = true;
@@ -35,6 +37,7 @@ const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig, option
         thresholdLimit: 'lower',
         success: objSuccess,
         value,
+        type,
       };
     },
   );
@@ -46,6 +49,7 @@ const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig, option
         label: 'Heap Snapshot Checks',
         rawLabel: 'Heap Snapshot Checks',
         success,
+        type,
       },
     ],
     raw,

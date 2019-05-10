@@ -10,13 +10,16 @@ export interface ReportError {
 export interface ReportItem {
   data?: ReportItem[];
   label: string;
+  lastValue?: number | string;
   rawLabel: string;
+  rawLastValue?: number | string;
   rawThreshold?: number | string;
   rawValue?: number | string;
   threshold?: number | string;
   thresholdLimit?: ReportThresholdLimit;
   value?: number | string;
   success: boolean;
+  type: string;
 }
 
 export interface Report {

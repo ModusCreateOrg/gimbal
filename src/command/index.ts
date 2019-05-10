@@ -1,4 +1,3 @@
-import { Cell, GenericTable } from 'cli-table3';
 import program, { Command as CommandType } from 'commander';
 import figlet from 'figlet';
 import path from 'path';
@@ -17,9 +16,6 @@ type Action = (commandOptions: CommandOptions, args?: string[]) => Promise<any>;
 type ActionCreatorArg = string[] | CommandType;
 type ActionCreator = (...actionArgs: ActionCreatorArg[]) => Promise<void>;
 type DefaultValueFn = (options: CommandOptions) => CommandOptions;
-type OutputRet = void | GenericTable<Cell[]>;
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-type Output = (reports: any, options: CommandOptions) => Promise<OutputRet> | OutputRet;
 
 interface Option {
   defaultValue?: string | DefaultValueFn;

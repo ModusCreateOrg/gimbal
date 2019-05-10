@@ -3,6 +3,8 @@ import { Config, Result } from '@/typings/module/lighthouse';
 import { CommandOptions } from '@/typings/utils/command';
 import { AdvancedThreshold } from '@/typings/utils/threshold';
 
+const type = 'lighthouse';
+
 const parseReport = (raw: Result, { threshold }: Config, options: CommandOptions): Report => {
   const { checkThresholds } = options;
   const isComplexThreshold = typeof threshold === 'object';
@@ -30,6 +32,7 @@ const parseReport = (raw: Result, { threshold }: Config, options: CommandOptions
         thresholdLimit: 'lower',
         success: objSuccess,
         value: value.toFixed(0),
+        type,
       };
     },
   );
@@ -41,6 +44,7 @@ const parseReport = (raw: Result, { threshold }: Config, options: CommandOptions
         label: 'Lighthouse Audits',
         rawLabel: 'Lighthouse Audits',
         success,
+        type,
       },
     ],
     raw,

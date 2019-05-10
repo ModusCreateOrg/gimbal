@@ -1,6 +1,6 @@
-import { HorizontalTable } from 'cli-table3';
+import Table from '@/components/Table';
 
 /* eslint-disable-next-line import/prefer-default-export */
 export interface CliOutputOptions {
-  table?: HorizontalTable;
+  table?: Table;
 }
