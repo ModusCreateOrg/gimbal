@@ -2,7 +2,6 @@ import bytes from 'bytes';
 import { Report, ReportItem } from '@/typings/command';
 import { ParsedSizeConfig, ParsedFile } from '@/typings/module/size';
 import { CommandOptions } from '@/typings/utils/command';
-import { truncatePath } from '@/utils/string';
 
 const bytesConfig = { unitSeparator: ' ' };
 const type = 'size';
@@ -15,7 +14,7 @@ interface ParseOptions {
 const parseArray = (files: ParsedFile[], config: ParsedSizeConfig, options: ParseOptions): ReportItem[] =>
   files.map(
     (file: ParsedFile): ReportItem => ({
-      label: truncatePath(file.path, options.cwd),
+      label: file.path,
       rawLabel: file.path,
       rawThreshold: config.maxSizeBytes,
       rawValue: file.size,

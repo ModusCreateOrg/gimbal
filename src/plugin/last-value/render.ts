@@ -43,6 +43,7 @@ export const addColumn = (table: Table | void, config: Config): void => {
       {
         header: 'Last Value',
         key: 'lastValue',
+        align: 'center',
         renderer: (lastValue: number | string, item: LastReportItem): string => {
           const failure = doesItemFail(item, config);
 

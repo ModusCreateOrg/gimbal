@@ -6,6 +6,7 @@ export interface Column {
   align?: Alignments;
   header: string;
   key: string;
+  maxWidth?: number;
   renderer?: Renderer;
 }
 

@@ -13,6 +13,7 @@ export const createTable = (commandOptions: CommandOptions, config?: Config): Ta
       {
         header: 'Label',
         key: 'label',
+        maxWidth: 50,
         renderer: (label, item): string => {
           const { data, success } = item;
 
