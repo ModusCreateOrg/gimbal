@@ -1,36 +1,25 @@
-import { AdvancedThreshold, Modes, Options } from '@/typings/utils/threshold';
+type Modes = 'lower' | 'upper';
 
-const modeChecker = (value: number, threshold: number, mode?: Modes): boolean =>
-  mode === 'above' ? value < threshold : value > threshold;
+const PERCENTAGE_RE = /^(\d+(?:\.\d+)?)\s*%$/;
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-const checkThresholds = (obj: any, threshold?: number | AdvancedThreshold, options?: Options): boolean => {
-  if (threshold == null) {
-    return true;
-  }
+export const isPercentage = (value: number | string): boolean => String(value).match(PERCENTAGE_RE) != null;
+export const percentToNumber = (value: string): number => Number(value.replace(PERCENTAGE_RE, '$1'));
 
-  let i = 0;
-  const mode = options && options.mode;
-  const parser = options && options.parser;
-  const keys = Object.keys(obj).sort();
-  const { length } = keys;
+const checkValue = (value: number, threshold: number, mode: Modes): boolean =>
+  mode === 'lower'
+    ? value >= threshold // lower means value should be above or equal to the threshold
+    : value <= threshold; // upper mode means value should be below or equal to the threshold
 
-  while (i < length) {
-    const key = keys[i];
-    const value = obj[key];
-    const parsedValue = parser ? parser(value) : value;
-    const thresholdNumber: number = (typeof threshold === 'object'
-      ? (threshold as AdvancedThreshold)[key]
-      : threshold) as number;
+const checkPercentage = (raw: string, rawThreshold: string, mode: Modes): boolean => {
+  const threshold = percentToNumber(rawThreshold);
+  const value = percentToNumber(raw);
 
-    if (modeChecker(parsedValue, thresholdNumber, mode)) {
-      return false;
-    }
-
-    i += 1;
-  }
-
-  return true;
+  return checkValue(value, threshold, mode);
 };
 
-export default checkThresholds;
+const checkThreshold = (value: number | string, threshold: number | string, mode: Modes = 'upper'): boolean =>
+  isPercentage(value)
+    ? checkPercentage(value as string, threshold as string, mode)
+    : checkValue(value as number, threshold as number, mode);
+
+export default checkThreshold;

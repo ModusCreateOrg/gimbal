@@ -109,6 +109,7 @@
     "puppeteer": "1.15.0",
     "read-pkg": "5.1.1",
     "serve-handler": "6.0.0",
+    "sqlite3": "4.0.8",
     "strip-ansi": "5.2.0"
   },
   "devDependencies": {
@@ -126,6 +127,7 @@
     "@types/pidusage": "2.0.1",
     "@types/puppeteer": "1.12.4",
     "@types/read-pkg": "4.0.0",
+    "@types/sqlite3": "3.1.5",
     "@typescript-eslint/eslint-plugin": "1.7.0",
     "@zerollup/ts-transform-paths": "1.7.1",
     "copyfiles": "2.1.0",

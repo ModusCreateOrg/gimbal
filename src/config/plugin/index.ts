@@ -1,12 +1,17 @@
 import program from 'commander';
 import resolver from '@/config/resolver';
 import event from '@/event';
-import { PluginConfig, Plugin, PluginFunction, PluginOptions } from '@/typings/config/plugin';
+import { PluginConfig, Plugin, PluginOptions } from '@/typings/config/plugin';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
 
+interface Map {
+  [label: string]: PluginConfig;
+}
+
 // this is the object that gets passed to a plugin function
 const options: PluginOptions = {
+  dir: __dirname,
   event,
   program,
   utils: {
@@ -14,22 +19,19 @@ const options: PluginOptions = {
   },
 };
 
+const map: Map = {};
+
 const parsePlugins = async (
-  plugins: (string | Plugin | PluginFunction)[],
+  plugins: (string | PluginConfig)[],
   dir: string,
   commandOptions: CommandOptions,
-): Promise<void[]> => {
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+): Promise<any[]> => {
   const pluginConfigs = await Promise.all(
     plugins.map(
-      async (plugin: string | PluginConfig | Plugin | PluginFunction): Promise<PluginConfig> => {
-        if (typeof plugin === 'function' || (plugin as Plugin).default) {
-          return {
-            plugin: plugin as Plugin,
-          };
-        }
-
-        const obj: PluginConfig = typeof plugin === 'string' ? { plugin } : (plugin as PluginConfig);
-        const resolved = await import(resolver(obj.plugin as string, dir));
+      async (plugin: string | PluginConfig): Promise<PluginConfig> => {
+        const obj: PluginConfig = typeof plugin === 'string' ? { plugin, name: plugin } : (plugin as PluginConfig);
+        const resolved = await import(resolver(obj.plugin as string, dir, 'plugin'));
 
         return {
           ...obj,
@@ -41,18 +43,19 @@ const parsePlugins = async (
 
   return Promise.all(
     pluginConfigs.map(
-      (config: PluginConfig): void => {
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+      (config: PluginConfig): any => {
         const { plugin } = config;
-        const func = (plugin as Plugin).default
-          ? ((plugin as Plugin).default as PluginFunction)
-          : (plugin as PluginFunction);
+        const func = (plugin as Plugin).default;
+
+        map[config.name] = config;
 
         // since we could be in user land, let's clone
         // the options object incase someone messes with
         // it that could cause issues.
         // Also return it in case it's a promise, we can
         // wait for it.
-        return func({ ...options, commandOptions: { ...commandOptions }, utils: { ...options.utils } }, config);
+        return func({ ...options, commandOptions: { ...commandOptions }, utils: { ...options.utils }, dir }, config);
       },
     ),
   );

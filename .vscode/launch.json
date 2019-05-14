@@ -54,7 +54,9 @@
       "${workspaceFolder}/src/index.ts",
       "heap-snapshot",
       "--cwd",
-      "./sample/build"
+      "./sample/build",
+      "--config",
+      "../.gimbalrc.yml"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"
@@ -73,7 +75,9 @@
       "${workspaceFolder}/src/index.ts",
       "lighthouse",
       "--cwd",
-      "./sample/build"
+      "./sample/build",
+      "--config",
+      "../.gimbalrc.yml"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"
@@ -111,7 +115,9 @@
       "${workspaceFolder}/src/index.ts",
       "unused-source",
       "--cwd",
-      "./sample/build"
+      "./sample/build",
+      "--config",
+      "../.gimbalrc.yml"
     ],
     "skipFiles": [
       "<node_internals>/**/*.js"

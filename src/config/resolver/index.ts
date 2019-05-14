@@ -8,7 +8,7 @@ const IS_USER_HOME_RE = /^~/;
 
 const GIMBAL_ROOT = resolvePath(__dirname, '../..');
 
-const resolver = (requested: string, dir: string): string => {
+const resolver = (requested: string, dir: string, dirPrefix: string): string => {
   // if path starts with `~` then this is a filesystem path
   // that needs to be mapped to the user's home dir. This
   // should be handled by nodejs in a platform agnostic
@@ -27,6 +27,12 @@ const resolver = (requested: string, dir: string): string => {
   // as a gimbal internal plugin
   if (requested.match(IS_GIMBAL_RE)) {
     return resolvePath(GIMBAL_ROOT, requested.substr(2));
+  }
+
+  const gimbalDir = path.join(GIMBAL_ROOT, dirPrefix, requested);
+
+  if (existsSync(gimbalDir)) {
+    return resolvePath(gimbalDir);
   }
 
   // see if it's a node module install on the cwd

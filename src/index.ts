@@ -24,6 +24,7 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
     .description('A CLI tool for monitoring web performance in modern web projects')
     // global options all command will receive
     .option('--cwd [dir]', 'The directory to work in. Defaults to where the command was executed from.', process.cwd())
+    .option('--config [file]', 'The file to load as the configuration file.')
     .option('--no-comment', 'Set to disable commenting results on the VCS')
     .option('--no-check-thresholds', 'Set to disable checking thresholds.')
     .option('--output-html [file]', 'The path to write the results as HTML to.')

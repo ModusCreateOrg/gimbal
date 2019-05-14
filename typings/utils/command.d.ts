@@ -1,6 +1,7 @@
 export interface CommandOptions {
   cwd: string;
   comment: boolean;
+  config?: string;
   outputHtml?: string;
   outputJson?: string;
   outputMarkdown?: string;

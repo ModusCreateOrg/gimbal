@@ -11,7 +11,7 @@ import {
   PluginEndEvent,
 } from '@/typings/config';
 import { CommandOptions } from '@/typings/utils/command';
-import { resolvePath } from '@/utils/fs';
+import { exists, resolvePath } from '@/utils/fs';
 import jsLoader from './loader/js';
 import yamlLoader from './loader/yaml';
 import parsePlugins from './plugin';
@@ -47,6 +47,16 @@ class Config {
       throw new Error('Configuration is already loaded!');
     }
 
+    if (commandOptions.config) {
+      const file = resolvePath(commandOptions.cwd, commandOptions.config);
+
+      if (await exists(file)) {
+        return this.loadFile(dir, file, commandOptions, force);
+      }
+
+      return undefined;
+    }
+
     const glob = resolvePath(dir, this.CONFIG_FILE_GLOB);
     const [file] = await globby(glob);
 
@@ -54,6 +64,15 @@ class Config {
       return undefined;
     }
 
+    return this.loadFile(dir, file, commandOptions, force);
+  }
+
+  public async loadFile(
+    dir: string,
+    file: string,
+    commandOptions: CommandOptions,
+    force: boolean,
+  ): Promise<ConfigType | void> {
     const ext = extname(file).substr(1);
     const loader = this.LOADERS[ext];
 
