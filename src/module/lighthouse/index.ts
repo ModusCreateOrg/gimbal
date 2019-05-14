@@ -4,6 +4,7 @@ import Config from '@/config';
 import EventEmitter from '@/event';
 import { Report } from '@/typings/command';
 import {
+  Audit,
   Config as LighthouseConfig,
   Options,
   AuditStartEvent,
@@ -21,6 +22,18 @@ const lighthouseRunner = async (
   commandOptions: CommandOptions,
   config: LighthouseConfig = Config.get('configs.lighthouse', defaultConfig),
 ): Promise<Report> => {
+  /* eslint-disable-next-line no-param-reassign  */
+  options.output = ['json'];
+
+  if ((config.outputHtml || commandOptions.lighthouseOutputHtml) && options.output.indexOf('html') === -1) {
+    options.output.push('html');
+
+    if (!config.outputHtml) {
+      /* eslint-disable-next-line no-param-reassign  */
+      config.outputHtml = commandOptions.lighthouseOutputHtml as string;
+    }
+  }
+
   const auditStartEvent: AuditStartEvent = {
     config,
     options,
@@ -29,7 +42,7 @@ const lighthouseRunner = async (
 
   await EventEmitter.fire(`module/lighthouse/audit/start`, auditStartEvent);
 
-  const audit = await lighthouse(
+  const audit: Audit = await lighthouse(
     url,
     {
       ...options,
@@ -56,7 +69,7 @@ const lighthouseRunner = async (
 
   await EventEmitter.fire(`module/lighthouse/report/start`, reportStartEvent);
 
-  const report = parseReport(audit.lhr, config, commandOptions);
+  const report = await parseReport(audit, config, commandOptions);
 
   const reportEndEvent: ReportEndEvent = {
     audit,

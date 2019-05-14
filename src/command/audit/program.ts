@@ -27,6 +27,10 @@ export default new Command({
       description: 'Disable the lighthouse auditing',
       flag: '--no-lighthouse',
     },
+    {
+      description: 'Location to output the lighthouse HTML report to.',
+      flag: '--lighthouse-output-html [file]',
+    },
   ],
   title: 'Web Performance Audit',
 });

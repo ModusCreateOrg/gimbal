@@ -26,12 +26,14 @@ export interface ConfigSettings {
 
 export interface Config {
   extends?: string;
+  outputHtml?: string;
   settings?: ConfigSettings;
   threshold: Threshold;
 }
 
 export interface Options {
   chromePort: string;
+  output?: string[];
 }
 
 export interface Result {
@@ -48,6 +50,11 @@ export interface Result {
   runWarnings: string[];
   timing: {};
   userAgent: string;
+}
+
+export interface Audit {
+  lhr: Result;
+  report?: string[];
 }
 
 export interface AuditStartEvent {

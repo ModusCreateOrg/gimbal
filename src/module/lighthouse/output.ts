@@ -1,18 +1,21 @@
+import { dirname } from 'path';
 import { Report, ReportItem } from '@/typings/command';
-import { Config, Result } from '@/typings/module/lighthouse';
+import { Audit, Config } from '@/typings/module/lighthouse';
 import { CommandOptions } from '@/typings/utils/command';
 import { AdvancedThreshold } from '@/typings/utils/threshold';
+import { mkdirp, resolvePath, writeFile } from '@/utils/fs';
 
 const type = 'lighthouse';
 
-const parseReport = (raw: Result, { threshold }: Config, options: CommandOptions): Report => {
+const parseReport = async (raw: Audit, { outputHtml, threshold }: Config, options: CommandOptions): Promise<Report> => {
+  const { lhr, report } = raw;
   const { checkThresholds } = options;
   const isComplexThreshold = typeof threshold === 'object';
   let success = true;
 
-  const data: ReportItem[] = Object.keys(raw.categories).map(
+  const data: ReportItem[] = Object.keys(lhr.categories).map(
     (label: string): ReportItem => {
-      const obj = raw.categories[label];
+      const obj = lhr.categories[label];
       const value = obj.score * 100;
       const thresholdNumber: number = (isComplexThreshold
         ? (threshold as AdvancedThreshold)[label]
@@ -36,6 +39,15 @@ const parseReport = (raw: Result, { threshold }: Config, options: CommandOptions
       };
     },
   );
+
+  if (outputHtml && report) {
+    const [, html] = report;
+    const path = resolvePath(options.cwd, outputHtml);
+
+    await mkdirp(dirname(path));
+
+    await writeFile(path, html, 'utf8');
+  }
 
   return {
     data: [
