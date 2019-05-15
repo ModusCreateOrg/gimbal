@@ -68,7 +68,7 @@ const checkThreshold = (percentage: number, threshold?: string): CheckThresholdR
   const thresholdNum = (threshold as string).substr(0, (threshold as string).length - 1);
 
   return {
-    success: percentage >= Number(thresholdNum),
+    success: percentage <= Number(thresholdNum),
     threshold,
   };
 };
