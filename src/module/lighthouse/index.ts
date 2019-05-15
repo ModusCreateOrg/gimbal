@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 // @ts-ignore
 import lighthouse from 'lighthouse';
 import Config from '@/config';
@@ -16,14 +17,36 @@ import { CommandOptions } from '@/typings/utils/command';
 import defaultConfig from './default-config';
 import parseReport from './output';
 
+// Default config options
+const defaults = {
+  output: ['json'],
+};
+
 const lighthouseRunner = async (
   url: string,
-  options: Options,
+  userOptions: Options,
   commandOptions: CommandOptions,
   config: LighthouseConfig = Config.get('configs.lighthouse', defaultConfig),
 ): Promise<Report> => {
-  /* eslint-disable-next-line no-param-reassign  */
-  options.output = ['json'];
+  // Build options but let users change the defaults if needed
+  const options = {
+    ...deepmerge(defaults, userOptions),
+    ...Config.getObject(
+      [
+        {
+          config: 'configs.lighthouse',
+          defaultValue: {
+            maxWaitForFcp: 60 * 1000,
+          },
+          key: 'lighthouseConfig', // is just a temp key since flatten is true
+        },
+      ],
+      {
+        flatten: true,
+        removeProps: ['outputHtml', 'threshold'],
+      },
+    ),
+  };
 
   if ((config.outputHtml || commandOptions.lighthouseOutputHtml) && options.output.indexOf('html') === -1) {
     options.output.push('html');

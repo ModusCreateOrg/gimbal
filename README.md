@@ -207,6 +207,7 @@ The main purpose of Gimbal is to run audits against an application. Each audit h
 ```yaml
 configs:
   lighthouse:
+    outputHtml: artifacts/lighthouse.html
     threshold:
       accessibility: 93
       'best-practices': 90
@@ -228,8 +229,20 @@ configs:
       maxSize: 1 MB
     - path: ./build/static/js/runtime*.js
       maxSize: 10 KB
+    - path: ./build/vendor.*.js
+      maxSize: 250 KB
+    - path: ./build/!(vendor).*.js
+      maxSize: 200 KB
     - path: ./build/
       maxSize: 18 MB
+  unused-source:
+    threshold: 0%
+  outputs:
+    html: artifacts/results.html
+    json: artifacts/results.json
+    markdown: artifacts/results.md
+  jobs:
+    - audit
 ```
 
 More about configuring thresholds can be found on the individual documentation pages of each [commands](./docs/command) and [modules](./docs/module).

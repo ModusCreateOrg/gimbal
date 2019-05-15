@@ -16,6 +16,18 @@ import jsLoader from './loader/js';
 import yamlLoader from './loader/yaml';
 import parsePlugins from './plugin';
 
+interface Descriptor {
+  config: string;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  defaultValue?: any;
+  key: string;
+}
+
+interface GetObjectOptions {
+  flatten?: boolean;
+  removeProps?: string[];
+}
+
 class Config {
   private CONFIG_FILE_GLOB: string = '.gimbalrc.{js,json,yaml,yml}';
 
@@ -184,6 +196,52 @@ class Config {
      * which could pose an issue.
      */
     return this.maybeMerge(defaultValue, obj);
+  }
+
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  public getObject(descriptors: Descriptor[], options?: GetObjectOptions): any {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    let obj: any = {};
+
+    descriptors.forEach(
+      (descriptor: Descriptor): void => {
+        const value = this.get(descriptor.config, descriptor.defaultValue);
+
+        // TODO support nested key
+        obj[descriptor.key] = value;
+      },
+    );
+
+    if (options) {
+      if (options.flatten) {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        const newObj: any = {};
+
+        Object.keys(obj).forEach(
+          (key: string): void => {
+            const value = obj[key];
+
+            if (typeof value === 'object' && !Array.isArray(value)) {
+              Object.assign(newObj, value);
+            } else {
+              newObj[key] = value;
+            }
+          },
+        );
+
+        obj = newObj;
+      }
+
+      if (options.removeProps && options.removeProps.length > 0) {
+        options.removeProps.forEach(
+          (key: string): void => {
+            delete obj[key];
+          },
+        );
+      }
+    }
+
+    return obj;
   }
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
