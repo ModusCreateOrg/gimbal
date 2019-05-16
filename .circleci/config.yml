@@ -1,12 +1,13 @@
 aliases:
   - &restore-npm-cache
-    key: v1-dependencies-{{ checksum "package-lock.json" }}
+    key: v1-dependencies-{{ checksum "yarn.lock" }}
     name: Restoring node_modules/ cache
   - &save-npm-cache
-    key: v1-dependencies-{{ checksum "package-lock.json" }}
+    key: v1-dependencies-{{ checksum "yarn.lock" }}
     name: Saving node_modules/ cache
     paths:
       - node_modules
+      - packages/gimbal/node_modules
 
 docker-defaults: &docker-defaults
   docker:
@@ -32,11 +33,11 @@ jobs:
       - restore_cache: *restore-npm-cache
       - run: yarn build
       - run:
-          name: Test Help
-          command: node bin/index.js --help
+          name: Test Gimbal CLI Help
+          command: node packages/gimbal/bin/index.js --help
       - run:
-          name: Test Version
-          command: node bin/index.js --version
+          name: Test Gimbal CLI Version
+          command: node packages/gimbal/bin/index.js --version
 
   build-docker:
       <<: *defaults
@@ -47,14 +48,14 @@ jobs:
         - run:
             name: Build Docker image
             command: |
-              docker build -t $IMAGE_NAME:latest .
+              docker build -t $IMAGE_NAME:latest packages/gimbal
         - run:
             name: Archive Docker image
-            command: docker save -o image.tar $IMAGE_NAME
+            command: docker save -o gimbal.tar $IMAGE_NAME
         - persist_to_workspace:
             root: .
             paths:
-              - ./image.tar
+              - ./gimbal.tar
 
   install-dependencies:
     <<: *defaults
@@ -63,7 +64,7 @@ jobs:
       - restore_cache: *restore-npm-cache
       - run:
           name: Install Node modules
-          command: npm i -ci
+          command: yarn
       - save_cache: *save-npm-cache
 
   lint:
@@ -81,11 +82,11 @@ jobs:
       - run:
           name: Setup .npmrc
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - run: npm i -ci
+      - run: yarn
       - run: yarn lint
       - run: yarn test
       - run: yarn build
-      - run: npm publish
+      - run: yarn lerna publish from-package --yes
 
   publish-docker:
     <<: *defaults
@@ -96,7 +97,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Load archived Docker image
-          command: docker load -i /tmp/workspace/image.tar
+          command: docker load -i /tmp/workspace/gimbal.tar
       - run:
           name: Publish Docker Image to Docker Hub
           command: |

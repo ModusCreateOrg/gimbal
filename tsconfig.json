@@ -5,24 +5,14 @@
     "moduleResolution": "node",
     "lib": ["es6", "es2015", "dom"],
     "declaration": true,
-    "outDir": "lib",
-    "rootDir": "src",
     "strict": true,
     "types": ["node", "jest"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
 
-    "baseUrl": ".",
-    "paths": {
-      "@/typings/*": ["./typings/*"],
-      "@/*": ["./src/*"]
-    },
-
-    "plugins": [
-      {
-        "transform": "@zerollup/ts-transform-paths"
-      }
-    ],
+    "plugins": [{
+      "transform": "@zerollup/ts-transform-paths"
+    }],
 
     /* Strict Type-Checking Options */
     /* Raise error on expressions and declarations with an implied 'any' type. */
@@ -58,8 +48,5 @@
     "bin",
     "lib",
     "node_modules"
-  ],
-  "include": [
-    "./src/**/*"
   ]
 }

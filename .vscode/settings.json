@@ -9,6 +9,10 @@
     "typescript",
     "typescriptreact"
   ],
+  "eslint.workingDirectories": [{
+    "directory": "./packages/gimbal",
+    "changeProcessCWD": true
+  }],
   "cSpell.words": [
     "brotli",
     "deepmerge",

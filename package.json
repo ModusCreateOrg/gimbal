@@ -1,151 +1,52 @@
 {
-  "name": "@modus/gimbal",
-  "version": "1.0.10",
-  "description": "A CLI tool for monitoring web performance in modern web projects",
-  "main": "./lib/modules.js",
-  "bin": {
-    "gimbal": "./bin/index.js"
-  },
-  "types": "./bin/index.d.ts",
-  "files": [
-    "bin/**/*",
-    "lib/**/*"
-  ],
+  "name": "@modus/gimbal-monorepo",
+  "private": true,
   "scripts": {
-    "prebuild": "rm -Rf lib",
-    "build": "ttsc -p .",
-    "build:check": "ttsc --noEmit -p .",
-    "build:watch": "ttsc --watch -p .",
-    "postbuild": "npm run copy-static-assets",
-    "copy-static-assets": "copyfiles -u 1 src/**/*/*.{html,txt} lib/",
-    "create": "npm run build && npm run start",
-    "lint": "eslint 'bin/**/*.js' 'src/**/*.ts'",
+    "build": "lerna run build",
+    "clean": "rimraf packages/**/lib",
+    "lint": "lerna run lint",
     "lint-staged": "lint-staged",
-    "setup": "npx create-react-app sample && cd sample && SKIP_PREFLIGHT_CHECK=true npm run build",
-    "start": "node -r ts-node/register -r tsconfig-paths/register src/index.ts",
-    "start:break": "node --inspect-brk -r ts-node/register -r tsconfig-paths/register src/index.ts",
-    "start:debug": "node --inspect -r ts-node/register -r tsconfig-paths/register src/index.ts",
+    "postinstall": "lerna bootstrap",
+    "publish": "lerna run tsc && lerna publish",
     "test": "jest --coverage",
     "test:coveralls": "cat ./coverage/lcov.info | coveralls",
-    "test:nocov": "jest"
+    "test:nocov": "jest",
+    "version": "lerna version patch --exact --yes"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ModusCreateOrg/gimbal.git"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "web-performance",
-    "ci",
-    "performance",
-    "webdevelopment",
-    "javascript",
-    "typescript",
-    "lighthouse",
-    "bundlesize",
-    "audit",
-    "react",
-    "puppeteer"
-  ],
-  "contributors": [
-    {
-      "name": "Muhammad Ahsan Ayaz",
-      "email": "ahsan.ayaz@moduscreate.com"
-    },
-    {
-      "name": "Grgur de Grisogono",
-      "email": "grgur@moduscreate.com"
-    },
-    {
-      "name": "Matthew Kelch",
-      "email": "matthew.kelch@moduscreate.com"
-    },
-    {
-      "name": "Seth Lemmons",
-      "email": "seth.lemmons@moduscreate.com"
-    },
-    {
-      "name": "Mitchell Simoens",
-      "email": "mitchell.simoens@moduscreate.com"
-    }
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ModusCreateOrg/gimbal/issues"
-  },
-  "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint-staged"
     }
   },
   "lint-staged": {
-    "bin/**/*.{js,jsx,ts,tsx},src/**/*.{js,jsx,ts,tsx}": [
+    "packages/**/bin/**/*.{js,jsx,ts,tsx},src/**/*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "git add"
     ]
   },
-  "dependencies": {
-    "@octokit/rest": "16.25.3",
-    "brotli-size": "0.1.0",
-    "bytes": "3.1.0",
-    "cli-table3": "0.5.1",
-    "colors": "1.3.3",
-    "commander": "2.20.0",
-    "deepmerge": "3.2.0",
-    "figlet": "1.2.1",
-    "get-folder-size": "2.0.1",
-    "get-port": "5.0.0",
-    "globby": "9.2.0",
-    "gzip-size": "5.1.0",
-    "js-yaml": "3.13.1",
-    "lighthouse": "5.0.0",
-    "marked": "0.6.2",
-    "minimatch": "3.0.4",
-    "mkdirp": "0.5.1",
-    "mysql": "2.17.1",
-    "pidusage": "2.0.17",
-    "puppeteer": "1.15.0",
-    "read-pkg": "5.1.1",
-    "serve-handler": "6.0.0",
-    "sqlite3": "4.0.8",
-    "strip-ansi": "5.2.0"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
-    "@types/bytes": "3.0.0",
-    "@types/copyfiles": "2.1.0",
-    "@types/figlet": "1.2.0",
-    "@types/get-folder-size": "2.0.0",
-    "@types/globby": "9.1.0",
-    "@types/jest": "24.0.12",
-    "@types/js-yaml": "3.12.1",
-    "@types/marked": "0.6.5",
-    "@types/minimatch": "3.0.3",
-    "@types/mkdirp": "0.5.2",
-    "@types/mysql": "2.15.6",
-    "@types/node": "12.0.0",
-    "@types/pidusage": "2.0.1",
-    "@types/puppeteer": "1.12.4",
-    "@types/read-pkg": "4.0.0",
-    "@types/sqlite3": "3.1.5",
-    "@typescript-eslint/eslint-plugin": "1.7.0",
+    "@types/jest": "24.0.13",
+    "@types/node": "12.0.2",
+    "@typescript-eslint/eslint-plugin": "1.9.0",
     "@zerollup/ts-transform-paths": "1.7.1",
-    "copyfiles": "2.1.0",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "17.1.0",
-    "eslint-config-prettier": "4.2.0",
+    "eslint-config-prettier": "4.3.0",
     "eslint-import-resolver-typescript": "1.1.1",
     "eslint-plugin-import": "2.17.2",
     "eslint-plugin-jest": "22.5.1",
     "eslint-plugin-jsx-a11y": "6.2.1",
-    "eslint-plugin-prettier": "3.0.1",
+    "eslint-plugin-prettier": "3.1.0",
     "eslint-plugin-react": "7.13.0",
-    "husky": "2.2.0",
+    "husky": "2.3.0",
     "jest": "24.8.0",
-    "lint-staged": "8.1.6",
-    "prettier": "1.17.0",
+    "lerna": "3.14.1",
+    "lint-staged": "8.1.7",
+    "prettier": "1.17.1",
+    "rimraf": "2.6.3",
     "ts-jest": "24.0.2",
     "ts-node": "8.1.0",
     "tsconfig-paths": "3.8.0",

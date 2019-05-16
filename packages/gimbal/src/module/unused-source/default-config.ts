@@ -9,24 +9,24 @@ const defaultConfig: UnusedSourceConfig = {
    */
   threshold: [
     {
-      maxSize: '30%',
+      maxSize: '35%',
       path: '**/*/*.css',
     },
     {
-      maxSize: '2%',
+      maxSize: '3%',
       path: '**/*/main.*.js',
     },
     {
-      maxSize: '40%',
+      maxSize: '70%',
       path: '**/*/*.js',
     },
     {
-      maxSize: '25%',
+      maxSize: '30%',
       path: '/',
       type: 'js',
     },
     {
-      maxSize: '40%',
+      maxSize: '65%',
       path: '/',
     },
   ] as SizeConfigs[],

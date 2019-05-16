@@ -6,7 +6,7 @@
   "configurations": [{
     "type": "node",
     "request": "launch",
-    "name": "No Command",
+    "name": "gimbal",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -14,17 +14,20 @@
       "tsconfig-paths/register"
     ],
     "args": [
-      "${workspaceFolder}/src/index.ts",
+      "${workspaceFolder}/packages/gimbal/src/index.ts",
       "--cwd",
-      "./sample"
+      "${workspaceFolder}/packages/${input:appInput}"
     ],
+    "env": {
+      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
+    },
     "skipFiles": [
       "<node_internals>/**/*.js"
     ]
   }, {
     "type": "node",
     "request": "launch",
-    "name": "audit",
+    "name": "gimbal audit",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -32,18 +35,21 @@
       "tsconfig-paths/register"
     ],
     "args": [
-      "${workspaceFolder}/src/index.ts",
+      "${workspaceFolder}/packages/gimbal/src/index.ts",
       "audit",
       "--cwd",
-      "./sample"
+      "${workspaceFolder}/packages/${input:appInput}"
     ],
+    "env": {
+      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
+    },
     "skipFiles": [
       "<node_internals>/**/*.js"
     ]
   }, {
     "type": "node",
     "request": "launch",
-    "name": "heap-snapshot",
+    "name": "gimbal heap-snapshot",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -51,20 +57,23 @@
       "tsconfig-paths/register"
     ],
     "args": [
-      "${workspaceFolder}/src/index.ts",
+      "${workspaceFolder}/packages/gimbal/src/index.ts",
       "heap-snapshot",
       "--cwd",
-      "./sample/build",
+      "${workspaceFolder}/packages/${input:appInput}/build",
       "--config",
       "../.gimbalrc.yml"
     ],
+    "env": {
+      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
+    },
     "skipFiles": [
       "<node_internals>/**/*.js"
     ]
   }, {
     "type": "node",
     "request": "launch",
-    "name": "lighthouse",
+    "name": "gimbal lighthouse",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -72,20 +81,23 @@
       "tsconfig-paths/register"
     ],
     "args": [
-      "${workspaceFolder}/src/index.ts",
+      "${workspaceFolder}/packages/gimbal/src/index.ts",
       "lighthouse",
       "--cwd",
-      "./sample/build",
+      "${workspaceFolder}/packages/${input:appInput}/build",
       "--config",
       "../.gimbalrc.yml"
     ],
+    "env": {
+      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
+    },
     "skipFiles": [
       "<node_internals>/**/*.js"
     ]
   }, {
     "type": "node",
     "request": "launch",
-    "name": "size",
+    "name": "gimbal size",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -93,18 +105,21 @@
       "tsconfig-paths/register"
     ],
     "args": [
-      "${workspaceFolder}/src/index.ts",
+      "${workspaceFolder}/packages/gimbal/src/index.ts",
       "size",
       "--cwd",
-      "./sample"
+      "${workspaceFolder}/packages/${input:appInput}"
     ],
+    "env": {
+      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
+    },
     "skipFiles": [
       "<node_internals>/**/*.js"
     ]
   }, {
     "type": "node",
     "request": "launch",
-    "name": "unused-source",
+    "name": "gimbal unused-source",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -112,13 +127,16 @@
       "tsconfig-paths/register"
     ],
     "args": [
-      "${workspaceFolder}/src/index.ts",
+      "${workspaceFolder}/packages/gimbal/src/index.ts",
       "unused-source",
       "--cwd",
-      "./sample/build",
+      "${workspaceFolder}/packages/${input:appInput}/build",
       "--config",
       "../.gimbalrc.yml"
     ],
+    "env": {
+      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
+    },
     "skipFiles": [
       "<node_internals>/**/*.js"
     ]
@@ -129,5 +147,11 @@
     "description": "Which ENV file should be used?",
     "options": ["CircleCI/commit.env", "CircleCI/pr.env", "TravisCI/commit.env", "TravisCI/pr.env"],
     "default": "CircleCI/pr.env"
+  }, {
+    "type": "pickString",
+    "id": "appInput",
+    "description": "Which app do you want to run on?",
+    "options": ["example-react"],
+    "default": "example-react"
   }]
 }
