@@ -12,51 +12,14 @@ export interface SizeConfig {
   threshold: SizeConfigs[];
 }
 
-export interface ParsedSizeConfig {
-  failures: ParsedFile[];
-  fullPath: string;
+export interface FileResult {
+  filePath: string;
+  isDirectory: boolean;
+  maxSizeBytes: number;
   maxSize: string;
-  maxSizeBytes: number;
-  path: string;
-  successes: ParsedFile[];
-}
-
-export interface ParsedFile {
-  fail: boolean;
-  path: string;
-  size: number;
-  threshold: string;
-}
-
-export interface CheckStartEvent {
-  config: SizeConfigs;
-  fullPath: string;
-  options: CommandOptions;
-  maxSizeBytes: number;
-  paths: string[];
-  sizeConfig: SizeConfig;
-}
-
-export interface CheckEndEvent {
-  config: SizeConfigs;
-  failures: ParsedFile[];
-  fullPath: string;
-  options: CommandOptions;
-  maxSizeBytes: number;
-  paths: string[];
-  sizeConfig: SizeConfig;
-  successes: ParsedFile[];
-}
-
-export interface ItemCheckEvent {
-  config: SizeConfigs;
-  fail: boolean;
-  options: CommandOptions;
-  maxSizeBytes: number;
-  parsedFile: ParsedFile;
-  path: string;
-  sizeConfig: SizeConfig;
-  size: number;
+  sizeBytes: number;
+  size: string;
+  thresholdPath: string;
 }
 
 export interface AuditStartEvent {
@@ -65,19 +28,19 @@ export interface AuditStartEvent {
 }
 
 export interface AuditEndEvent {
-  audit: ParsedSizeConfig[];
+  audit: FileResult[];
   config: SizeConfig;
   options: CommandOptions;
 }
 
 export interface ReportStartEvent {
-  audit: ParsedSizeConfig[];
+  audit: FileResult[];
   config: SizeConfig;
   options: CommandOptions;
 }
 
 export interface ReportEndEvent {
-  audit: ParsedSizeConfig[];
+  audit: FileResult[];
   config: SizeConfig;
   options: CommandOptions;
   report: Report;

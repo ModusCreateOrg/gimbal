@@ -3,19 +3,16 @@ import brotliSize from 'brotli-size';
 import bytes from 'bytes';
 import globby from 'globby';
 import gzipSize from 'gzip-size';
+import minimatch from 'minimatch';
 import Config from '@/config';
 import EventEmitter from '@/event';
 import { Report } from '@/typings/command';
 import {
+  FileResult,
   SizeConfig,
   SizeConfigs,
-  ParsedSizeConfig,
-  ParsedFile,
   AuditStartEvent,
   AuditEndEvent,
-  CheckStartEvent,
-  CheckEndEvent,
-  ItemCheckEvent,
   ReportStartEvent,
   ReportEndEvent,
 } from '@/typings/module/size';
@@ -47,84 +44,42 @@ const getFileSize = async (path: string, compression: CompressionMechanisms): Pr
 
 const getDirSize = async (path: string): Promise<number> => (await getDirectorySize(path)) as number;
 
-const getFileResult = async (
-  cwd: string,
-  sizeConfig: SizeConfig,
-  config: SizeConfigs,
+const findMatchingThreshold = (
+  filePath: string,
+  configObject: SizeConfig,
   options: CommandOptions,
-): Promise<ParsedSizeConfig> => {
-  const { checkThresholds } = options;
-  const fullPath = resolvePath(cwd, config.path);
-  const paths = await globby(fullPath, { expandDirectories: false, onlyFiles: false });
-  const { maxSize: threshold } = config;
-  const maxSizeBytes = bytes(threshold);
-  const failures: ParsedFile[] = [];
-  const successes: ParsedFile[] = [];
-
-  const checkStartEvent: CheckStartEvent = {
-    config,
-    fullPath,
-    options,
-    maxSizeBytes,
-    paths,
-    sizeConfig,
-  };
-
-  await EventEmitter.fire(`module/size/check/start`, checkStartEvent);
-
-  await Promise.all(
-    paths.map(
-      async (path: string): Promise<ParsedFile> => {
-        const pathStats = await stats(path);
-        const isDirectory = pathStats.isDirectory();
-        const size: number = isDirectory ? await getDirSize(path) : await getFileSize(path, sizeConfig.compression);
-        const fail = checkThresholds ? size > maxSizeBytes : false;
-        const parsedFile: ParsedFile = { fail, path, size, threshold };
-
-        if (fail) {
-          failures.push(parsedFile);
-        } else {
-          successes.push(parsedFile);
-        }
-
-        const itemChecKEvent: ItemCheckEvent = {
-          config,
-          fail,
-          options,
-          maxSizeBytes,
-          parsedFile,
-          path,
-          sizeConfig,
-          size,
-        };
-
-        await EventEmitter.fire(`module/size/check/${isDirectory ? 'dir' : 'file'}`, itemChecKEvent);
-
-        return parsedFile;
-      },
-    ),
+): SizeConfigs | void =>
+  configObject.threshold.find(
+    (threshold: SizeConfigs): boolean => minimatch(filePath, resolvePath(options.cwd, threshold.path)),
   );
 
-  const checkEndEvent: CheckEndEvent = {
-    config,
-    failures,
-    fullPath,
-    options,
-    maxSizeBytes,
-    paths,
-    sizeConfig,
-    successes,
-  };
+const getResult = async (
+  filePath: string,
+  configObject: SizeConfig,
+  options: CommandOptions,
+): Promise<FileResult | void> => {
+  const threshold = findMatchingThreshold(filePath, configObject, options);
 
-  await EventEmitter.fire(`module/size/check/end`, checkEndEvent);
+  if (threshold) {
+    const maxSizeBytes = bytes(threshold.maxSize);
+    const pathStats = await stats(filePath);
+    const isDirectory = pathStats.isDirectory();
+    const size: number = isDirectory
+      ? await getDirSize(filePath)
+      : await getFileSize(filePath, configObject.compression);
 
-  return {
-    ...config,
-    failures,
-    fullPath,
-    maxSizeBytes,
-    successes,
-  };
+    return {
+      filePath,
+      isDirectory,
+      maxSizeBytes,
+      maxSize: threshold.maxSize,
+      sizeBytes: size,
+      size: bytes(size),
+      thresholdPath: resolvePath(options.cwd, threshold.path),
+    };
+  }
+
+  return undefined;
 };
 
 const sizeModule = async (
@@ -149,11 +104,14 @@ const sizeModule = async (
 
   await EventEmitter.fire(`module/size/audit/start`, auditStartEvent);
 
-  const audit: ParsedSizeConfig[] = await Promise.all(
-    configObject.threshold.map(
-      (config: SizeConfigs): Promise<ParsedSizeConfig> => getFileResult(cwd, configObject, config, options),
-    ),
+  const pathsGlobs: string[] = configObject.threshold.map(
+    (threshold: SizeConfigs): string => resolvePath(cwd, threshold.path),
   );
+  const paths = await globby(pathsGlobs, { expandDirectories: false, onlyFiles: false });
+  const raw: (FileResult | void)[] = await Promise.all(
+    paths.map((filePath: string): Promise<FileResult | void> => getResult(filePath, configObject, options)),
+  );
+  const audit: FileResult[] = raw.filter(Boolean) as FileResult[];
 
   const auditEndEvent: AuditEndEvent = {
     audit,
