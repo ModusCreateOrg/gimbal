@@ -6,6 +6,7 @@ import Command, { preparseOptions } from '@/command';
 import Config from '@/config';
 import processJobs from '@/config/jobs';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
+import updateNotifier from 'update-notifier';
 
 (async (): Promise<void> => {
   if (!process.env[CHILD_GIMBAL_PROCESS]) {
@@ -39,6 +40,9 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
   // is loaded. This way things like plugins will be ready
   const options = preparseOptions();
   const config = await Config.load(options.cwd, options);
+
+  // Notify of new package
+  updateNotifier({ pkg: packageJson }).notify();
 
   // kick off commander
   program.parse(process.argv);
