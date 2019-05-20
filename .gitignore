@@ -4,3 +4,5 @@ lerna-debug.log
 npm-debug.log
 packages/*/lib
 *.db
+*error.log
+package-lock.json
