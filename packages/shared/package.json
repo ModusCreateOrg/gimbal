@@ -21,15 +21,15 @@
     "commander": "2.20.0",
     "get-folder-size": "2.0.1",
     "get-port": "5.0.0",
-    "mkdirp": "0.5.1",
     "minimatch": "3.0.4",
+    "mkdirp": "0.5.1",
     "pidusage": "2.0.17",
     "strip-ansi": "5.2.0"
   },
   "devDependencies": {
     "@types/get-folder-size": "2.0.0",
-    "@types/mkdirp": "0.5.2",
     "@types/minimatch": "3.0.3",
+    "@types/mkdirp": "0.5.2",
     "@types/pidusage": "2.0.1"
   }
 }
