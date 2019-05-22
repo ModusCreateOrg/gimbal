@@ -64,7 +64,7 @@ jobs:
       - restore_cache: *restore-npm-cache
       - run:
           name: Install Node modules
-          command: yarn bootstrap
+          command: yarn
       - save_cache: *save-npm-cache
 
   lint:
@@ -83,7 +83,7 @@ jobs:
           name: Setup .npmrc
           # command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
           command: printf "@modus:registry=https://npm.modus.app\n//npm.modus.app/:_authToken=\"%s\"" "$MODUS_NPM_TOKEN" >> ~/.npmrc
-      - run: yarn bootstrap
+      - run: yarn
       - run: yarn lint
       - run: yarn test
       - run: yarn lerna publish from-package --yes --registry https://npm.modus.app/
