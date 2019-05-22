@@ -20,7 +20,7 @@ Next, you need to add the plugin to your Gimbal configuration file:
 
 ```yaml
 plugins:
-  - @modus/gimbal-plugin-sqlite
+  - '@modus/gimbal-plugin-sqlite'
 ```
 
 ### JSON
@@ -45,8 +45,8 @@ By default, this plugin will save the database to `./gimbal.db`. In order to cha
 
 ```yaml
 plugins:
-  - plugin: @modus/gimbal-plugin-sqlite
-    file: artifacts/gibmal_tests.db
+  - plugin: '@modus/gimbal-plugin-sqlite'
+    file: artifacts/gimbal_tests.db
 ```
 
 ### `@modus/gimbal-plugin-last-value`
@@ -55,7 +55,7 @@ Allows for getting and saving last value reports. To enable this support, you ne
 
 ```yaml
 plugins:
-  - plugin: @modus/gimbal-plugin-sqlite
+  - plugin: '@modus/gimbal-plugin-sqlite'
     lastValue: true
 ```
 
@@ -63,7 +63,7 @@ By default, this will use `gimbal_archive` as the table. To change these values,
 
 ```yaml
 plugins:
-  - plugin: @modus/gimbal-plugin-sqlite
+  - plugin: '@modus/gimbal-plugin-sqlite'
     lastValue:
       table: test_runs
 ```

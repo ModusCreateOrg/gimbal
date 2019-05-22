@@ -20,7 +20,7 @@ Next, you need to add the plugin to your Gimbal configuration file:
 
 ```yaml
 plugins:
-  - @modus/gimbal-plugin-mysql
+  - '@modus/gimbal-plugin-mysql'
 ```
 
 ### JSON
@@ -53,7 +53,7 @@ Allows for getting and saving last value reports. To enable this support, you ne
 
 ```yaml
 plugins:
-  - plugin: @modus/gimbal-plugin-mysql
+  - plugin: '@modus/gimbal-plugin-mysql'
     lastValue: true
 ```
 
@@ -61,7 +61,7 @@ By default, this will use `gimbal` as the database and `gimbal_archive` table. T
 
 ```yaml
 plugins:
-  - plugin: @modus/gimbal-plugin-mysql
+  - plugin: '@modus/gimbal-plugin-mysql'
     lastValue:
       database: my-database
       table: test_runs

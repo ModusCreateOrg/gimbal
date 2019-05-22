@@ -20,7 +20,7 @@ Next, you need to add the plugin to your Gimbal configuration file:
 
 ```yaml
 plugins:
-  - @modus/gimbal-plugin-last-value
+  - '@modus/gimbal-plugin-last-value'
 ```
 
 ### JSON
@@ -61,7 +61,7 @@ There may be times where the difference of the last value and the current value 
 
 ```yaml
 plugins:
-  - plugin: @modus/gimbal-plugin-last-value
+  - plugin: "@modus/gimbal-plugin-last-value"
   failOnBreak: false
   saveOnlyOnSuccess: true
   threshold:

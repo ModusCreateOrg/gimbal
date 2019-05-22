@@ -1,6 +1,11 @@
 import deepmerge from 'deepmerge';
+import mkdirpMod from 'mkdirp';
+import { dirname } from 'path';
 import sqlite3 from 'sqlite3';
+import { promisify } from 'util';
 import { PluginOptions } from '@/typings/config/plugin';
+
+const mkdirp = promisify(mkdirpMod);
 
 interface ItemConfig {
   table: string;
@@ -31,6 +36,8 @@ const sqlite = async (
   }
 
   if (willNeedDatabase(sqliteConfig)) {
+    await mkdirp(dirname(sqliteConfig.file));
+
     const db = new sqlite3.Database(sqliteConfig.file);
 
     if (config.lastValue) {
