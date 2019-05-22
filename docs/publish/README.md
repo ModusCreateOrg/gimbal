@@ -3,7 +3,7 @@
 Gimbal is a node module that is published to the [npmjs](https://www.npmjs.com/) repository. In order to publish, the [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version) command is used to bump the version. Once the git ag is pushed, CircleCI will automatically trigger publishing to the npm repository:
 
 ```shell
-$ yarn version
+$ yarn run version
 ```
 
 This will execute:
