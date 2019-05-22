@@ -2,11 +2,12 @@
   "name": "@modus/gimbal-monorepo",
   "private": true,
   "scripts": {
+    "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
-    "clean": "rimraf packages/**/lib",
+    "clean": "rimraf 'packages/**/{build,lib}' '**/node_modules' '**/coverage'",
+    "link": "lerna run link",
     "lint": "lerna run lint",
     "lint-staged": "lint-staged",
-    "postinstall": "lerna bootstrap",
     "publish": "lerna run tsc && lerna publish",
     "test": "jest --coverage",
     "test:coveralls": "cat ./coverage/lcov.info | coveralls",
@@ -19,7 +20,7 @@
     }
   },
   "lint-staged": {
-    "packages/**/bin/**/*.{js,jsx,ts,tsx},src/**/*.{js,jsx,ts,tsx}": [
+    "packages/**/bin/**/*.{js,jsx,ts,tsx},packages/**/src/**/*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "git add"
     ]
@@ -35,6 +36,7 @@
     "eslint": "5.16.0",
     "eslint-config-airbnb": "17.1.0",
     "eslint-config-prettier": "4.3.0",
+    "eslint-import-resolver-lerna": "1.1.0",
     "eslint-import-resolver-typescript": "1.1.1",
     "eslint-plugin-import": "2.17.2",
     "eslint-plugin-jest": "22.5.1",

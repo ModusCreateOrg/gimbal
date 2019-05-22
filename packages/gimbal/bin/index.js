@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
 // eslint-disable-next-line import/no-unresolved
-require('../lib/index.js');
+require('../lib/gimbal/src');

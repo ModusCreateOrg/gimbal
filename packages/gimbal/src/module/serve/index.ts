@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import http from 'http';
 // @ts-ignore
 import handler from 'serve-handler';
-import EventEmitter from '@/event';
+import EventEmitter from '@/shared/event';
 import {
   CloseStartEvent,
   CloseEndEvent,

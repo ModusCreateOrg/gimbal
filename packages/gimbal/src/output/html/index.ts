@@ -1,9 +1,9 @@
 import marked from 'marked';
 import path from 'path';
 import generateMarkdown from '@/output/markdown';
+import { readFile } from '@/shared/utils/fs';
 import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import { readFile } from '@/utils/fs';
 
 // use table's html render type when we get to building real html
 

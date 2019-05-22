@@ -2,13 +2,13 @@ import program, { Command as CommandType } from 'commander';
 import figlet from 'figlet';
 import path from 'path';
 import Config from '@/config';
-import EventEmitter from '@/event';
+import EventEmitter from '@/shared/event';
 import Logger from '@/logger';
 import output from '@/output';
 import { StartEvent, EndEvent, ActionStartEvent, ActionEndEvent, Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
-import { readDir, stats } from '@/utils/fs';
+import { readDir, stats } from '@/shared/utils/fs';
 import comment from '@/vcs/comment';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */

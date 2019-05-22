@@ -81,12 +81,13 @@ jobs:
       - checkout
       - run:
           name: Setup .npmrc
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+          # command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+          command: printf "@modus:registry=https://npm.modus.app\n//npm.modus.app/:_authToken=\"%s\"" "$MODUS_NPM_TOKEN" >> ~/.npmrc
       - run: yarn
       - run: yarn lint
       - run: yarn test
       - run: yarn build
-      - run: yarn lerna publish from-package --yes
+      - run: yarn lerna publish from-package --yes --registry https://npm.modus.app/
 
   publish-docker:
     <<: *defaults
@@ -150,22 +151,22 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
-      - build-docker:
-          context: deploy-creds
-          requires:
-            - publish
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-      - publish-docker:
-          context: deploy-creds
-          requires:
-            - build-docker
-            - publish
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+      # - build-docker:
+      #     context: deploy-creds
+      #     requires:
+      #       - publish
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^v.*/
+      # - publish-docker:
+      #     context: deploy-creds
+      #     requires:
+      #       - build-docker
+      #       - publish
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^v.*/

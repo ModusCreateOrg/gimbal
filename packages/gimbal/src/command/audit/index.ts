@@ -6,8 +6,8 @@ import UnusedSource from '@/module/unused-source';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import { resolvePath } from '@/utils/fs';
-import findPort from '@/utils/port';
+import { resolvePath } from '@/shared/utils/fs';
+import findPort from '@/shared/utils/port';
 
 const calculateUnusedSource = async (chrome: Chrome, url: string, options: CommandOptions): Promise<Report | void> => {
   const page = await chrome.newPage();

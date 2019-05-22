@@ -1,0 +1,35 @@
+{
+  "name": "@modus/gimbal-plugin-sqlite",
+  "version": "1.0.10",
+  "description": "SQLite storage helpers for Gimbal and Gimbal plugins",
+  "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ModusCreateOrg/gimbal.git"
+  },
+  "scripts": {
+    "build": "ttsc -p .",
+    "build:check": "ttsc --noEmit -p .",
+    "build:watch": "ttsc --watch -p .",
+    "link": "npm link",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "bugs": {
+    "url": "https://github.com/ModusCreateOrg/gimbal/issues"
+  },
+  "dependencies": {
+    "deepmerge": "3.2.0",
+    "sqlite3": "4.0.8"
+  },
+  "devDependencies": {
+    "@types/sqlite3": "3.1.5"
+  }
+}

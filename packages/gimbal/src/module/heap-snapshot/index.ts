@@ -1,6 +1,6 @@
 import { Metrics, Page } from 'puppeteer';
 import Config from '@/config';
-import EventEmitter from '@/event';
+import EventEmitter from '@/shared/event';
 import { Report } from '@/typings/command';
 import {
   Config as HeapSnapshotConfig,

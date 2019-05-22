@@ -1,7 +1,8 @@
 import deepmerge from 'deepmerge';
 import globby from 'globby';
 import { extname } from 'path';
-import EventEmitter from '@/event';
+import EventEmitter from '@/shared/event';
+import { exists, resolvePath } from '@/shared/utils/fs';
 import {
   Config as ConfigType,
   LoaderMap,
@@ -11,7 +12,6 @@ import {
   PluginEndEvent,
 } from '@/typings/config';
 import { CommandOptions } from '@/typings/utils/command';
-import { exists, resolvePath } from '@/utils/fs';
 import jsLoader from './loader/js';
 import yamlLoader from './loader/yaml';
 import parsePlugins from './plugin';

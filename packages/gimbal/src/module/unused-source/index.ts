@@ -2,7 +2,7 @@ import minimatch from 'minimatch';
 import { CoverageEntry, Page } from 'puppeteer';
 import { URL } from 'url';
 import Config from '@/config';
-import EventEmitter from '@/event';
+import EventEmitter from '@/shared/event';
 import { Report } from '@/typings/command';
 import { SizeConfigs } from '@/typings/module/size';
 import {

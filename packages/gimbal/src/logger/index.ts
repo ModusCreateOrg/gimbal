@@ -1,6 +1,6 @@
 import colors from 'colors/safe';
 import Config from '@/config';
-import { pad } from '@/utils/string';
+import { pad } from '@/shared/utils/string';
 
 const colorsArray = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'gray'];
 let last: number;

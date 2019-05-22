@@ -5,7 +5,8 @@ import globby from 'globby';
 import gzipSize from 'gzip-size';
 import minimatch from 'minimatch';
 import Config from '@/config';
-import EventEmitter from '@/event';
+import EventEmitter from '@/shared/event';
+import { readFile, resolvePath, stats, getDirectorySize } from '@/shared/utils/fs';
 import { Report } from '@/typings/command';
 import {
   FileResult,
@@ -17,7 +18,6 @@ import {
   ReportEndEvent,
 } from '@/typings/module/size';
 import { CommandOptions } from '@/typings/utils/command';
-import { readFile, resolvePath, stats, getDirectorySize } from '@/utils/fs';
 import defaultConfig from './default-config';
 import parseReport from './output';
 

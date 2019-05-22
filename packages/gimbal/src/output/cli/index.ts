@@ -1,14 +1,14 @@
-import Table from '@/components/Table';
+import TableComp from '@/shared/components/Table';
+import { sectionHeading, successOrFailure } from '@/shared/utils/colors';
 import { Report, ReportItem } from '@/typings/command';
-import { Config, Data } from '@/typings/components/Table';
+import { Config, Data, Table } from '@/typings/components/Table';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
-import { sectionHeading, successOrFailure } from '@/utils/colors';
 
 const successColorizeRenderer = (value: Data, item: Data): string => successOrFailure(value, item.success);
 
-export const createTable = (commandOptions: CommandOptions, config?: Config): Table => {
-  const table = new Table({
+export const createTable = (commandOptions: CommandOptions, config?: Config): TableComp => {
+  const table = new TableComp({
     columns: [
       {
         header: 'Label',

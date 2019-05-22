@@ -9,6 +9,8 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 import updateNotifier from 'update-notifier';
 
 (async (): Promise<void> => {
+  const isBuilt = path.extname(__filename) === '.js';
+
   if (!process.env[CHILD_GIMBAL_PROCESS]) {
     const gimbal = fs.readFileSync(path.join(__dirname, 'ascii_art/gimbal.txt'), 'utf8');
 
@@ -17,7 +19,7 @@ import updateNotifier from 'update-notifier';
   }
 
   const packageJson = await readPkg({
-    cwd: path.join(__dirname, '..'),
+    cwd: isBuilt ? path.join(__dirname, '../../..') : path.join(__dirname, '..'),
   });
 
   program

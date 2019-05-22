@@ -1,11 +1,11 @@
-import EventEmitter from '@/event';
 import Logger from '@/logger';
+import EventEmitter from '@/shared/event';
+import spawn from '@/shared/utils/spawn';
+import { splitOnWhitespace } from '@/shared/utils/string';
 import { ArrayJob, Job, JobRet, JobStartEvent, JobEndEvent, JobsStartEvent, JobsEndEvent } from '@/typings/config/jobs';
 import { CommandOptions } from '@/typings/utils/command';
 import { CmdSpawnRet } from '@/typings/utils/spawn';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
-import spawn from '@/utils/spawn';
-import { splitOnWhitespace } from '@/utils/string';
 
 const prependDashes = (option: string): string => `--${option.replace(/^-+/, '')}`;
 

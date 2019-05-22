@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 // @ts-ignore
 import lighthouse from 'lighthouse';
 import Config from '@/config';
-import EventEmitter from '@/event';
+import EventEmitter from '@/shared/event';
 import { Report } from '@/typings/command';
 import {
   Audit,

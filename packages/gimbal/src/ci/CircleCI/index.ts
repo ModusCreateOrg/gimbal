@@ -1,6 +1,6 @@
 import { CIMode } from '@/typings/ci';
 import { VCS as VCSTypes } from '@/typings/vcs';
-import env from '@/utils/env';
+import env from '@/shared/utils/env';
 import whichVCS from '@/vcs';
 
 export default class CircleCI {

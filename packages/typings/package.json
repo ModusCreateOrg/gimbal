@@ -1,0 +1,19 @@
+{
+  "name": "@modus/gimbal-typings",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A common node module that doesn't get published to npm holding the typings",
+  "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ModusCreateOrg/gimbal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ModusCreateOrg/gimbal/issues"
+  },
+  "dependencies": {
+    "cli-table3": "0.5.1",
+    "commander": "2.20.0"
+  }
+}

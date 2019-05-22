@@ -6,15 +6,15 @@ import Octokit, {
   Response,
 } from '@octokit/rest';
 import { URL } from 'url';
-import EventEmitter from '@/event';
 import Logger from '@/logger';
+import EventEmitter from '@/shared/event';
+import env from '@/shared/utils/env';
 import {
   CommitCommentStartEvent,
   CommitCommentEndEvent,
   CommitPRStartEvent,
   CommitPREndEvent,
 } from '@/typings/vcs/GitHub';
-import env from '@/utils/env';
 
 const GITHUB_RE = /(?:www\.)?github\.com$/i;
 

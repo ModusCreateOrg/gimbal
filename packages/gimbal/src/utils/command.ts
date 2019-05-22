@@ -1,7 +1,7 @@
 import program, { Command } from 'commander';
 import { existsSync } from 'fs';
+import { resolvePath } from '@/shared/utils/fs';
 import { CommandOptions } from '@/typings/utils/command';
-import { resolvePath } from '@/utils/fs';
 
 const defaultConfig: CommandOptions = {
   cwd: resolvePath(),

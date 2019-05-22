@@ -1,9 +1,9 @@
 import bytes from 'bytes';
 import { relative } from 'path';
+import checkThreshold from '@/shared/utils/threshold';
 import { Report, ReportItem } from '@/typings/command';
 import { FileResult } from '@/typings/module/size';
 import { CommandOptions } from '@/typings/utils/command';
-import checkThreshold from '@/utils/threshold';
 
 const bytesConfig = { unitSeparator: ' ' };
 const type = 'size';

@@ -3,7 +3,7 @@ import Serve from '@/module/serve';
 import UnusedSource from '@/module/unused-source';
 import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import findPort from '@/utils/port';
+import findPort from '@/shared/utils/port';
 
 const unusedSourceRunner = async (options: CommandOptions): Promise<Report> => {
   const chrome = new Chrome();

@@ -1,6 +1,6 @@
 import { existsSync } from 'fs';
 import path from 'path';
-import { resolvePath } from '@/utils/fs';
+import { resolvePath } from '@/shared/utils/fs';
 
 const IS_FILE_RE = /^[./]/;
 const IS_GIMBAL_RE = /^@\//;

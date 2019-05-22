@@ -1,7 +1,8 @@
 import path from 'path';
-import EventEmitter from '@/event';
 import Config from '@/config';
 import Logger from '@/logger';
+import EventEmitter from '@/shared/event';
+import { mkdirp, resolvePath, writeFile } from '@/shared/utils/fs';
 import { Report } from '@/typings/command';
 import {
   FileWriteStartEvent,
@@ -19,7 +20,6 @@ import {
 } from '@/typings/output';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
-import { mkdirp, resolvePath, writeFile } from '@/utils/fs';
 import { outputTable } from './cli';
 import htmlOutput from './html';
 import jsonOutput from './json';

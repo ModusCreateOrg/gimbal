@@ -12,6 +12,21 @@
   "eslint.workingDirectories": [{
     "directory": "./packages/gimbal",
     "changeProcessCWD": true
+  }, {
+    "directory": "./packages/plugin-last-value",
+    "changeProcessCWD": true
+  }, {
+    "directory": "./packages/plugin-mysql",
+    "changeProcessCWD": true
+  }, {
+    "directory": "./packages/plugin-sqlite",
+    "changeProcessCWD": true
+  }, {
+    "directory": "./packages/shared",
+    "changeProcessCWD": true
+  }, {
+    "directory": "./packages/typings",
+    "changeProcessCWD": true
   }],
   "cSpell.words": [
     "brotli",
@@ -20,5 +35,10 @@
     "globby",
     "precache",
     "promisify"
-  ]
+  ],
+  "sqltools.connections": [{
+    "database": "./packages/example-react/gimbal.db",
+    "dialect": "SQLite",
+    "name": "gimbal-example-react"
+  }]
 }

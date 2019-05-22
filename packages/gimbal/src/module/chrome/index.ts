@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { URL } from 'url';
 import Config from '@/config';
-import EventEmitter from '@/event';
+import EventEmitter from '@/shared/event';
 import {
   LaunchStartEvent,
   LaunchEndEvent,

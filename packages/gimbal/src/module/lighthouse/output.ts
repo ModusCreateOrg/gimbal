@@ -3,7 +3,7 @@ import { Report, ReportItem } from '@/typings/command';
 import { Audit, Config } from '@/typings/module/lighthouse';
 import { CommandOptions } from '@/typings/utils/command';
 import { AdvancedThreshold } from '@/typings/utils/threshold';
-import { mkdirp, resolvePath, writeFile } from '@/utils/fs';
+import { mkdirp, resolvePath, writeFile } from '@/shared/utils/fs';
 
 const type = 'lighthouse';
 

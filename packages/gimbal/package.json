@@ -2,9 +2,9 @@
   "name": "@modus/gimbal",
   "version": "1.0.10",
   "description": "A CLI tool for monitoring web performance in modern web projects",
-  "main": "./lib/modules.js",
+  "main": "lib/gimbal/src/modules.js",
   "bin": {
-    "gimbal": "./bin/index.js"
+    "gimbal": "bin/index.js"
   },
   "files": [
     "bin/**/*",
@@ -14,9 +14,10 @@
     "build": "ttsc -p .",
     "build:check": "ttsc --noEmit -p .",
     "build:watch": "ttsc --watch -p .",
+    "link": "npm link",
     "lint": "eslint 'bin/**/*.js' 'src/**/*.ts'",
     "postbuild": "npm run copy-static-assets",
-    "copy-static-assets": "copyfiles -u 1 src/**/*/*.{html,txt} lib/",
+    "copy-static-assets": "copyfiles -u 1 src/**/*/*.{html,txt} lib/gimbal/src",
     "start": "node -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "start:break": "node --inspect-brk -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "start:debug": "node --inspect -r ts-node/register -r tsconfig-paths/register src/index.ts"
@@ -80,18 +81,16 @@
     "get-folder-size": "2.0.1",
     "get-port": "5.0.0",
     "globby": "9.2.0",
-    "gzip-size": "5.1.0",
+    "gzip-size": "5.1.1",
     "js-yaml": "3.13.1",
     "lighthouse": "5.0.0",
     "marked": "0.6.2",
     "minimatch": "3.0.4",
     "mkdirp": "0.5.1",
-    "mysql": "2.17.1",
     "pidusage": "2.0.17",
     "puppeteer": "1.16.0",
     "read-pkg": "5.1.1",
     "serve-handler": "6.0.0",
-    "sqlite3": "4.0.8",
     "strip-ansi": "5.2.0",
     "update-notifier": "3.0.0"
   },
@@ -105,12 +104,9 @@
     "@types/marked": "0.6.5",
     "@types/minimatch": "3.0.3",
     "@types/mkdirp": "0.5.2",
-    "@types/mysql": "2.15.6",
     "@types/pidusage": "2.0.1",
     "@types/puppeteer": "1.12.4",
     "@types/read-pkg": "4.0.0",
-    "@types/sqlite3": "3.1.5",
-    "@types/strip-ansi": "5.2.1",
     "@types/update-notifier": "2.5.0",
     "copyfiles": "2.1.0"
   }

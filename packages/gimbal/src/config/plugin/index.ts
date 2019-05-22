@@ -1,9 +1,23 @@
 import program from 'commander';
 import resolver from '@/config/resolver';
-import event from '@/event';
+import HeapSnapshotMeta from '@/module/heap-snapshot/meta';
+import LighthouseMeta from '@/module/lighthouse/meta';
+import SizeMeta from '@/module/size/meta';
+import UnusedSourceMeta from '@/module/unused-source/meta';
+import event from '@/shared/event';
+import envOrDefault from '@/shared/utils/env';
+import { resolvePath } from '@/shared/utils/fs';
 import { PluginConfig, Plugin, PluginOptions } from '@/typings/config/plugin';
+import { Metas } from '@/typings/plugin/last-value/util';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
+
+const metas: Metas = {
+  'heap-snapshot': HeapSnapshotMeta,
+  lighthouse: LighthouseMeta,
+  size: SizeMeta,
+  'unused-source': UnusedSourceMeta,
+};
 
 interface Map {
   [label: string]: PluginConfig;
@@ -13,9 +27,14 @@ interface Map {
 const options: PluginOptions = {
   dir: __dirname,
   event,
+  modules: {
+    metas,
+  },
   program,
   utils: {
     getOptionsFromCommand,
+    resolvePath,
+    envOrDefault,
   },
 };
 

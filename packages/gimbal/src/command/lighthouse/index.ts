@@ -3,8 +3,8 @@ import Lighthouse from '@/module/lighthouse';
 import Serve from '@/module/serve';
 import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import { mkdirp } from '@/utils/fs';
-import findPort from '@/utils/port';
+import { mkdirp } from '@/shared/utils/fs';
+import findPort from '@/shared/utils/port';
 
 const lighthouseRunner = async (options: CommandOptions): Promise<Report> => {
   if (options.artifactDir) {
