@@ -6,7 +6,7 @@
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
     "clean": "rimraf 'packages/**/{build,lib,package-lock.json}' '**/node_modules' '**/coverage'",
-    "lerna:version": "lerna version patch --exact --yes",
+    "lerna:version": "lerna version patch --exact --force-publish --yes",
     "link": "lerna run link",
     "lint": "lerna run lint",
     "lint-staged": "lint-staged",
