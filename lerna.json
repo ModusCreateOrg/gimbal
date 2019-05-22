@@ -6,6 +6,9 @@
   "useWorkspaces": true,
   "version": "1.0.10",
   "command": {
+    "publish": {
+      "allowBranch": "master"
+    },
     "version": {
       "allowBranch": "master"
     }
