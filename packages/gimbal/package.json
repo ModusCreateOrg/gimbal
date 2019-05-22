@@ -17,6 +17,7 @@
     "link": "npm link",
     "lint": "eslint 'bin/**/*.js' 'src/**/*.ts'",
     "postbuild": "npm run copy-static-assets",
+    "prepublish": "yarn build",
     "copy-static-assets": "copyfiles -u 1 src/**/*/*.{html,txt} lib/gimbal/src",
     "start": "node -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "start:break": "node --inspect-brk -r ts-node/register -r tsconfig-paths/register src/index.ts",
