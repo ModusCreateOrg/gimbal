@@ -33,6 +33,8 @@
     "deepmerge",
     "directorysize",
     "globby",
+    "lerna",
+    "monorepo",
     "precache",
     "promisify"
   ],
