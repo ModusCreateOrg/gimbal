@@ -41,7 +41,7 @@ const audit = async (options: CommandOptions): Promise<Report> => {
   const needChromeAndServe = options.calculateUnusedCss || options.heapSnapshot || options.lighthouse;
 
   const servePort = needChromeAndServe ? await findPort() : null;
-  const localUri = servePort ? `http://localhost:${servePort}` : null;
+  const localUri = servePort ? `http://localhost:${servePort}${options.route}` : null;
   const buildDir = resolvePath(options.cwd, options.buildDir as string);
   const serve = servePort ? new Serve({ port: servePort, public: buildDir }) : null;
   const chrome = needChromeAndServe ? new Chrome() : null;

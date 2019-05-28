@@ -10,6 +10,11 @@ export default new Command({
       description: 'Location to output the lighthouse HTML report to.',
       flag: '--lighthouse-output-html [file]',
     },
+    {
+      defaultValue: '/',
+      description: 'Route to run tests on.',
+      flag: '--route <route>',
+    },
   ],
   title: 'Lighthouse Audits',
 });

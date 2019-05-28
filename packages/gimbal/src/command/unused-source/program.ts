@@ -5,5 +5,12 @@ import Command from '@/command';
 export default new Command({
   action,
   command: 'unused-source',
+  options: [
+    {
+      defaultValue: '/',
+      description: 'Route to run tests on.',
+      flag: '--route <route>',
+    },
+  ],
   title: 'Unused Source Checks',
 });

@@ -8,7 +8,7 @@ import findPort from '@/shared/utils/port';
 const unusedSourceRunner = async (options: CommandOptions): Promise<Report> => {
   const chrome = new Chrome();
   const servePort = await findPort();
-  const localUri = `http://localhost:${servePort}`;
+  const localUri = `http://localhost:${servePort}${options.route}`;
   const serve = new Serve({
     port: servePort,
     public: options.cwd as string,

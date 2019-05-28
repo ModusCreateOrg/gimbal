@@ -23,7 +23,7 @@ const lighthouseRunner = async (options: CommandOptions): Promise<Report> => {
 
   try {
     const report: Report = await Lighthouse(
-      `http://localhost:${servePort}`,
+      `http://localhost:${servePort}${options.route}`,
       {
         chromePort: chrome.port as string,
       },
