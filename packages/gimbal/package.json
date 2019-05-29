@@ -1,6 +1,6 @@
 {
   "name": "@modus/gimbal",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A CLI tool for monitoring web performance in modern web projects",
   "main": "lib/gimbal/src/modules.js",
   "bin": {

@@ -1,6 +1,6 @@
 {
   "name": "@modus/gimbal-plugin-last-value",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Track last value for Gimbal audits",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
   "license": "MIT",
