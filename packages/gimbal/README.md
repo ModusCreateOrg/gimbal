@@ -32,7 +32,8 @@
 [Code of Conduct](./CODE_OF_CONDUCT.md) |
 [Twitter](https://twitter.com/ModusCreate)
 
-Gimbal uses industry-standard audits to analyze application performance. Continuously track performance to ensure your apps are within acceptable 🏎performance budgets.
+<img align="left" width="75" height="75" src="https://res.cloudinary.com/modus-labs/image/upload/c_scale,dpr_auto,e_trim:10,f_auto,w_150/v1559132943/labs/gimbal.png">
+Gimbal uses industry-standard audits to analyze application performance. Continuously track performance to ensure your apps are within acceptable performance budgets.
 
 Gimbal ❤️ CIs like [Circle CI](https://circleci.com/) and [Travis CI](https://travis-ci.com/).
 
