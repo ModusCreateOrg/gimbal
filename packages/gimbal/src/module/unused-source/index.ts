@@ -29,17 +29,21 @@ interface CheckThresholdRet {
 
 type EntryType = 'css' | 'js' | undefined;
 
+const doThresholdMatch = (url: string, threshold: SizeConfigs): boolean => {
+  const info = new URL(url);
+
+  // use the pathname, not the whole url to make the
+  // threshold path config simpler
+  return minimatch(info.pathname, threshold.path);
+};
+
 const isThresholdMatch = (url: string, threshold: SizeConfigs, type?: EntryType): boolean => {
   // only attempt to find a match if both types match
   if (threshold.type === type) {
-    const info = new URL(url);
-
-    // use the pathname, not the whole url to make the
-    // threshold path config simpler
-    return minimatch(info.pathname, threshold.path);
+    return doThresholdMatch(url, threshold);
   }
 
-  return false;
+  return !threshold.type && doThresholdMatch(url, threshold);
 };
 
 const getThreshold = (url: string, thresholds: SizeConfigs[], type?: EntryType): string | void => {
@@ -76,6 +80,29 @@ const checkThreshold = (percentage: number, threshold?: string): CheckThresholdR
 const getEntryUsed = (entry: CoverageEntry): number =>
   entry.ranges.reduce((used: number, range: CoverageRange): number => used + range.end - range.start - 1, 0);
 
+const sortThreshold = (thresholds: SizeConfigs[]): SizeConfigs[] =>
+  thresholds.sort(
+    (last: SizeConfigs, current: SizeConfigs): 0 | 1 | -1 => {
+      if (last.type == null && current.type != null) {
+        return 1;
+      }
+      if (last.type != null && current.type == null) {
+        return -1;
+      }
+
+      if (last.type && current.type) {
+        if (last.type < current.type) {
+          return -1;
+        }
+        if (last.type > current.type) {
+          return 1;
+        }
+      }
+
+      return 0;
+    },
+  );
+
 const UnusedCSS = async (
   page: Page,
   url: string,
@@ -88,6 +115,9 @@ const UnusedCSS = async (
     ...config,
   };
   const isThresholdArray = Array.isArray(sourceConfig.threshold);
+  const thresholds: string | SizeConfigs[] = isThresholdArray
+    ? sortThreshold(sourceConfig.threshold as SizeConfigs[])
+    : sourceConfig.threshold;
 
   const auditStartEvent: AuditStartEvent = {
     config: sourceConfig,
@@ -149,8 +179,8 @@ const UnusedCSS = async (
     const unused = entryTotal - entryUsed;
     const percentage = (unused / entryTotal) * 100;
     const threshold = isThresholdArray
-      ? getThreshold(entry.url, sourceConfig.threshold as SizeConfigs[], type)
-      : (sourceConfig.threshold as string);
+      ? getThreshold(entry.url, thresholds as SizeConfigs[], type)
+      : (thresholds as string);
     const checked = checkThresholds ? checkThreshold(percentage, threshold as string) : { success: true };
 
     return {
@@ -179,9 +209,7 @@ const UnusedCSS = async (
 
   const unused = total - used;
   const percentage = (unused / total) * 100;
-  const threshold = isThresholdArray
-    ? getThreshold(url, sourceConfig.threshold as SizeConfigs[])
-    : (sourceConfig.threshold as string);
+  const threshold = isThresholdArray ? getThreshold(url, thresholds as SizeConfigs[]) : (thresholds as string);
   const checked = checkThresholds ? checkThreshold(percentage, threshold as string) : { success: true };
   const pageTotal: Entry = {
     ...checked,

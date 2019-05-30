@@ -39,16 +39,16 @@ const renderItem = (table: HorizontalTable, item: Data, index: number, columns: 
         (column: Column): string | Cell => {
           let { [column.key]: value } = item;
 
+          if (value == null) {
+            return '';
+          }
+
           if (column.maxWidth && value.length > column.maxWidth) {
             value = `... ${value.substr(value.length - column.maxWidth)}`;
           }
 
           if (column.renderer) {
             value = column.renderer(value, item);
-          }
-
-          if (value == null) {
-            return '';
           }
 
           if (column.align && column.align !== 'left') {

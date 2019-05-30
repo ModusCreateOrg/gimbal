@@ -5,7 +5,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
-    "clean": "rimraf 'packages/**/{build,lib,package-lock.json}' '**/node_modules' '**/coverage'",
+    "clean": "rimraf 'packages/**/{build,lib,dist,package-lock.json}' '**/node_modules' '**/coverage'",
     "lerna:version": "lerna version patch --exact --force-publish --yes",
     "link": "lerna run link",
     "lint": "lerna run lint",
@@ -29,8 +29,9 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@angular/cli": "8.0.0",
     "@types/jest": "24.0.13",
-    "@types/node": "12.0.2",
+    "@types/node": "12.0.4",
     "@typescript-eslint/eslint-plugin": "1.9.0",
     "@zerollup/ts-transform-paths": "1.7.1",
     "eslint": "5.16.0",
@@ -38,8 +39,8 @@
     "eslint-config-prettier": "4.3.0",
     "eslint-import-resolver-lerna": "1.1.0",
     "eslint-import-resolver-typescript": "1.1.1",
-    "eslint-plugin-import": "2.17.2",
-    "eslint-plugin-jest": "22.5.1",
+    "eslint-plugin-import": "2.17.3",
+    "eslint-plugin-jest": "22.6.4",
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-prettier": "3.1.0",
     "eslint-plugin-react": "7.13.0",
@@ -50,9 +51,9 @@
     "prettier": "1.17.1",
     "rimraf": "2.6.3",
     "ts-jest": "24.0.2",
-    "ts-node": "8.1.0",
+    "ts-node": "8.2.0",
     "tsconfig-paths": "3.8.0",
     "ttypescript": "1.5.6",
-    "typescript": "3.4.5"
+    "typescript": "3.5.1"
   }
 }

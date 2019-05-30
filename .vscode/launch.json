@@ -151,7 +151,7 @@
     "type": "pickString",
     "id": "appInput",
     "description": "Which app do you want to run on?",
-    "options": ["example-react"],
+    "options": ["example-angular", "example-react"],
     "default": "example-react"
   }]
 }

@@ -7,6 +7,7 @@ aliases:
     name: Saving node_modules/ cache
     paths:
       - node_modules
+      - packages/example-angular/node_modules
       - packages/gimbal/node_modules
 
 docker-defaults: &docker-defaults
