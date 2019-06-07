@@ -84,17 +84,13 @@ const getResult = async (
 
 const sizeModule = async (
   options: CommandOptions,
-  sizeConfig: SizeConfig | SizeConfigs[] = Config.get('configs.size', defaultConfig),
+  config: SizeConfig | SizeConfigs[] = Config.get('configs.size'),
 ): Promise<Report> => {
-  if (!sizeConfig) {
-    return Promise.resolve({
-      data: [],
-      success: true,
-    });
-  }
-
   const { cwd } = options;
-
+  const sizeConfig = {
+    ...defaultConfig,
+    ...config,
+  };
   const configObject: SizeConfig = Array.isArray(sizeConfig) ? { threshold: sizeConfig } : sizeConfig;
 
   const auditStartEvent: AuditStartEvent = {
