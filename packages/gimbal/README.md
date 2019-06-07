@@ -19,6 +19,8 @@
           |___/
 ```
 
+[![npm (scoped)](https://img.shields.io/npm/v/@modus/gimbal.svg)](https://www.npmjs.com/package/@modus/gimbal)
+[![npm](https://img.shields.io/npm/dm/@modus/gimbal.svg)](https://www.npmjs.com/package/@modus/gimbal)
 [![CircleCI](https://circleci.com/gh/ModusCreateOrg/gimbal.svg?style=svg&circle-token=070b2e28332dfe71ad3b6b8ab9ee5d472a1d7f76)](https://circleci.com/gh/ModusCreateOrg/gimbal)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
