@@ -1,8 +1,8 @@
 import deepmerge from 'deepmerge';
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { URL } from 'url';
+import EventEmitter from '@modus/gimbal-core/lib/event';
 import Config from '@/config';
-import EventEmitter from '@/shared/event';
 import {
   LaunchStartEvent,
   LaunchEndEvent,

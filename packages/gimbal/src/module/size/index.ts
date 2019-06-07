@@ -4,9 +4,9 @@ import bytes from 'bytes';
 import globby from 'globby';
 import gzipSize from 'gzip-size';
 import minimatch from 'minimatch';
+import EventEmitter from '@modus/gimbal-core/lib/event';
+import { readFile, resolvePath, stats, getDirectorySize } from '@modus/gimbal-core/lib/utils/fs';
 import Config from '@/config';
-import EventEmitter from '@/shared/event';
-import { readFile, resolvePath, stats, getDirectorySize } from '@/shared/utils/fs';
 import { Report } from '@/typings/command';
 import {
   FileResult,
@@ -49,8 +49,8 @@ const findMatchingThreshold = (
   configObject: SizeConfig,
   options: CommandOptions,
 ): SizeConfigs | void =>
-  configObject.threshold.find(
-    (threshold: SizeConfigs): boolean => minimatch(filePath, resolvePath(options.cwd, threshold.path)),
+  configObject.threshold.find((threshold: SizeConfigs): boolean =>
+    minimatch(filePath, resolvePath(options.cwd, threshold.path)),
   );
 
 const getResult = async (
@@ -104,8 +104,8 @@ const sizeModule = async (
 
   await EventEmitter.fire(`module/size/audit/start`, auditStartEvent);
 
-  const pathsGlobs: string[] = configObject.threshold.map(
-    (threshold: SizeConfigs): string => resolvePath(cwd, threshold.path),
+  const pathsGlobs: string[] = configObject.threshold.map((threshold: SizeConfigs): string =>
+    resolvePath(cwd, threshold.path),
   );
   const paths = await globby(pathsGlobs, { expandDirectories: false, onlyFiles: false });
   const raw: (FileResult | void)[] = await Promise.all(

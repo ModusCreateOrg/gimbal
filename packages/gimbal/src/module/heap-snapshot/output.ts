@@ -1,3 +1,4 @@
+import checkThreshold from '@modus/gimbal-core/lib/utils/threshold';
 import { Report, ReportItem } from '@/typings/command';
 import { Config as HeapSnapshotConfig, HeapMetrics } from '@/typings/module/heap-snapshot';
 import { CommandOptions } from '@/typings/utils/command';
@@ -22,7 +23,7 @@ const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig, option
     (label: string): ReportItem => {
       const objThreshold = threshold[label];
       const value = raw[label] as number;
-      const objSuccess = !checkThresholds || objThreshold == null || value <= objThreshold;
+      const objSuccess = !checkThresholds || objThreshold == null || checkThreshold(value, objThreshold);
 
       if (!objSuccess) {
         success = false;
@@ -31,9 +32,9 @@ const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig, option
       return {
         label,
         rawLabel: label,
-        rawThreshold: objThreshold || '',
+        rawThreshold: objThreshold,
         rawValue: value,
-        threshold: objThreshold || '',
+        threshold: objThreshold,
         thresholdLimit: 'lower',
         success: objSuccess,
         value,

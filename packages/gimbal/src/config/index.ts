@@ -1,8 +1,8 @@
 import deepmerge from 'deepmerge';
 import globby from 'globby';
 import { extname } from 'path';
-import EventEmitter from '@/shared/event';
-import { exists, resolvePath } from '@/shared/utils/fs';
+import EventEmitter from '@modus/gimbal-core/lib/event';
+import { exists, resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import {
   Config as ConfigType,
   LoaderMap,
@@ -203,41 +203,35 @@ class Config {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     let obj: any = {};
 
-    descriptors.forEach(
-      (descriptor: Descriptor): void => {
-        const value = this.get(descriptor.config, descriptor.defaultValue);
+    descriptors.forEach((descriptor: Descriptor): void => {
+      const value = this.get(descriptor.config, descriptor.defaultValue);
 
-        // TODO support nested key
-        obj[descriptor.key] = value;
-      },
-    );
+      // TODO support nested key
+      obj[descriptor.key] = value;
+    });
 
     if (options) {
       if (options.flatten) {
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const newObj: any = {};
 
-        Object.keys(obj).forEach(
-          (key: string): void => {
-            const value = obj[key];
+        Object.keys(obj).forEach((key: string): void => {
+          const value = obj[key];
 
-            if (typeof value === 'object' && !Array.isArray(value)) {
-              Object.assign(newObj, value);
-            } else {
-              newObj[key] = value;
-            }
-          },
-        );
+          if (typeof value === 'object' && !Array.isArray(value)) {
+            Object.assign(newObj, value);
+          } else {
+            newObj[key] = value;
+          }
+        });
 
         obj = newObj;
       }
 
       if (options.removeProps && options.removeProps.length > 0) {
-        options.removeProps.forEach(
-          (key: string): void => {
-            delete obj[key];
-          },
-        );
+        options.removeProps.forEach((key: string): void => {
+          delete obj[key];
+        });
       }
     }
 

@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "gimbal": "TS_NODE_PROJECT=../gimbal/tsconfig.json yarn start --cwd ../gimbal -- --cwd ../example-angular",
+    "gimbal": "TS_NODE_PROJECT=../../packages/gimbal/tsconfig.json yarn start --cwd ../gimbal -- --cwd ../../examples/angular",
     "gimbal:built": "gimbal",
     "test": "ng test",
     "lint": "ng lint",

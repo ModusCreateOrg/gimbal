@@ -33,13 +33,11 @@ export const outputTable = (report: Report, commandOptions: CommandOptions, opti
   const table = options && options.table ? options.table : createTable(commandOptions, tableConfig);
 
   if (report.data) {
-    report.data.forEach(
-      (item: ReportItem): void => {
-        if (item.value != null) {
-          table.add(item);
-        }
-      },
-    );
+    report.data.forEach((item: ReportItem): void => {
+      if (item.value != null) {
+        table.add(item);
+      }
+    });
   }
 
   return table.render('markdown');
@@ -52,15 +50,13 @@ const MarkdownOutput = (report: Report, commandOptions: CommandOptions): string 
 
   let markdown = '# Gimbal Report';
 
-  report.data.forEach(
-    (item: ReportItem): void => {
-      markdown = `${markdown}
+  report.data.forEach((item: ReportItem): void => {
+    markdown = `${markdown}
 
 ## ${item.label}
 
 ${outputTable(item, commandOptions)}`;
-    },
-  );
+  });
 
   return markdown;
 };

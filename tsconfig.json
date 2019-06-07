@@ -11,7 +11,13 @@
     "resolveJsonModule": true,
 
     "plugins": [{
-      "transform": "@zerollup/ts-transform-paths"
+      "transform": "@zerollup/ts-transform-paths",
+      // these are the paths in the tsconfigs that should be ignored
+      // they have to be hardcoded and exactly what is in the tsconfigs
+      "exclude": [
+        "@modus/gimbal-core",
+        "@modus/gimbal-core/lib/*"
+      ]
     }],
 
     /* Strict Type-Checking Options */

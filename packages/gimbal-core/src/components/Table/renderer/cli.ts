@@ -35,32 +35,30 @@ const renderItem = (table: HorizontalTable, item: Data, index: number, columns: 
     }
   } else {
     table.push(
-      columns.map(
-        (column: Column): string | Cell => {
-          let { [column.key]: value } = item;
+      columns.map((column: Column): string | Cell => {
+        let { [column.key]: value } = item;
 
-          if (value == null) {
-            return '';
-          }
+        if (value == null) {
+          return '';
+        }
 
-          if (column.maxWidth && value.length > column.maxWidth) {
-            value = `... ${value.substr(value.length - column.maxWidth)}`;
-          }
+        if (column.maxWidth && value.length > column.maxWidth) {
+          value = `... ${value.substr(value.length - column.maxWidth)}`;
+        }
 
-          if (column.renderer) {
-            value = column.renderer(value, item);
-          }
+        if (column.renderer) {
+          value = column.renderer(value, item);
+        }
 
-          if (column.align && column.align !== 'left') {
-            return {
-              content: value,
-              hAlign: column.align,
-            };
-          }
+        if (column.align && column.align !== 'left') {
+          return {
+            content: value,
+            hAlign: column.align,
+          };
+        }
 
-          return value;
-        },
-      ),
+        return value;
+      }),
     );
   }
 };

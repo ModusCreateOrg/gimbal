@@ -1,19 +1,31 @@
 {
-  "name": "@modus/shared",
-  "private": true,
+  "name": "@modus/gimbal-core",
   "version": "1.0.12",
-  "description": "A common node module that doesn't get published to npm holding shared things",
+  "description": "> TODO: description",
+  "author": "Mitchell Simoens <mitchellsimoens@gmail.com>",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
   "license": "MIT",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ModusCreateOrg/gimbal.git"
   },
+  "scripts": {
+    "build": "ttsc -p .",
+    "build:check": "ttsc --noEmit -p .",
+    "build:cleanup": "rimraf lib/gimbal-core",
+    "build:watch": "ttsc --watch -p .",
+    "lint": "eslint 'src/**/*.ts'",
+    "prepublish": "yarn build"
+  },
   "bugs": {
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
-  },
-  "scripts": {
-    "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
     "cli-table3": "0.5.1",

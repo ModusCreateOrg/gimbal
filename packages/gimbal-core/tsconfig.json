@@ -4,15 +4,13 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "lib",
-    "rootDir": "src",
+    "rootDirs": ["src"],
     "baseUrl": ".",
     "paths": {
-      "@/shared/*": ["./src/*"],
-      "@/typings/*": ["../typings/*"],
-      "@/*": ["./src/*"]
+      "@/typings/*": ["../typings/*"]
     }
   },
   "include": [
-    "./src"
-  ],
+    "src"
+  ]
 }

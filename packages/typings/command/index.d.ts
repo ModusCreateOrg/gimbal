@@ -11,6 +11,8 @@ export interface ReportItem {
   data?: ReportItem[];
   label: string;
   lastValue?: number | string;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  raw?: any;
   rawLabel: string;
   rawLastValue?: number | string;
   rawThreshold?: number | string;
@@ -27,6 +29,7 @@ export interface Report {
   data?: ReportItem[];
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   raw?: any;
+  rawReports?: Report[];
   success: boolean;
 }
 

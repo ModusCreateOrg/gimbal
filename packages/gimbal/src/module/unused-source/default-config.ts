@@ -13,7 +13,7 @@ const defaultConfig: UnusedSourceConfig = {
       path: '**/*/*.css',
     },
     {
-      maxSize: '3%',
+      maxSize: '15%',
       path: '**/*/main.*.js',
     },
     {

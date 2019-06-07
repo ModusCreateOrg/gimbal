@@ -1,7 +1,7 @@
 import marked from 'marked';
 import path from 'path';
+import { readFile } from '@modus/gimbal-core/lib/utils/fs';
 import generateMarkdown from '@/output/markdown';
-import { readFile } from '@/shared/utils/fs';
 import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 

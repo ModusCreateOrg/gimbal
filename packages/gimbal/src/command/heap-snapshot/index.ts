@@ -1,35 +1,53 @@
+import findPort from '@modus/gimbal-core/lib/utils/port';
 import Chrome from '@/module/chrome';
 import Serve from '@/module/serve';
 import HeapSnapshot from '@/module/heap-snapshot';
 import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import findPort from '@/shared/utils/port';
 
-const unusedSourceRunner = async (options: CommandOptions): Promise<Report> => {
+interface Options {
+  chrome: Chrome;
+  port: number;
+}
+
+const doAudit = async (options: Options, commandOptions: CommandOptions): Promise<Report> => {
+  const { chrome, port } = options;
+  const localUri = `http://localhost:${port}${commandOptions.route}`;
+  const page = await chrome.newPage();
+
+  if (!page) {
+    return {
+      data: [],
+      success: true,
+    };
+  }
+
+  const report = await HeapSnapshot(page, localUri, commandOptions);
+
+  await page.close();
+
+  return report;
+};
+
+const doAudits = (routes: string[], options: Options, commandOptions: CommandOptions): Promise<Report | Report[]> =>
+  Promise.all(routes.map((route: string): Promise<Report> => doAudit(options, { ...commandOptions, route })));
+
+const unusedSourceRunner = async (commandOptions: CommandOptions): Promise<Report | Report[]> => {
   const chrome = new Chrome();
   const servePort = await findPort();
-  const localUri = `http://localhost:${servePort}${options.route}`;
   const serve = new Serve({
     port: servePort,
-    public: options.cwd as string,
+    public: commandOptions.cwd as string,
   });
 
   await serve.start();
   await chrome.launch();
 
   try {
-    const page = await chrome.newPage();
-
-    if (!page) {
-      return {
-        data: [],
-        success: true,
-      };
-    }
-
-    const report = await HeapSnapshot(page, localUri, options);
-
-    await page.close();
+    const options: Options = { chrome, port: servePort };
+    const report = Array.isArray(commandOptions.route)
+      ? await doAudits(commandOptions.route, options, commandOptions)
+      : await doAudit(options, commandOptions);
 
     await chrome.kill();
     await serve.stop();

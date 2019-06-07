@@ -1,6 +1,6 @@
+import env from '@modus/gimbal-core/lib/utils/env';
 import { CIMode } from '@/typings/ci';
 import { VCS as VCSTypes } from '@/typings/vcs';
-import env from '@/shared/utils/env';
 import whichVCS from '@/vcs';
 
 export default class CircleCI {

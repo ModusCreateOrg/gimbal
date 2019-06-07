@@ -1,8 +1,8 @@
 import minimatch from 'minimatch';
 import { CoverageEntry, Page } from 'puppeteer';
 import { URL } from 'url';
+import EventEmitter from '@modus/gimbal-core/lib/event';
 import Config from '@/config';
-import EventEmitter from '@/shared/event';
 import { Report } from '@/typings/command';
 import { SizeConfigs } from '@/typings/module/size';
 import {
@@ -46,7 +46,7 @@ const isThresholdMatch = (url: string, threshold: SizeConfigs, type?: EntryType)
   return !threshold.type && doThresholdMatch(url, threshold);
 };
 
-const getThreshold = (url: string, thresholds: SizeConfigs[], type?: EntryType): string | void => {
+export const getThreshold = (url: string, thresholds: SizeConfigs[], type?: EntryType): string | void => {
   // attempt to find a matching threshold
   const threshold = thresholds.find((item: SizeConfigs): boolean => isThresholdMatch(url, item, type));
 
@@ -59,7 +59,7 @@ const getThreshold = (url: string, thresholds: SizeConfigs[], type?: EntryType):
   return type ? getThreshold(url, thresholds) : undefined;
 };
 
-const checkThreshold = (percentage: number, threshold?: string): CheckThresholdRet => {
+export const checkThreshold = (percentage: number, threshold?: string): CheckThresholdRet => {
   if (threshold == null) {
     // if no threshold, then this is valid
     return {
@@ -77,31 +77,29 @@ const checkThreshold = (percentage: number, threshold?: string): CheckThresholdR
   };
 };
 
-const getEntryUsed = (entry: CoverageEntry): number =>
+export const getEntryUsed = (entry: CoverageEntry): number =>
   entry.ranges.reduce((used: number, range: CoverageRange): number => used + range.end - range.start - 1, 0);
 
 const sortThreshold = (thresholds: SizeConfigs[]): SizeConfigs[] =>
-  thresholds.sort(
-    (last: SizeConfigs, current: SizeConfigs): 0 | 1 | -1 => {
-      if (last.type == null && current.type != null) {
-        return 1;
-      }
-      if (last.type != null && current.type == null) {
+  thresholds.sort((last: SizeConfigs, current: SizeConfigs): 0 | 1 | -1 => {
+    if (last.type == null && current.type != null) {
+      return 1;
+    }
+    if (last.type != null && current.type == null) {
+      return -1;
+    }
+
+    if (last.type && current.type) {
+      if (last.type < current.type) {
         return -1;
       }
-
-      if (last.type && current.type) {
-        if (last.type < current.type) {
-          return -1;
-        }
-        if (last.type > current.type) {
-          return 1;
-        }
+      if (last.type > current.type) {
+        return 1;
       }
+    }
 
-      return 0;
-    },
-  );
+    return 0;
+  });
 
 const UnusedCSS = async (
   page: Page,
@@ -185,6 +183,7 @@ const UnusedCSS = async (
 
     return {
       ...checked,
+      rawEntry: entry,
       total: entryTotal,
       unused,
       unusedPercentage: `${percentage.toFixed(2)}%`,

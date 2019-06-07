@@ -4,15 +4,16 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "lib",
-    "rootDirs": ["src", "../shared/src"],
+    "rootDirs": ["src"],
     "baseUrl": ".",
     "paths": {
       "@/typings/*": ["../typings/*"],
-      "@/shared/*": ["../shared/src/*"],
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@modus/gimbal-core": ["../gimbal-core/src/index.ts"],
+      "@modus/gimbal-core/lib/*": ["../gimbal-core/src/*"]
     }
   },
   "include": [
-    "./src/**/*"
+    "src"
   ]
 }

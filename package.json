@@ -5,18 +5,20 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
-    "clean": "rimraf 'packages/**/{build,lib,dist,package-lock.json}' '**/node_modules' '**/coverage'",
+    "build:examples": "yarn --cwd examples/angular run build && yarn --cwd examples/react run build",
+    "clean": "rimraf '{examples,packages}/**/{build,lib,dist,package-lock.json}' '**/node_modules' '**/coverage'",
     "lerna:version": "lerna version patch --exact --force-publish --yes",
     "link": "lerna run link",
     "lint": "lerna run lint",
     "lint-staged": "lint-staged",
+    "postinstall": "yarn run bootstrap",
     "test": "jest --coverage",
     "test:coveralls": "cat ./coverage/lcov.info | coveralls",
     "test:nocov": "jest"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint-staged"
+      "pre-commit": "yarn run lint-staged"
     }
   },
   "lint-staged": {
@@ -29,11 +31,11 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@angular/cli": "8.0.0",
+    "@angular/cli": "8.0.2",
     "@types/jest": "24.0.13",
-    "@types/node": "12.0.4",
+    "@types/node": "12.0.7",
     "@typescript-eslint/eslint-plugin": "1.9.0",
-    "@zerollup/ts-transform-paths": "1.7.1",
+    "@zerollup/ts-transform-paths": "1.7.3",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "17.1.0",
     "eslint-config-prettier": "4.3.0",
@@ -44,16 +46,16 @@
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-prettier": "3.1.0",
     "eslint-plugin-react": "7.13.0",
-    "husky": "2.3.0",
+    "husky": "2.4.0",
     "jest": "24.8.0",
     "lerna": "3.14.1",
-    "lint-staged": "8.1.7",
-    "prettier": "1.17.1",
+    "lint-staged": "8.2.0",
+    "prettier": "1.18.2",
     "rimraf": "2.6.3",
     "ts-jest": "24.0.2",
     "ts-node": "8.2.0",
     "tsconfig-paths": "3.8.0",
-    "ttypescript": "1.5.6",
+    "ttypescript": "1.5.7",
     "typescript": "3.5.1"
   }
 }

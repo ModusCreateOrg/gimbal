@@ -1,5 +1,5 @@
-import TableComp from '@/shared/components/Table';
-import { sectionHeading, successOrFailure } from '@/shared/utils/colors';
+import TableComp from '@modus/gimbal-core/lib/components/Table';
+import { sectionHeading, successOrFailure } from '@modus/gimbal-core/lib/utils/colors';
 import { Report, ReportItem } from '@/typings/command';
 import { Config, Data, Table } from '@/typings/components/Table';
 import { CliOutputOptions } from '@/typings/output/cli';
@@ -70,12 +70,10 @@ export const outputTable = (report: Report, commandOptions: CommandOptions, opti
   const table = options && options.table ? options.table : createTable(commandOptions);
 
   if (report.data) {
-    report.data.forEach(
-      (item: ReportItem): void => {
-        // TODO handle grouped items
-        table.add(item);
-      },
-    );
+    report.data.forEach((item: ReportItem): void => {
+      // TODO handle grouped items
+      table.add(item);
+    });
   }
 
   return table;

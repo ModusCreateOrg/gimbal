@@ -1,8 +1,8 @@
 import path from 'path';
+import EventEmitter from '@modus/gimbal-core/lib/event';
+import { mkdirp, resolvePath, writeFile } from '@modus/gimbal-core/lib/utils/fs';
 import Config from '@/config';
 import Logger from '@/logger';
-import EventEmitter from '@/shared/event';
-import { mkdirp, resolvePath, writeFile } from '@/shared/utils/fs';
 import { Report } from '@/typings/command';
 import {
   FileWriteStartEvent,

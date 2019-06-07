@@ -1,12 +1,12 @@
 import program from 'commander';
+import event from '@modus/gimbal-core/lib/event';
+import envOrDefault from '@modus/gimbal-core/lib/utils/env';
+import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import resolver from '@/config/resolver';
 import HeapSnapshotMeta from '@/module/heap-snapshot/meta';
 import LighthouseMeta from '@/module/lighthouse/meta';
 import SizeMeta from '@/module/size/meta';
 import UnusedSourceMeta from '@/module/unused-source/meta';
-import event from '@/shared/event';
-import envOrDefault from '@/shared/utils/env';
-import { resolvePath } from '@/shared/utils/fs';
 import { PluginConfig, Plugin, PluginOptions } from '@/typings/config/plugin';
 import { Metas } from '@/typings/plugin/last-value/util';
 import { CommandOptions } from '@/typings/utils/command';

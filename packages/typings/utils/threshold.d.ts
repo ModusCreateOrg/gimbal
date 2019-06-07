@@ -17,7 +17,7 @@ export interface AdvancedThreshold extends LighthouseThreshold {
   Nodes?: number;
   RecalcStyleDuration?: number;
 
-  [name: string]: number | void;
+  [name: string]: number | undefined;
 }
 
 export type Threshold = number | AdvancedThreshold;

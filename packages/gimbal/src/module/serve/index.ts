@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import http from 'http';
 // @ts-ignore
 import handler from 'serve-handler';
-import EventEmitter from '@/shared/event';
+import EventEmitter from '@modus/gimbal-core/lib/event';
 import {
   CloseStartEvent,
   CloseEndEvent,
@@ -46,11 +46,10 @@ class Serve {
 
         await EventEmitter.fire(`module/serve/create-server/start`, createServerStartEvent);
 
-        const server = http.createServer(
-          (request, response): void =>
-            handler(request, response, {
-              public: dir,
-            }),
+        const server = http.createServer((request, response): void =>
+          handler(request, response, {
+            public: dir,
+          }),
         );
 
         const createServerEndEvent: CreateServerEndEvent = {

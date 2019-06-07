@@ -35,6 +35,16 @@ export default new Command({
       defaultValue: '/',
       description: 'Route to run tests on.',
       flag: '--route <route>',
+      process: (value: string, previous: string | string[]): string[] => {
+        // means previous is just the defaultValue
+        if (!Array.isArray(previous)) {
+          return [value];
+        }
+
+        previous.push(value);
+
+        return previous;
+      },
     },
   ],
   title: 'Web Performance Audit',

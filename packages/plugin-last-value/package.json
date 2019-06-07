@@ -18,15 +18,18 @@
   "scripts": {
     "build": "ttsc -p .",
     "build:check": "ttsc --noEmit -p .",
+    "build:cleanup": "rimraf lib/gimbal-core",
     "build:watch": "ttsc --watch -p .",
     "link": "npm link",
     "lint": "eslint 'src/**/*.ts'",
+    "postbuild": "yarn run build:cleanup",
     "prepublish": "yarn build"
   },
   "bugs": {
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
+    "@modus/gimbal-core": "1.0.12",
     "bytes": "3.1.0",
     "deepmerge": "3.2.0"
   },

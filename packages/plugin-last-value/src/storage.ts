@@ -10,40 +10,38 @@ const applyRow = (archiveItem: LastReportItem, config: Config, report: Report, m
   if (parent && parent.data && archiveItem.data) {
     let { success } = parent;
 
-    parent.data.forEach(
-      (item: ReportItem): void => {
-        const match =
-          archiveItem.data &&
-          archiveItem.data.find((archiveChild: ReportItem): boolean => archiveChild.rawLabel === item.rawLabel);
+    parent.data.forEach((item: ReportItem): void => {
+      const match =
+        archiveItem.data &&
+        archiveItem.data.find((archiveChild: ReportItem): boolean => archiveChild.rawLabel === item.rawLabel);
 
-        if (match) {
+      if (match) {
+        /* eslint-disable-next-line no-param-reassign */
+        item.lastValue = match.value;
+        /* eslint-disable-next-line no-param-reassign */
+        item.rawLastValue = match.rawValue;
+
+        const diffInfo = getItemDiff(item as LastReportItem, metaMap);
+
+        if (diffInfo) {
           /* eslint-disable-next-line no-param-reassign */
-          item.lastValue = match.value;
+          (item as LastReportItem).lastValueChange = diffInfo.change;
           /* eslint-disable-next-line no-param-reassign */
-          item.rawLastValue = match.rawValue;
+          (item as LastReportItem).lastValueDiff = diffInfo.diff;
+        }
 
-          const diffInfo = getItemDiff(item as LastReportItem, metaMap);
+        if (failOnBreach && item.success) {
+          const itemSuccess = !doesItemFail(item as LastReportItem, config, metaMap);
 
-          if (diffInfo) {
-            /* eslint-disable-next-line no-param-reassign */
-            (item as LastReportItem).lastValueChange = diffInfo.change;
-            /* eslint-disable-next-line no-param-reassign */
-            (item as LastReportItem).lastValueDiff = diffInfo.diff;
-          }
+          /* eslint-disable-next-line no-param-reassign */
+          item.success = itemSuccess;
 
-          if (failOnBreach && item.success) {
-            const itemSuccess = !doesItemFail(item as LastReportItem, config, metaMap);
-
-            /* eslint-disable-next-line no-param-reassign */
-            item.success = itemSuccess;
-
-            if (success) {
-              success = itemSuccess;
-            }
+          if (success) {
+            success = itemSuccess;
           }
         }
-      },
-    );
+      }
+    });
 
     if (failOnBreach) {
       parent.success = success;
@@ -76,11 +74,9 @@ export const getLastReport = async (
     row.report = archived;
 
     if (archived.data) {
-      archived.data.forEach(
-        (archiveItem: LastReportItem): void => {
-          applyRow(archiveItem, config, report, metaMap);
-        },
-      );
+      archived.data.forEach((archiveItem: LastReportItem): void => {
+        applyRow(archiveItem, config, report, metaMap);
+      });
     }
   }
 };

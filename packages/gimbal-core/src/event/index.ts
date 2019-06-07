@@ -2,7 +2,7 @@ import minimatch from 'minimatch';
 import { FireRet } from '@/typings/event';
 import { Callback, Config } from '@/typings/event/Event';
 import { Data } from '@/typings/utils/Queue';
-import Queue from '@/shared/utils/Queue';
+import Queue from '../utils/Queue';
 import Event from './Event';
 
 interface EventMap {
@@ -34,35 +34,31 @@ class Emitter {
       rets: [],
     };
 
-    Object.keys(events).forEach(
-      (name: string): void => {
-        const match = minimatch(event, name);
+    Object.keys(events).forEach((name: string): void => {
+      const match = minimatch(event, name);
 
-        if (match) {
-          matched.push(...events[name]);
-        }
-      },
-    );
+      if (match) {
+        matched.push(...events[name]);
+      }
+    });
 
     if (matched.length > 0) {
       const queue = new Queue();
       const args = matched
-        .sort(
-          (last: Event, next: Event): number => {
-            const lastPriority = last.priority || 0;
-            const nextPriority = next.priority || 0;
+        .sort((last: Event, next: Event): number => {
+          const lastPriority = last.priority || 0;
+          const nextPriority = next.priority || 0;
 
-            if (lastPriority < nextPriority) {
-              return -1;
-            }
+          if (lastPriority < nextPriority) {
+            return -1;
+          }
 
-            if (lastPriority > nextPriority) {
-              return 1;
-            }
+          if (lastPriority > nextPriority) {
+            return 1;
+          }
 
-            return 0;
-          },
-        )
+          return 0;
+        })
         .map((eventInstance: Event): Data => eventInstance.createCallback(event));
 
       queue.add(...args);

@@ -1,7 +1,7 @@
+import EventEmitter from '@modus/gimbal-core/lib/event';
+import spawn from '@modus/gimbal-core/lib/utils/spawn';
+import { splitOnWhitespace } from '@modus/gimbal-core/lib/utils/string';
 import Logger from '@/logger';
-import EventEmitter from '@/shared/event';
-import spawn from '@/shared/utils/spawn';
-import { splitOnWhitespace } from '@/shared/utils/string';
 import { ArrayJob, Job, JobRet, JobStartEvent, JobEndEvent, JobsStartEvent, JobsEndEvent } from '@/typings/config/jobs';
 import { CommandOptions } from '@/typings/utils/command';
 import { CmdSpawnRet } from '@/typings/utils/spawn';
@@ -101,19 +101,17 @@ const handleResults = (ret: JobRet[]): JobRet[] => {
 
   Logger.log(
     ret
-      .map(
-        (item: void | CmdSpawnRet): string => {
-          if (item) {
-            if (!item.success) {
-              hasFailure = true;
-            }
-
-            return item.logs.map((logItem: Buffer): string => logItem.toString()).join('');
+      .map((item: void | CmdSpawnRet): string => {
+        if (item) {
+          if (!item.success) {
+            hasFailure = true;
           }
 
-          return '';
-        },
-      )
+          return item.logs.map((logItem: Buffer): string => logItem.toString()).join('');
+        }
+
+        return '';
+      })
       .join('\n'),
   );
 

@@ -1,7 +1,7 @@
+import EventEmitter from '@modus/gimbal-core/lib/event';
 import whichCI from '@/ci';
 import Config from '@/config';
 import { outputTable } from '@/output/markdown';
-import EventEmitter from '@/shared/event';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { CommentStartEvent, CommentEndEvent } from '@/typings/vcs/comment';

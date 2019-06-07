@@ -19,26 +19,22 @@ const defaultConfig: Config = {
 };
 
 const createConnection = (config: ItemConfig, envOrDefault: EnvOrDefault): Promise<Connection> =>
-  new Promise(
-    (resolve, reject): void => {
-      const connection = mysqlMod.createConnection({
-        host: envOrDefault('GIMBAL_MYSQL_HOST', 'localhost'),
-        user: envOrDefault('GIMBAL_MYSQL_USERNAME', 'root'),
-        password: envOrDefault('GIMBAL_MYSQL_PASSWORD'),
-        database: config.database,
-      });
+  new Promise((resolve, reject): void => {
+    const connection = mysqlMod.createConnection({
+      host: envOrDefault('GIMBAL_MYSQL_HOST', 'localhost'),
+      user: envOrDefault('GIMBAL_MYSQL_USERNAME', 'root'),
+      password: envOrDefault('GIMBAL_MYSQL_PASSWORD'),
+      database: config.database,
+    });
 
-      connection.connect(
-        (error: MysqlError | null): void => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(connection);
-          }
-        },
-      );
-    },
-  );
+    connection.connect((error: MysqlError | null): void => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(connection);
+      }
+    });
+  });
 
 const mysql = async ({ event, utils: { envOrDefault } }: PluginOptions, config: Config): Promise<void> => {
   const mysqlConfig = deepmerge(defaultConfig, config);

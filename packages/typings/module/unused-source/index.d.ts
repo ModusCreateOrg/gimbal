@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import { CoverageEntry, Page } from 'puppeteer';
 import { Report } from '@/typings/command';
 import { SizeConfigs } from '@/typings/module/size';
@@ -9,6 +10,7 @@ export interface CoverageRange {
 }
 
 export interface Entry {
+  rawEntry?: CoverageEntry;
   success: boolean;
   threshold?: string;
   total: number;
@@ -16,7 +18,7 @@ export interface Entry {
   unused: number;
   unusedPercentage: string;
   used: number;
-  [name: string]: number | string | boolean | void;
+  [name: string]: CoverageEntry | number | string | boolean | void;
 }
 
 export interface UnusedRet {

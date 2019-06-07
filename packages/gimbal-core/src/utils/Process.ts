@@ -54,9 +54,9 @@ export default class Process {
   }
 
   public start(): void {
-    const interval = setInterval((): Promise<void> => this.capture(), 500) as NodeJS.Timeout;
+    const interval = setInterval((): Promise<void> => this.capture(), 500) as unknown;
 
-    this.interval = interval;
+    this.interval = interval as NodeJS.Timeout;
 
     this.capture();
   }

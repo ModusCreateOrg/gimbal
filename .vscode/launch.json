@@ -16,7 +16,7 @@
     "args": [
       "${workspaceFolder}/packages/gimbal/src/index.ts",
       "--cwd",
-      "${workspaceFolder}/packages/${input:appInput}"
+      "${workspaceFolder}/examples/${input:appInput}"
     ],
     "env": {
       "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
@@ -38,7 +38,7 @@
       "${workspaceFolder}/packages/gimbal/src/index.ts",
       "audit",
       "--cwd",
-      "${workspaceFolder}/packages/${input:appInput}"
+      "${workspaceFolder}/examples/${input:appInput}"
     ],
     "env": {
       "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
@@ -60,7 +60,7 @@
       "${workspaceFolder}/packages/gimbal/src/index.ts",
       "heap-snapshot",
       "--cwd",
-      "${workspaceFolder}/packages/${input:appInput}/build",
+      "${workspaceFolder}/examples/${input:appInput}/build",
       "--config",
       "../.gimbalrc.yml"
     ],
@@ -84,7 +84,7 @@
       "${workspaceFolder}/packages/gimbal/src/index.ts",
       "lighthouse",
       "--cwd",
-      "${workspaceFolder}/packages/${input:appInput}/build",
+      "${workspaceFolder}/examples/${input:appInput}/build",
       "--config",
       "../.gimbalrc.yml"
     ],
@@ -108,7 +108,7 @@
       "${workspaceFolder}/packages/gimbal/src/index.ts",
       "size",
       "--cwd",
-      "${workspaceFolder}/packages/${input:appInput}"
+      "${workspaceFolder}/examples/${input:appInput}"
     ],
     "env": {
       "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
@@ -130,7 +130,7 @@
       "${workspaceFolder}/packages/gimbal/src/index.ts",
       "unused-source",
       "--cwd",
-      "${workspaceFolder}/packages/${input:appInput}/build",
+      "${workspaceFolder}/examples/${input:appInput}/build",
       "--config",
       "../.gimbalrc.yml"
     ],
@@ -151,7 +151,7 @@
     "type": "pickString",
     "id": "appInput",
     "description": "Which app do you want to run on?",
-    "options": ["example-angular", "example-react"],
-    "default": "example-react"
+    "options": ["angular", "react"],
+    "default": "react"
   }]
 }

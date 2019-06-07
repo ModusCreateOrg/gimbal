@@ -18,6 +18,8 @@ const defaultConfig: Config = {
   },
 };
 
+type EventRet = void | Promise<void>;
+
 const inspectCommandOptions = (commandOptions: CommandOptions, callback: InspectCallback): void | Promise<void> => {
   if (commandOptions.checkLastValues) {
     return callback();
@@ -32,22 +34,22 @@ module.exports = async ({ event, modules: { metas }, program }: PluginOptions, c
 
   event.on(
     'output/cli/report/end',
-    (eventName: string, { commandOptions, table }: CliReportEndEvent): void | Promise<void> =>
+    (name: string, { commandOptions, table }: CliReportEndEvent): EventRet =>
       inspectCommandOptions(commandOptions, (): void => addColumn(table, pluginConfig, metas)),
   );
 
   event.on(
     'command/*/action/end',
-    (eventName: string, { commandOptions, report }: ActionEndEvent): void | Promise<void> =>
+    (name: string, { commandOptions, report }: ActionEndEvent): EventRet =>
       inspectCommandOptions(
         commandOptions,
-        (): Promise<void> => getLastReport(eventName, pluginConfig, report, event, metas),
+        (): Promise<void> => getLastReport(name, pluginConfig, report, event, metas),
       ),
   );
 
   event.on(
     'command/*/end',
-    (eventName: string, { commandOptions, report }: EndEvent): void | Promise<void> =>
-      inspectCommandOptions(commandOptions, (): Promise<void> => saveReport(eventName, pluginConfig, report, event)),
+    (name: string, { commandOptions, report }: EndEvent): EventRet =>
+      inspectCommandOptions(commandOptions, (): Promise<void> => saveReport(name, pluginConfig, report, event)),
   );
 };

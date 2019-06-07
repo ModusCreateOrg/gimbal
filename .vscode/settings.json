@@ -13,6 +13,9 @@
     "directory": "./packages/gimbal",
     "changeProcessCWD": true
   }, {
+    "directory": "./packages/gimbal-core",
+    "changeProcessCWD": true
+  }, {
     "directory": "./packages/plugin-last-value",
     "changeProcessCWD": true
   }, {
@@ -20,9 +23,6 @@
     "changeProcessCWD": true
   }, {
     "directory": "./packages/plugin-sqlite",
-    "changeProcessCWD": true
-  }, {
-    "directory": "./packages/shared",
     "changeProcessCWD": true
   }, {
     "directory": "./packages/typings",
@@ -39,7 +39,7 @@
     "promisify"
   ],
   "sqltools.connections": [{
-    "database": "./packages/example-react/gimbal.db",
+    "database": "./examples/react/gimbal.db",
     "dialect": "SQLite",
     "name": "gimbal-example-react"
   }]

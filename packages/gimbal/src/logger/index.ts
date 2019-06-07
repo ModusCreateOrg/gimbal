@@ -1,6 +1,6 @@
 import colors from 'colors/safe';
+import { pad } from '@modus/gimbal-core/lib/utils/string';
 import Config from '@/config';
-import { pad } from '@/shared/utils/string';
 
 const colorsArray = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'gray'];
 let last: number;
@@ -78,24 +78,20 @@ const logIndented = (val: LoggerArgs, indent: number = 0): void => {
 // logs out a group of strings.  An array of strings or sub string arrays should
 // be passed in.
 const logGroup = (group: LoggerArgs, indent: number = 0): void => {
-  group.forEach(
-    (val: LoggerArgs): void => {
-      if (Array.isArray(val)) {
-        logGroup(val, indent + 1);
-      } else {
-        logIndented(val, indent);
-      }
-    },
-  );
+  group.forEach((val: LoggerArgs): void => {
+    if (Array.isArray(val)) {
+      logGroup(val, indent + 1);
+    } else {
+      logIndented(val, indent);
+    }
+  });
 };
 
 // handles the grouped logging of all arguments passed
 const group = (...groups: LoggerArgs): void => {
-  [...groups].forEach(
-    (grp): void => {
-      logGroup(grp as LoggerArgs);
-    },
-  );
+  [...groups].forEach((grp): void => {
+    logGroup(grp as LoggerArgs);
+  });
 };
 
 // Sets the allowed logging level
@@ -197,18 +193,16 @@ const getNextColor = (): string => {
 export const namedLogger = (name: string, timeStamp: boolean = true): Logger => {
   const nextColor = getNextColor();
 
-  return createLogger(
-    (level: string, logger: Logger): void => {
-      // @ts-ignore
-      const nameColor = colors[nextColor](name);
-      const fn = createLoggerFunction(level, timeStamp, nameColor);
+  return createLogger((level: string, logger: Logger): void => {
+    // @ts-ignore
+    const nameColor = colors[nextColor](name);
+    const fn = createLoggerFunction(level, timeStamp, nameColor);
 
-      /* eslint-disable-next-line no-param-reassign */
-      logger[level] = fn;
-      /* eslint-disable-next-line no-param-reassign */
-      logger.group[level] = createLoggerGroupFunction(level, fn);
-    },
-  );
+    /* eslint-disable-next-line no-param-reassign */
+    logger[level] = fn;
+    /* eslint-disable-next-line no-param-reassign */
+    logger.group[level] = createLoggerGroupFunction(level, fn);
+  });
 };
 
 // The main logger object

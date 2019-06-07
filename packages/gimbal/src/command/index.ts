@@ -1,15 +1,16 @@
 import program, { Command as CommandType } from 'commander';
 import figlet from 'figlet';
 import path from 'path';
+import EventEmitter from '@modus/gimbal-core/lib/event';
+import { readDir, stats } from '@modus/gimbal-core/lib/utils/fs';
 import Config from '@/config';
-import EventEmitter from '@/shared/event';
 import Logger from '@/logger';
 import output from '@/output';
 import { StartEvent, EndEvent, ActionStartEvent, ActionEndEvent, Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
-import { readDir, stats } from '@/shared/utils/fs';
 import comment from '@/vcs/comment';
+import reconcileReports from './reconcile';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Action = (commandOptions: CommandOptions, args?: string[]) => Promise<any>;
@@ -18,9 +19,12 @@ type ActionCreator = (...actionArgs: ActionCreatorArg[]) => Promise<void>;
 type DefaultValueFn = (options: CommandOptions) => CommandOptions;
 
 interface Option {
-  defaultValue?: string | DefaultValueFn;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  defaultValue?: any | DefaultValueFn;
   description?: string;
   flag: string;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  process?: ((arg1: any, arg2: any) => void) | RegExp;
 }
 
 interface Config {
@@ -69,11 +73,13 @@ class Command {
     const cmd = program.command(this.command);
 
     if (options) {
-      options.forEach(
-        (option: Option): void => {
+      options.forEach((option: Option): void => {
+        if (option.process) {
+          cmd.option(option.flag, option.description, option.process, option.defaultValue);
+        } else {
           cmd.option(option.flag, option.description, option.defaultValue);
-        },
-      );
+        }
+      });
     }
 
     cmd.action(this.createAction());
@@ -117,7 +123,8 @@ class Command {
 
       await EventEmitter.fire(`command/${this.command}/action/start`, actionStartEvent);
 
-      const report: Report = await this.action(commandOptions, args);
+      const reports: Report | Report[] = await this.action(commandOptions, args);
+      const report: Report = reconcileReports(reports);
 
       const actionEndEvent: ActionEndEvent = {
         args,

@@ -6,10 +6,11 @@ const type = 'unused-source';
 
 const parseReport = (raw: Entry[], options: CommandOptions): Report => {
   const { checkThresholds } = options;
-  const success: boolean = checkThresholds ? raw.every((entry: Entry): boolean => entry.success) : true;
+  const success: boolean = !checkThresholds || raw.every((entry: Entry): boolean => entry.success);
   const data: ReportItem[] = raw.map(
     (entry: Entry): ReportItem => ({
       label: entry.url,
+      raw: entry,
       rawLabel: entry.url,
       rawThreshold: entry.threshold,
       rawValue: entry.unusedPercentage,

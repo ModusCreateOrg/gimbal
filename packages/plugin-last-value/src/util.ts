@@ -1,7 +1,7 @@
+import checkThreshold, { isPercentage, percentToNumber } from '@modus/gimbal-core/lib/utils/threshold';
 import { Meta } from '@/typings/module';
 import { Config, ItemFailReasons, LastReportItem } from '@/typings/plugin/last-value';
 import { DiffRet, Metas } from '@/typings/plugin/last-value/util';
-import checkThreshold, { isPercentage, percentToNumber } from '@/shared/utils/threshold';
 
 const getNumberDiff = (item: LastReportItem): DiffRet => {
   const lastValue = Number(item.rawLastValue);

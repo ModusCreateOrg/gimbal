@@ -1,9 +1,10 @@
 import { dirname } from 'path';
+import { mkdirp, resolvePath, writeFile } from '@modus/gimbal-core/lib/utils/fs';
+import checkThreshold from '@modus/gimbal-core/lib/utils/threshold';
 import { Report, ReportItem } from '@/typings/command';
 import { Audit, Config } from '@/typings/module/lighthouse';
 import { CommandOptions } from '@/typings/utils/command';
 import { AdvancedThreshold } from '@/typings/utils/threshold';
-import { mkdirp, resolvePath, writeFile } from '@/shared/utils/fs';
 
 const type = 'lighthouse';
 
@@ -20,7 +21,7 @@ const parseReport = async (raw: Audit, { outputHtml, threshold }: Config, option
       const thresholdNumber: number = (isComplexThreshold
         ? (threshold as AdvancedThreshold)[label]
         : threshold) as number;
-      const objSuccess = checkThresholds ? value >= thresholdNumber : true;
+      const objSuccess = !checkThresholds || checkThreshold(value, thresholdNumber, 'lower');
 
       if (!objSuccess) {
         success = objSuccess;

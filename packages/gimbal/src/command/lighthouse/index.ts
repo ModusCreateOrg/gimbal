@@ -1,34 +1,48 @@
+import { mkdirp } from '@modus/gimbal-core/lib/utils/fs';
+import findPort from '@modus/gimbal-core/lib/utils/port';
+import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import Chrome from '@/module/chrome';
 import Lighthouse from '@/module/lighthouse';
 import Serve from '@/module/serve';
 import { Report } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import { mkdirp } from '@/shared/utils/fs';
-import findPort from '@/shared/utils/port';
+import { Options } from '@/typings/module/lighthouse';
 
-const lighthouseRunner = async (options: CommandOptions): Promise<Report> => {
-  if (options.artifactDir) {
-    await mkdirp(options.artifactDir as string);
+const doAudit = (port: number, userOptions: Options, commandOptions: CommandOptions): Promise<Report | Report[]> => {
+  if (Array.isArray(commandOptions.route)) {
+    const queue = new Queue();
+
+    commandOptions.route.forEach((route: string): void => {
+      queue.add((): Promise<Report> => Lighthouse(`http://localhost:${port}${route}`, userOptions, commandOptions));
+    });
+
+    return queue.run();
+  }
+
+  return Lighthouse(`http://localhost:${port}${commandOptions.route}`, userOptions, commandOptions);
+};
+
+const lighthouseRunner = async (commandOptions: CommandOptions): Promise<Report | Report[]> => {
+  if (commandOptions.artifactDir) {
+    await mkdirp(commandOptions.artifactDir as string);
   }
 
   const chrome = new Chrome();
   const servePort = await findPort();
   const serve = new Serve({
     port: servePort,
-    public: options.cwd as string,
+    public: commandOptions.cwd as string,
   });
 
   await serve.start();
   await chrome.launch();
 
   try {
-    const report: Report = await Lighthouse(
-      `http://localhost:${servePort}${options.route}`,
-      {
-        chromePort: chrome.port as string,
-      },
-      options,
-    );
+    const userOptions: Options = {
+      chromePort: chrome.port as string,
+    };
+
+    const report = await doAudit(servePort, userOptions, commandOptions);
 
     await chrome.kill();
     await serve.stop();

@@ -2,17 +2,13 @@ import envOrDefault from './env';
 
 const ORIG_ENV = process.env;
 
-beforeEach(
-  (): void => {
-    process.env = {};
-  },
-);
+beforeEach((): void => {
+  process.env = {};
+});
 
-afterEach(
-  (): void => {
-    process.env = { ...ORIG_ENV };
-  },
-);
+afterEach((): void => {
+  process.env = { ...ORIG_ENV };
+});
 
 describe('util.env', (): void => {
   describe('envOrDefault', (): void => {
