@@ -4,6 +4,7 @@ import program from 'commander';
 import readPkg from 'read-pkg';
 import Command, { preparseOptions } from '@/command';
 import Config from '@/config';
+import processAudits from '@/config/audits';
 import processJobs from '@/config/jobs';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 import updateNotifier from 'update-notifier';
@@ -51,11 +52,17 @@ import updateNotifier from 'update-notifier';
 
   if (!program.args.length) {
     if (config) {
-      const { jobs } = config;
+      const { audits, jobs } = config;
 
       if (jobs) {
         try {
           await processJobs(jobs, options);
+        } catch {
+          process.exit(1);
+        }
+      } else if (audits && audits.length) {
+        try {
+          await processAudits();
         } catch {
           process.exit(1);
         }

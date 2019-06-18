@@ -1,5 +1,7 @@
 import { ReportThresholdLimit } from '@/typings/command';
 
+export type Modules = 'heap-snapshot' | 'lighthouse' | 'size' | 'unused-source';
+
 type Types = 'number' | 'percentage' | 'size';
 
 interface TypesMap {

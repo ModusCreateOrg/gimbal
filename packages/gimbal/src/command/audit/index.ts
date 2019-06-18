@@ -1,6 +1,7 @@
 import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import findPort from '@modus/gimbal-core/lib/utils/port';
+import Config from '@/config';
 import sizeModule from '@/module/size';
 import LighthouseModule from '@/module/lighthouse';
 import Chrome from '@/module/chrome';
@@ -8,6 +9,7 @@ import HeapSnapshot from '@/module/heap-snapshot';
 import UnusedSource from '@/module/unused-source';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
+import { Modules } from '@/typings/module';
 import { CommandOptions } from '@/typings/utils/command';
 
 interface AuditOptions {
@@ -39,12 +41,14 @@ const takeHeapSnapshot = async (chrome: Chrome, url: string, options: CommandOpt
   throw new Error('Could not open page to get heap snapshot');
 };
 
-const doAudit = async (options: AuditOptions, commandOptions: CommandOptions): Promise<Report> => {
+const shouldRunModule = (audits: string[], module: string): boolean => audits.indexOf(module) !== -1;
+
+const doAudit = async (options: AuditOptions, audits: Modules[], commandOptions: CommandOptions): Promise<Report> => {
   const { chrome, url } = options;
   const rets: ReportItem[] = [];
   let success = true;
 
-  if (commandOptions.size) {
+  if (shouldRunModule(audits, 'size')) {
     const report = await sizeModule(commandOptions);
 
     if (!report.success) {
@@ -56,7 +60,7 @@ const doAudit = async (options: AuditOptions, commandOptions: CommandOptions): P
     }
   }
 
-  if (commandOptions.lighthouse && chrome && url) {
+  if (shouldRunModule(audits, 'lighthouse') && chrome && url) {
     const report = await LighthouseModule(
       url,
       {
@@ -74,7 +78,7 @@ const doAudit = async (options: AuditOptions, commandOptions: CommandOptions): P
     }
   }
 
-  if (commandOptions.calculateUnusedSource && chrome && url) {
+  if (shouldRunModule(audits, 'unused-source') && chrome && url) {
     const report = await calculateUnusedSource(chrome, url, commandOptions);
 
     if (report) {
@@ -88,7 +92,7 @@ const doAudit = async (options: AuditOptions, commandOptions: CommandOptions): P
     }
   }
 
-  if (commandOptions.heapSnapshot && chrome && url) {
+  if (shouldRunModule(audits, 'heap-snapshot') && chrome && url) {
     const report = await takeHeapSnapshot(chrome, url, commandOptions);
 
     if (report) {
@@ -109,9 +113,39 @@ const doAudit = async (options: AuditOptions, commandOptions: CommandOptions): P
 };
 
 const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
+  let audits: Modules[] = Config.get('audits');
+
+  if (!audits || !audits.length) {
+    /**
+     * This block is more for backwards compatibility. If the `gimbal audit`
+     * command was executed and there isn't the `audits` config, we can fall
+     * back on the old way using the cli options that opts out.
+     */
+    audits = audits ? [...audits] : [];
+
+    if (options.calculateUnusedSource) {
+      audits.push('unused-source');
+    }
+
+    if (options.heapSnapshot) {
+      audits.push('heap-snapshot');
+    }
+
+    if (options.lighthouse) {
+      audits.push('lighthouse');
+    }
+
+    if (options.size) {
+      audits.push('size');
+    }
+  }
+
   // if we are going to calculate unused CSS, take heap snapshot(s) or run lighthouse audits
   // we need to host the app and use chrome
-  const needChromeAndServe = options.calculateUnusedSource || options.heapSnapshot || options.lighthouse;
+  const needChromeAndServe =
+    shouldRunModule(audits, 'heap-snapshot') ||
+    shouldRunModule(audits, 'lighthouse') ||
+    shouldRunModule(audits, 'unused-source');
 
   const servePort = needChromeAndServe ? await findPort() : null;
   const buildDir = resolvePath(options.cwd, options.buildDir as string);
@@ -139,6 +173,7 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
               chrome,
               url: servePort ? `http://localhost:${servePort}${route}` : undefined,
             },
+            audits,
             {
               ...options,
               route,
@@ -157,6 +192,7 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
         chrome,
         url: servePort ? `http://localhost:${servePort}${options.route}` : undefined,
       },
+      audits,
       options,
     );
   }
