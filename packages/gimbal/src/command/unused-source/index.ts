@@ -35,7 +35,7 @@ const unusedSourceRunner = async (commandOptions: CommandOptions): Promise<Repor
   const servePort = await findPort();
   const serve = new Serve({
     port: servePort,
-    public: commandOptions.cwd as string,
+    public: commandOptions.cwd,
   });
 
   await serve.start();

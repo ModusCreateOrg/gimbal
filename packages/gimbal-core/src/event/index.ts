@@ -44,22 +44,23 @@ class Emitter {
 
     if (matched.length > 0) {
       const queue = new Queue();
-      const args = matched
-        .sort((last: Event, next: Event): number => {
-          const lastPriority = last.priority || 0;
-          const nextPriority = next.priority || 0;
 
-          if (lastPriority < nextPriority) {
-            return -1;
-          }
+      matched.sort((last: Event, next: Event): number => {
+        const lastPriority = last.priority || 0;
+        const nextPriority = next.priority || 0;
 
-          if (lastPriority > nextPriority) {
-            return 1;
-          }
+        if (lastPriority < nextPriority) {
+          return -1;
+        }
 
-          return 0;
-        })
-        .map((eventInstance: Event): Data => eventInstance.createCallback(event));
+        if (lastPriority > nextPriority) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      const args = matched.map((eventInstance: Event): Data => eventInstance.createCallback(event));
 
       queue.add(...args);
 

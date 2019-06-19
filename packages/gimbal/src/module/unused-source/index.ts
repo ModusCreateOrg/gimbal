@@ -70,7 +70,7 @@ export const checkThreshold = (percentage: number, threshold?: string): CheckThr
 
   // threshold is a percentage as a string
   // remove % off end
-  const thresholdNum = (threshold as string).substr(0, (threshold as string).length - 1);
+  const thresholdNum = threshold.substr(0, threshold.length - 1);
 
   return {
     success: percentage <= Number(thresholdNum),
@@ -81,7 +81,7 @@ export const checkThreshold = (percentage: number, threshold?: string): CheckThr
 export const getEntryUsed = (entry: CoverageEntry): number =>
   entry.ranges.reduce((used: number, range: CoverageRange): number => used + range.end - range.start - 1, 0);
 
-const sortThreshold = (thresholds: SizeConfigs[]): SizeConfigs[] =>
+const sortThreshold = (thresholds: SizeConfigs[]): SizeConfigs[] => {
   thresholds.sort((last: SizeConfigs, current: SizeConfigs): 0 | 1 | -1 => {
     if (last.type == null && current.type != null) {
       return 1;
@@ -101,6 +101,9 @@ const sortThreshold = (thresholds: SizeConfigs[]): SizeConfigs[] =>
 
     return 0;
   });
+
+  return thresholds;
+};
 
 const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[]): SizeConfigs[] => {
   sourceArray.forEach((sourceItem: SizeConfigs): void => {

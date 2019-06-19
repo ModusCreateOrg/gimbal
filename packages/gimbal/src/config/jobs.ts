@@ -133,9 +133,7 @@ const processJobs = async (jobs: Job[], commandOptions: CommandOptions): Promise
   const ret: JobRet[] = await Promise.all(
     jobs.map(
       async (job: Job): Promise<CmdSpawnRet | void> =>
-        Array.isArray(job)
-          ? processArrayForm(job as ArrayJob, commandOptions)
-          : processStringForm(job as string, commandOptions),
+        Array.isArray(job) ? processArrayForm(job, commandOptions) : processStringForm(job, commandOptions),
     ),
   ).then(handleResults);
 

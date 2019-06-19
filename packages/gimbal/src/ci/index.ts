@@ -23,7 +23,7 @@ const tests: Tests = {
 
 const normalizeConfiguredCI = (configuredCI?: string | CIConfig): CIConfig | void => {
   if (configuredCI) {
-    return typeof configuredCI === 'string' ? { provider: configuredCI as string } : (configuredCI as CIConfig);
+    return typeof configuredCI === 'string' ? { provider: configuredCI } : configuredCI;
   }
 
   return undefined;

@@ -185,7 +185,7 @@ class Config {
       const prop = parts.shift() as string;
 
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      obj = obj[prop] as any;
+      obj = obj[prop];
     }
 
     /**

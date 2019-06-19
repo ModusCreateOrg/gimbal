@@ -52,7 +52,7 @@ const parsePlugins = async (
   const pluginConfigs = await Promise.all(
     plugins.map(
       async (plugin: string | PluginConfig): Promise<PluginConfig> => {
-        const obj: PluginConfig = typeof plugin === 'string' ? { plugin, name: plugin } : (plugin as PluginConfig);
+        const obj: PluginConfig = typeof plugin === 'string' ? { plugin, name: plugin } : plugin;
         const resolved = await import(resolver(obj.plugin as string, dir, 'plugin'));
 
         return {

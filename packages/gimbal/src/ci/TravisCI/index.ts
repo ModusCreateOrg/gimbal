@@ -6,6 +6,12 @@ import GitHub from '@/vcs/GitHub';
 export default class TravisCI {
   private $vcs?: VCSTypes;
 
+  private get slugSplit(): string[] {
+    const slug = env('TRAVIS_REPO_SLUG');
+
+    return slug.split('/');
+  }
+
   public static is(): boolean {
     return env('TRAVIS', false) as boolean;
   }
@@ -19,9 +25,7 @@ export default class TravisCI {
   }
 
   public get owner(): string {
-    const slug = env('TRAVIS_REPO_SLUG');
-
-    return slug.split('/')[0];
+    return this.slugSplit[0];
   }
 
   public get pr(): number | void {
@@ -31,9 +35,7 @@ export default class TravisCI {
   }
 
   public get repo(): string {
-    const slug = env('TRAVIS_REPO_SLUG');
-
-    return slug.split('/')[1];
+    return this.slugSplit[1];
   }
 
   public get sha(): string {

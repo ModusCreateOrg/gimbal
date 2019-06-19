@@ -22,7 +22,7 @@ const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig, option
   const data: ReportItem[] = keysToCareAbout.map(
     (label: string): ReportItem => {
       const objThreshold = threshold[label];
-      const value = raw[label] as number;
+      const value = raw[label];
       const objSuccess = !checkThresholds || objThreshold == null || checkThreshold(value, objThreshold);
 
       if (!objSuccess) {

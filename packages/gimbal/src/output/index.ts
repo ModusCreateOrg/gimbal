@@ -142,7 +142,7 @@ const output = async (report: Report, commandOptions: CommandOptions): Promise<v
 
       await EventEmitter.fire('output/json/report/start', jsonReportStartEvent);
 
-      const contents = await jsonOutput(report);
+      const contents = jsonOutput(report);
 
       const jsonReportEndEvent: JsonReportEndEvent = {
         commandOptions,
@@ -171,7 +171,7 @@ const output = async (report: Report, commandOptions: CommandOptions): Promise<v
 
       await EventEmitter.fire('output/markdown/report/start', markdownReportStartEvent);
 
-      const contents = await markdownOutput(report, commandOptions);
+      const contents = markdownOutput(report, commandOptions);
 
       const markdownReportEndEvent: MarkdownReportEndEvent = {
         commandOptions,

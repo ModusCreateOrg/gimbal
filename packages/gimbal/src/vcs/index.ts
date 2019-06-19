@@ -23,7 +23,7 @@ let vcs: GitHubCls | void;
 
 const normalizeConfiguredVCS = (configuredVCS?: string | VCSConfig): VCSConfig | void => {
   if (configuredVCS) {
-    return typeof configuredVCS === 'string' ? { provider: configuredVCS as string } : (configuredVCS as VCSConfig);
+    return typeof configuredVCS === 'string' ? { provider: configuredVCS } : configuredVCS;
   }
 
   return undefined;
@@ -56,14 +56,13 @@ const whichVCS = (repoUrl: string): VCSTypes | void => {
     ? configuredVCS.provider
     : Object.keys(tests).find((key: string): boolean => tests[key].is(url));
 
-  switch (VCS) {
-    case GitHub:
-      vcs = new GitHubCls();
+  if (VCS === GitHub) {
+    vcs = new GitHubCls();
 
-      return vcs;
-    default:
-      return undefined;
+    return vcs;
   }
+
+  return undefined;
 };
 
 export default whichVCS;
