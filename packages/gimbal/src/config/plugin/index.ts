@@ -5,6 +5,7 @@ import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import resolver from '@/config/resolver';
 import HeapSnapshotMeta from '@/module/heap-snapshot/meta';
 import LighthouseMeta from '@/module/lighthouse/meta';
+import { get, register } from '@/module/registry';
 import SizeMeta from '@/module/size/meta';
 import UnusedSourceMeta from '@/module/unused-source/meta';
 import { PluginConfig, Plugin, PluginOptions } from '@/typings/config/plugin';
@@ -28,7 +29,9 @@ const options: PluginOptions = {
   dir: __dirname,
   event,
   modules: {
+    get,
     metas,
+    register,
   },
   program,
   utils: {

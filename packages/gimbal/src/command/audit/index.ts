@@ -2,109 +2,56 @@ import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import findPort from '@modus/gimbal-core/lib/utils/port';
 import Config from '@/config';
-import sizeModule from '@/module/size';
-import LighthouseModule from '@/module/lighthouse';
 import Chrome from '@/module/chrome';
-import HeapSnapshot from '@/module/heap-snapshot';
-import UnusedSource from '@/module/unused-source';
+import { get } from '@/module/registry';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
 import { Modules } from '@/typings/module';
 import { CommandOptions } from '@/typings/utils/command';
+
+// register built-in modules
+import '@/module/heap-snapshot/register';
+import '@/module/lighthouse/register';
+import '@/module/size/register';
+import '@/module/unused-source/register';
 
 interface AuditOptions {
   chrome?: Chrome;
   url?: string;
 }
 
-const calculateUnusedSource = async (chrome: Chrome, url: string, options: CommandOptions): Promise<Report | void> => {
-  const page = await chrome.newPage();
-
-  if (page) {
-    const report = await UnusedSource(page, url, options);
-
-    await page.close();
-
-    return report;
-  }
-
-  throw new Error('Could not open page to calculate unused source');
-};
-
-const takeHeapSnapshot = async (chrome: Chrome, url: string, options: CommandOptions): Promise<Report | void> => {
-  const page = await chrome.newPage();
-
-  if (page) {
-    return HeapSnapshot(page, url, options);
-  }
-
-  throw new Error('Could not open page to get heap snapshot');
-};
-
 const shouldRunModule = (audits: string[], module: string): boolean => audits.indexOf(module) !== -1;
 
 const doAudit = async (options: AuditOptions, audits: Modules[], commandOptions: CommandOptions): Promise<Report> => {
-  const { chrome, url } = options;
   const rets: ReportItem[] = [];
   let success = true;
 
-  if (shouldRunModule(audits, 'size')) {
-    const report = await sizeModule(commandOptions);
+  await Promise.all(
+    audits.map(
+      async (audit: string): Promise<void> => {
+        const mod = get(audit);
 
-    if (!report.success) {
-      success = false;
-    }
+        if (!mod) {
+          throw new Error(`"${mod}" was not found in the module registry`);
+        }
 
-    if (report.data) {
-      rets.push(...report.data);
-    }
-  }
+        const report = await mod({
+          commandOptions,
+          ...options,
+        });
 
-  if (shouldRunModule(audits, 'lighthouse') && chrome && url) {
-    const report = await LighthouseModule(
-      url,
-      {
-        chromePort: chrome.port as string,
+        if (report) {
+          if (!report.success) {
+            success = false;
+          }
+
+          if (report.data) {
+            rets.push(...report.data);
+          }
+        }
       },
-      commandOptions,
-    );
-
-    if (!report.success) {
-      success = false;
-    }
-
-    if (report.data) {
-      rets.push(...report.data);
-    }
-  }
-
-  if (shouldRunModule(audits, 'unused-source') && chrome && url) {
-    const report = await calculateUnusedSource(chrome, url, commandOptions);
-
-    if (report) {
-      if (!report.success) {
-        success = false;
-      }
-
-      if (report.data) {
-        rets.push(...report.data);
-      }
-    }
-  }
-
-  if (shouldRunModule(audits, 'heap-snapshot') && chrome && url) {
-    const report = await takeHeapSnapshot(chrome, url, commandOptions);
-
-    if (report) {
-      if (!report.success) {
-        success = false;
-      }
-
-      if (report.data) {
-        rets.push(...report.data);
-      }
-    }
-  }
+    ),
+  );
 
   return {
     data: rets,

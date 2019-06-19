@@ -57,10 +57,15 @@ export default class GitHub {
     return undefined;
   }
 
-  private async createCommitComment(sha: string, body: string): Promise<Response<ReposCreateCommitCommentResponse>> {
+  private async createCommitComment(
+    /* eslint-disable-next-line @typescript-eslint/camelcase,camelcase */
+    commit_sha: string,
+    body: string,
+  ): Promise<Response<ReposCreateCommitCommentResponse>> {
     const comment: ReposCreateCommitCommentParams = {
       body,
-      sha,
+      /* eslint-disable-next-line @typescript-eslint/camelcase */
+      commit_sha,
       owner: this.ci.owner,
       repo: this.ci.repo,
     };

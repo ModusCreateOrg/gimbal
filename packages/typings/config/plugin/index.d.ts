@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { Emitter } from '@/typings/event';
+import { Get, Register } from '@/typings/module/registry';
 import { Metas } from '@/typings/plugin/last-value/util';
 import { ResolvePath } from '@/typings/utils/fs';
 import { CommandOptions, GetOptionsFromCommand } from '@/typings/utils/command';
@@ -10,7 +11,9 @@ export interface PluginOptions {
   dir: string;
   event: Emitter;
   modules: {
+    get: Get;
     metas: Metas;
+    register: Register;
   };
   program: Command;
   utils: {
