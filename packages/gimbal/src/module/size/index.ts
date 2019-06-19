@@ -1,6 +1,7 @@
 // @ts-ignore
 import brotliSize from 'brotli-size';
 import bytes from 'bytes';
+import deepmerge from 'deepmerge';
 import globby from 'globby';
 import gzipSize from 'gzip-size';
 import minimatch from 'minimatch';
@@ -82,16 +83,30 @@ const getResult = async (
   return undefined;
 };
 
+const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[]): SizeConfigs[] => {
+  sourceArray.forEach((sourceItem: SizeConfigs): void => {
+    const match = destinationArray.find((destItem: SizeConfigs): boolean => destItem.path === sourceItem.path);
+
+    if (match) {
+      // apply config onto default
+      Object.assign(match, sourceItem);
+    } else {
+      // is a new item
+      destinationArray.push(sourceItem);
+    }
+  });
+
+  return destinationArray;
+};
+
 const sizeModule = async (
   options: CommandOptions,
-  config: SizeConfig | SizeConfigs[] = Config.get('configs.size'),
+  config: SizeConfig | SizeConfigs[] = Config.get('configs.size', []),
 ): Promise<Report> => {
   const { cwd } = options;
-  const sizeConfig = {
-    ...defaultConfig,
-    ...config,
-  };
-  const configObject: SizeConfig = Array.isArray(sizeConfig) ? { threshold: sizeConfig } : sizeConfig;
+  const configObject = deepmerge(defaultConfig, Array.isArray(config) ? { threshold: config } : config, {
+    arrayMerge,
+  });
 
   const auditStartEvent: AuditStartEvent = {
     config: configObject,

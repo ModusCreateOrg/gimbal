@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 import minimatch from 'minimatch';
 import { CoverageEntry, Page } from 'puppeteer';
 import { URL } from 'url';
@@ -101,17 +102,32 @@ const sortThreshold = (thresholds: SizeConfigs[]): SizeConfigs[] =>
     return 0;
   });
 
+const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[]): SizeConfigs[] => {
+  sourceArray.forEach((sourceItem: SizeConfigs): void => {
+    const match = destinationArray.find((destItem: SizeConfigs): boolean => destItem.path === sourceItem.path);
+
+    if (match) {
+      // apply config onto default
+      Object.assign(match, sourceItem);
+    } else {
+      // is a new item
+      destinationArray.push(sourceItem);
+    }
+  });
+
+  return destinationArray;
+};
+
 const UnusedCSS = async (
   page: Page,
   url: string,
   options: CommandOptions,
-  config: UnusedSourceConfig = Config.get('configs.unused-source'),
+  config: UnusedSourceConfig = Config.get('configs.unused-source', {}),
 ): Promise<Report> => {
   const { checkThresholds } = options;
-  const sourceConfig = {
-    ...defaultConfig,
-    ...config,
-  };
+  const sourceConfig = deepmerge(defaultConfig, config, {
+    arrayMerge,
+  });
   const isThresholdArray = Array.isArray(sourceConfig.threshold);
   const thresholds: string | SizeConfigs[] = isThresholdArray
     ? sortThreshold(sourceConfig.threshold as SizeConfigs[])
