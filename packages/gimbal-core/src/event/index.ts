@@ -1,6 +1,6 @@
 import minimatch from 'minimatch';
 import { FireRet } from '@/typings/event';
-import { Callback, Config } from '@/typings/event/Event';
+import { Callback, CreatedCallback, Config } from '@/typings/event/Event';
 import { Data } from '@/typings/utils/Queue';
 import Queue from '../utils/Queue';
 import Event from './Event';
@@ -60,7 +60,7 @@ class Emitter {
         return 0;
       });
 
-      const args = matched.map((eventInstance: Event): Data => eventInstance.createCallback(event));
+      const args = matched.map((eventInstance: Event): CreatedCallback => eventInstance.createCallback(event));
 
       queue.add(...args);
 

@@ -10,7 +10,7 @@ afterEach((): void => {
   process.env = { ...ORIG_ENV };
 });
 
-describe('util.env', (): void => {
+describe('@modus/gimbal-core/utils/env', (): void => {
   describe('envOrDefault', (): void => {
     test('should return the value', (): void => {
       process.env.foo = 'bar';

@@ -4,19 +4,21 @@ module.exports = {
   env: {
     es6: true,
     jest: true,
-    node: true
+    node: true,
+    'jest/globals': true
   },
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'airbnb',
+    'plugin:jest/recommended',
     'plugin:prettier/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript'
   ],
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier', 'import'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', 'jest'],
   rules: {
     'prettier/prettier': 'error',
     'class-methods-use-this': 'off',

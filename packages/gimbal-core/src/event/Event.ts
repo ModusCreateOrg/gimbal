@@ -1,4 +1,4 @@
-import { Callback, Config } from '@/typings/event/Event';
+import { Callback, CreatedCallback, Config } from '@/typings/event/Event';
 import { Data } from '@/typings/utils/Queue';
 
 class Event {
@@ -26,7 +26,7 @@ class Event {
     return this.fn(event, data);
   }
 
-  public createCallback(event: string): Callback {
+  public createCallback(event: string): CreatedCallback {
     return this.fire.bind(this, event);
   }
 }
