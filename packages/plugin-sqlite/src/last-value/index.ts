@@ -36,7 +36,7 @@ export const getLastReport = async (command: string, config: Config): Promise<vo
     stmt.get(
       command,
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      (error: Error | void, row: any): void => {
+      (error: Error | void, row?: any): void => {
         if (error) {
           reject(error);
         } else {

@@ -21,7 +21,10 @@
     "build:watch": "ttsc --watch -p .",
     "link": "npm link",
     "lint": "eslint 'src/**/*.ts'",
-    "prepublish": "yarn build"
+    "prepublish": "yarn build",
+    "test": "jest --coverage",
+    "test:coveralls": "cat ./coverage/lcov.info | coveralls",
+    "test:nocov": "jest"
   },
   "bugs": {
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"

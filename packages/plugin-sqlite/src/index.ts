@@ -14,8 +14,8 @@ interface ItemConfig {
 type Item = boolean | ItemConfig;
 
 interface Config {
-  file: string;
-  lastValue: Item;
+  file?: string;
+  lastValue?: Item;
 }
 
 const defaultConfig: Config = {
