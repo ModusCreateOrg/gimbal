@@ -316,6 +316,7 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
         },
         table: 'hello_there',
       });
+
       expect(saveLastReport).toHaveBeenCalledWith('foo', 'bar', {
         db: new sqlite3.Database(':memory:'),
         file: ':memory:',
