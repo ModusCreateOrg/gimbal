@@ -4,6 +4,8 @@ import { Table } from '@/typings/components/Table';
 import { Config, LastReportItem } from '@/typings/plugin/last-value';
 import { Metas } from '@/typings/plugin/last-value/util';
 
+type Renderer = (lastValue: number | string | void, item: LastReportItem) => string;
+
 const bytesConfig = {
   unitSeparator: ' ',
 };
@@ -30,10 +32,30 @@ export const renderDifference = (lastValue: number, item: LastReportItem): strin
     const diffPrefix = diff > 0 ? '+' : '';
 
     return `${lastValue}
-${diffPrefix}${bytes(diff, bytesConfig)}`;
+  ${diffPrefix}${bytes(diff, bytesConfig)}`;
   }
 
   return `${lastValue}`;
+};
+
+export const createRenderer = (config: Config, metaMap: Metas): Renderer => (
+  lastValue: number | string | void,
+  item: LastReportItem,
+): string => {
+  const failure = doesItemFail(item, config, metaMap);
+
+  switch (failure) {
+    case 'number':
+    case 'percentage':
+    case 'size':
+      return renderDifference(lastValue as number, item);
+    case 'numberDiffPercentage':
+    case 'percentageDiffPercentage':
+    case 'sizeDiffPercentage':
+      return renderDiffPercentage(lastValue as string, item);
+    default:
+      return lastValue == null ? '' : `${lastValue}`;
+  }
 };
 
 export const addColumn = (table: Table | void, config: Config, metaMap: Metas): void => {
@@ -45,22 +67,7 @@ export const addColumn = (table: Table | void, config: Config, metaMap: Metas): 
         header: 'Last Value',
         key: 'lastValue',
         align: 'center',
-        renderer: (lastValue: number | string, item: LastReportItem): string => {
-          const failure = doesItemFail(item, config, metaMap);
-
-          switch (failure) {
-            case 'number':
-            case 'percentage':
-            case 'size':
-              return renderDifference(lastValue as number, item);
-            case 'numberDiffPercentage':
-            case 'percentageDiffPercentage':
-            case 'sizeDiffPercentage':
-              return renderDiffPercentage(lastValue as string, item);
-            default:
-              return lastValue ? `${lastValue}` : '';
-          }
-        },
+        renderer: createRenderer(config, metaMap),
       },
       index,
     );

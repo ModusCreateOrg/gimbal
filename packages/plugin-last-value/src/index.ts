@@ -28,7 +28,7 @@ const inspectCommandOptions = (commandOptions: CommandOptions, callback: Inspect
   return undefined;
 };
 
-module.exports = async ({ event, modules: { metas }, program }: PluginOptions, config: Config): Promise<void> => {
+const LastValue = async ({ event, modules: { metas }, program }: PluginOptions, config: Config): Promise<void> => {
   const pluginConfig = deepmerge(defaultConfig, config);
 
   program.option('--no-check-last-values', 'Set to disable checking last values vs current values.', true);
@@ -54,3 +54,5 @@ module.exports = async ({ event, modules: { metas }, program }: PluginOptions, c
       inspectCommandOptions(commandOptions, (): Promise<void> => saveReport(name, pluginConfig, report, event)),
   );
 };
+
+export default LastValue;
