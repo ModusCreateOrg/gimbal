@@ -40,6 +40,95 @@ describe('@modus/gimbal-core/event/index', (): void => {
     });
   });
 
+  describe('un', (): void => {
+    it('should remove listener', async (): Promise<void> => {
+      const { default: Emitter } = await import('./index');
+      const fn = jest.fn().mockResolvedValue('returned');
+
+      const instance = Emitter.on('foo', fn);
+
+      const ret = await Emitter.fire('foo', 'bar');
+
+      expect(ret).toEqual({
+        data: 'bar',
+        rets: ['returned'],
+      });
+
+      expect(fn).toHaveBeenCalledWith('foo', 'bar');
+      expect(fn.mock.calls).toEqual([['foo', 'bar']]);
+
+      Emitter.un('foo', instance);
+
+      const ret2 = await Emitter.fire('foo', 'bar');
+
+      expect(ret2).toEqual({
+        data: 'bar',
+        rets: [],
+      });
+
+      // same as when it was called
+      expect(fn.mock.calls).toEqual([['foo', 'bar']]);
+    });
+
+    it('should not remove listener of non-added event', async (): Promise<void> => {
+      const { default: Emitter } = await import('./index');
+      const fn = jest.fn().mockResolvedValue('returned');
+
+      const instance = Emitter.on('foo', fn);
+
+      const ret = await Emitter.fire('foo', 'bar');
+
+      expect(ret).toEqual({
+        data: 'bar',
+        rets: ['returned'],
+      });
+
+      expect(fn).toHaveBeenCalledWith('foo', 'bar');
+      expect(fn.mock.calls).toEqual([['foo', 'bar']]);
+
+      Emitter.un('bar', instance);
+
+      const ret2 = await Emitter.fire('foo', 'bar');
+
+      expect(ret2).toEqual({
+        data: 'bar',
+        rets: ['returned'],
+      });
+
+      expect(fn.mock.calls).toEqual([['foo', 'bar'], ['foo', 'bar']]);
+    });
+
+    it('should not remove listener not added', async (): Promise<void> => {
+      const { default: Event } = await import('./Event');
+      const { default: Emitter } = await import('./index');
+      const fn = jest.fn().mockResolvedValue('returned');
+      const instance = new Event('foo', (): void => {});
+
+      Emitter.on('foo', fn);
+
+      const ret = await Emitter.fire('foo', 'bar');
+
+      expect(ret).toEqual({
+        data: 'bar',
+        rets: ['returned'],
+      });
+
+      expect(fn).toHaveBeenCalledWith('foo', 'bar');
+      expect(fn.mock.calls).toEqual([['foo', 'bar']]);
+
+      Emitter.un('foo', instance);
+
+      const ret2 = await Emitter.fire('foo', 'bar');
+
+      expect(ret2).toEqual({
+        data: 'bar',
+        rets: ['returned'],
+      });
+
+      expect(fn.mock.calls).toEqual([['foo', 'bar'], ['foo', 'bar']]);
+    });
+  });
+
   describe('fire', (): void => {
     it('should be able to fire event', async (): Promise<void> => {
       const { default: Emitter } = await import('./index');

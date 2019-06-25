@@ -26,6 +26,16 @@ class Emitter {
     return instance;
   }
 
+  public un(event: string, instance: Event): void {
+    const { events } = this;
+    const { [event]: arr } = events;
+    const index = arr && arr.indexOf(instance);
+
+    if (arr && index !== -1) {
+      arr.splice(index, 1);
+    }
+  }
+
   public async fire(event: string, data: Data): Promise<FireRet> {
     const { events } = this;
     const matched: Event[] = [];
