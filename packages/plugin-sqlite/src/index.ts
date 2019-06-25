@@ -31,12 +31,14 @@ const sqlite = async (
 ): Promise<void> => {
   const sqliteConfig = deepmerge(defaultConfig, config);
 
-  if (commandOptions) {
+  if (commandOptions && sqliteConfig.file !== ':memory:') {
     sqliteConfig.file = resolvePath(commandOptions.cwd, sqliteConfig.file);
   }
 
   if (willNeedDatabase(sqliteConfig)) {
-    await mkdirp(dirname(sqliteConfig.file));
+    if (sqliteConfig.file !== ':memory:') {
+      await mkdirp(dirname(sqliteConfig.file));
+    }
 
     const db = new sqlite3.Database(sqliteConfig.file);
 
