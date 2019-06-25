@@ -30,6 +30,7 @@ const inspectCommandOptions = (commandOptions: CommandOptions, callback: Inspect
 
 module.exports = async ({ event, modules: { metas }, program }: PluginOptions, config: Config): Promise<void> => {
   const pluginConfig = deepmerge(defaultConfig, config);
+
   program.option('--no-check-last-values', 'Set to disable checking last values vs current values.', true);
 
   event.on(

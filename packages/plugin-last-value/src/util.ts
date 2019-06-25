@@ -1,5 +1,5 @@
 import checkThreshold, { isPercentage, percentToNumber } from '@modus/gimbal-core/lib/utils/threshold';
-import { Meta } from '@/typings/module';
+import { Meta, Types } from '@/typings/module';
 import { Config, ItemFailReasons, LastReportItem } from '@/typings/plugin/last-value';
 import { DiffRet, Metas } from '@/typings/plugin/last-value/util';
 
@@ -12,8 +12,12 @@ const getNumberDiff = (item: LastReportItem): DiffRet => {
 };
 
 const getPercentageDiff = (item: LastReportItem): DiffRet => {
-  const lastValue = percentToNumber(item.rawLastValue as string);
-  const value = percentToNumber(item.rawValue as string);
+  const lastValue = isPercentage(item.rawLastValue as string)
+    ? percentToNumber(item.rawLastValue as string)
+    : (item.rawLastValue as number);
+  const value = isPercentage(item.rawValue as string)
+    ? percentToNumber(item.rawValue as string)
+    : (item.rawValue as number);
   const diff = Math.abs(lastValue - value);
   const change = (diff / (item.rawValue as number)) * 100;
 
@@ -73,7 +77,7 @@ const checkSizeThreshold = (item: LastReportItem, config: Config, meta: Meta): I
   return checkDiff(item, diff, thresholds.size, thresholds.diffPercentage, 'size', 'sizeDiffPercentage', meta);
 };
 
-export const getItemDiff = (item: LastReportItem, metaMap: Metas): void | DiffRet => {
+const getThresholdType = (item: LastReportItem, metaMap: Metas): Types | void => {
   const meta = metaMap[item.type];
   let { thresholdType } = meta;
   const { thresholdTypes } = meta;
@@ -81,6 +85,12 @@ export const getItemDiff = (item: LastReportItem, metaMap: Metas): void | DiffRe
   if (!thresholdType && thresholdTypes) {
     thresholdType = thresholdTypes[item.rawLabel];
   }
+
+  return thresholdType;
+};
+
+export const getItemDiff = (item: LastReportItem, metaMap: Metas): void | DiffRet => {
+  const thresholdType = getThresholdType(item, metaMap);
 
   switch (thresholdType) {
     case 'number':
@@ -101,12 +111,7 @@ export const doesItemFail = (item: LastReportItem, config: Config, metaMap: Meta
   }
 
   const meta = metaMap[item.type];
-  let { thresholdType } = meta;
-  const { thresholdTypes } = meta;
-
-  if (!thresholdType && thresholdTypes) {
-    thresholdType = thresholdTypes[item.rawLabel];
-  }
+  const thresholdType = getThresholdType(item, metaMap);
 
   switch (thresholdType) {
     case 'number':

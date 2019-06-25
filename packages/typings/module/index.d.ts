@@ -2,7 +2,7 @@ import { ReportThresholdLimit } from '@/typings/command';
 
 export type Modules = 'heap-snapshot' | 'lighthouse' | 'size' | 'unused-source';
 
-type Types = 'number' | 'percentage' | 'size';
+export type Types = 'number' | 'percentage' | 'size';
 
 interface TypesMap {
   [label: string]: Types;
