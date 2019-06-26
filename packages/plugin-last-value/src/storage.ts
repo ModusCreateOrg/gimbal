@@ -1,4 +1,4 @@
-import { doesItemFail, getItemDiff } from '@/util';
+import { doesItemFail, getItemDiff } from './util';
 import { Report, ReportItem } from '@/typings/command';
 import { Config, LastReportItem, GetEvent, SaveEvent } from '@/typings/plugin/last-value';
 import { Metas } from '@/typings/plugin/last-value/util';

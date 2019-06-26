@@ -1,5 +1,5 @@
 import bytes from 'bytes';
-import { doesItemFail } from '@/util';
+import { doesItemFail } from './util';
 import { Table } from '@/typings/components/Table';
 import { Config, LastReportItem } from '@/typings/plugin/last-value';
 import { Metas } from '@/typings/plugin/last-value/util';

@@ -25,7 +25,7 @@ const markdownTableOptions = {
   },
 };
 
-const tableConfig: Config = {
+export const tableConfig: Config = {
   options: markdownTableOptions as TableInstanceOptions,
 };
 

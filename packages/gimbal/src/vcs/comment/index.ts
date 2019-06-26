@@ -1,25 +1,54 @@
 import EventEmitter from '@modus/gimbal-core/lib/event';
 import whichCI from '@/ci';
 import Config from '@/config';
-import { outputTable } from '@/output/markdown';
+import { createTable } from '@/output/cli';
+import { outputTable, tableConfig } from '@/output/markdown';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import { CommentStartEvent, CommentEndEvent } from '@/typings/vcs/comment';
+import {
+  CommentBuildStartEvent,
+  CommentBuildEndEvent,
+  CommentRenderTableStartEvent,
+  CommentRenderTableEndEvent,
+  CommentStartEvent,
+  CommentEndEvent,
+} from '@/typings/vcs/comment';
 
-const renderItem = (item: ReportItem, options: CommandOptions): string => {
-  if (!item.data) {
+const renderItem = async (reportItem: ReportItem, commandOptions: CommandOptions): Promise<string> => {
+  if (!reportItem.data) {
     return '';
   }
 
-  const numFailed = item.data.reduce(
+  const numFailed = reportItem.data.reduce(
     (num: number, dataItem: ReportItem): number => num + (dataItem.success ? 0 : 1),
     0,
   );
 
-  return `<details><summary>${item.label} (${numFailed} failure${numFailed === 1 ? '' : 's'})</summary>
+  const table = createTable(commandOptions, tableConfig);
+
+  const commentRenderTableStartEvent: CommentRenderTableStartEvent = {
+    commandOptions,
+    reportItem,
+    table,
+  };
+
+  await EventEmitter.fire(`vcs/comment/render/table/start`, commentRenderTableStartEvent);
+
+  const renderedTable = outputTable(reportItem, commandOptions, { table });
+
+  const commentRenderTableEndEvent: CommentRenderTableEndEvent = {
+    commandOptions,
+    renderedTable,
+    reportItem,
+    table,
+  };
+
+  await EventEmitter.fire(`vcs/comment/render/table/end`, commentRenderTableEndEvent);
+
+  return `<details><summary>${reportItem.label} (${numFailed} failure${numFailed === 1 ? '' : 's'})</summary>
 <p>
 
-${outputTable(item, options)}
+${renderedTable}
 
 </p>
 </details>`;
@@ -36,23 +65,53 @@ const vcsComment = async (report: Report, commandOptions: CommandOptions): Promi
         const { vcs } = ci;
 
         if (vcs) {
-          const markdown = report.data.map((item: ReportItem): string => renderItem(item, commandOptions)).join('\n\n');
-          const trimmed = markdown.trim();
+          const commentBuildStartEvent: CommentBuildStartEvent = {
+            ci,
+            report,
+            vcs,
+          };
 
-          if (trimmed) {
+          await EventEmitter.fire(`vcs/comment/build/start`, commentBuildStartEvent);
+
+          const renderedReport = await Promise.all(
+            report.data.map((item: ReportItem): Promise<string> => renderItem(item, commandOptions)),
+          );
+
+          let markdown = renderedReport.join('\n\n').trim();
+
+          const commentBuildEndEvent: CommentBuildEndEvent = {
+            ci,
+            markdown,
+            report,
+            vcs,
+          };
+
+          const { data }: { data: CommentBuildEndEvent } = await EventEmitter.fire(
+            `vcs/comment/build/end`,
+            commentBuildEndEvent,
+          );
+
+          if (data.markdown) {
+            /* eslint-disable-next-line prefer-destructuring */
+            markdown = data.markdown;
+          }
+
+          if (markdown) {
             const commentStartEvent: CommentStartEvent = {
               ci,
-              comment: trimmed,
+              comment: markdown,
+              report,
               vcs,
             };
 
             await EventEmitter.fire(`vcs/comment/start`, commentStartEvent);
 
-            await vcs.comment(trimmed);
+            await vcs.comment(markdown);
 
             const commentEndEvent: CommentEndEvent = {
               ci,
-              comment: trimmed,
+              comment: markdown,
+              report,
               vcs,
             };
 

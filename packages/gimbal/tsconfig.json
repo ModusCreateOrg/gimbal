@@ -10,7 +10,13 @@
       "@/typings/*": ["../typings/*"],
       "@/*": ["./src/*"],
       "@modus/gimbal-core": ["../gimbal-core/src/index.ts"],
-      "@modus/gimbal-core/lib/*": ["../gimbal-core/src/*"]
+      "@modus/gimbal-core/lib/*": ["../gimbal-core/src/*"],
+      "@modus/gimbal-plugin-last-value": ["../plugin-last-value/src/index.ts"],
+      "@modus/gimbal-plugin-last-value/lib/*": ["../plugin-last-value/src/*"],
+      "@modus/gimbal-plugin-mysql": ["../plugin-mysql/src/index.ts"],
+      "@modus/gimbal-plugin-mysql/lib/*": ["../plugin-mysql/src/*"],
+      "@modus/gimbal-plugin-sqlite": ["../plugin-sqlite/src/index.ts"],
+      "@modus/gimbal-plugin-sqlite/lib/*": ["../plugin-sqlite/src/*"]
     }
   },
   "include": [

@@ -111,6 +111,7 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
 
     expect(on.mock.calls).toEqual([
       ['output/cli/report/end', expect.any(Function)],
+      ['vcs/comment/render/table/start', expect.any(Function)],
       ['command/*/action/end', expect.any(Function)],
       ['command/*/end', expect.any(Function)],
     ]);
@@ -132,12 +133,12 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
     };
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    jest.doMock('@/render', (): any => ({
+    jest.doMock('./render', (): any => ({
       addColumn,
     }));
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    jest.doMock('@/storage', (): any => ({
+    jest.doMock('./storage', (): any => ({
       getLastReport,
       saveReport,
     }));
@@ -187,24 +188,43 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
 
     expect(on.mock.calls).toEqual([
       ['output/cli/report/end', expect.any(Function)],
+      ['vcs/comment/render/table/start', expect.any(Function)],
       ['command/*/action/end', expect.any(Function)],
       ['command/*/end', expect.any(Function)],
     ]);
 
-    expect(addColumn).toHaveBeenCalledWith(
-      'table',
-      {
-        failOnBreach: false,
-        saveOnlyOnSuccess: true,
-        thresholds: {
-          diffPercentage: 50,
-          number: 1,
-          percentage: 1,
-          size: 1,
+    expect(addColumn.mock.calls).toEqual([
+      // from 'output/cli/report/end' event
+      [
+        'table',
+        {
+          failOnBreach: false,
+          saveOnlyOnSuccess: true,
+          thresholds: {
+            diffPercentage: 50,
+            number: 1,
+            percentage: 1,
+            size: 1,
+          },
         },
-      },
-      {},
-    );
+        {},
+      ],
+      // from 'vcs/comment/render/table/start' event
+      [
+        'table',
+        {
+          failOnBreach: false,
+          saveOnlyOnSuccess: true,
+          thresholds: {
+            diffPercentage: 50,
+            number: 1,
+            percentage: 1,
+            size: 1,
+          },
+        },
+        {},
+      ],
+    ]);
 
     expect(getLastReport).toHaveBeenCalledWith(
       'command/*/action/end',
@@ -262,12 +282,12 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
     };
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    jest.doMock('@/render', (): any => ({
+    jest.doMock('./render', (): any => ({
       addColumn,
     }));
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    jest.doMock('@/storage', (): any => ({
+    jest.doMock('./storage', (): any => ({
       getLastReport,
       saveReport,
     }));
@@ -317,6 +337,7 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
 
     expect(on.mock.calls).toEqual([
       ['output/cli/report/end', expect.any(Function)],
+      ['vcs/comment/render/table/start', expect.any(Function)],
       ['command/*/action/end', expect.any(Function)],
       ['command/*/end', expect.any(Function)],
     ]);

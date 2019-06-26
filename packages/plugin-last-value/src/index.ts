@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge';
-import { addColumn } from '@/render';
-import { getLastReport, saveReport } from '@/storage';
+import { addColumn } from './render';
+import { getLastReport, saveReport } from './storage';
 import { ActionEndEvent, EndEvent } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Config, InspectCallback } from '@/typings/plugin/last-value';
@@ -35,6 +35,12 @@ const LastValue = async ({ event, modules: { metas }, program }: PluginOptions, 
 
   event.on(
     'output/cli/report/end',
+    (name: string, { commandOptions, table }: CliReportEndEvent): EventRet =>
+      inspectCommandOptions(commandOptions, (): void => addColumn(table, pluginConfig, metas)),
+  );
+
+  event.on(
+    'vcs/comment/render/table/start',
     (name: string, { commandOptions, table }: CliReportEndEvent): EventRet =>
       inspectCommandOptions(commandOptions, (): void => addColumn(table, pluginConfig, metas)),
   );
