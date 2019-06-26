@@ -13,9 +13,9 @@ configs:
       - path: dist/example-angular/main-*.js
         maxSize: 3 KB
       - path: dist/example-angular/polyfills-es5.js
-        maxSize: 85.5 KB
+        maxSize: 90 KB
       - path: dist/example-angular/polyfills-es2015.js
-        maxSize: 44.25 KB
+        maxSize: 45 KB
       - path: dist/example-angular/runtime-*.js
         maxSize: 1.75 KB
       - path: dist/example-angular/styles-*.js

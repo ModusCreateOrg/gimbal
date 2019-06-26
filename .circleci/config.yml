@@ -7,12 +7,24 @@ aliases:
     name: Saving node_modules/ cache
     paths:
       - node_modules
-      - packages/example-angular/node_modules
       - packages/gimbal/node_modules
+      - packages/gimbal-core/node_modules
+      - packages/plugin-last-value/node_modules
+      - packages/plugin-mysql/node_modules
+      - packages/plugin-sqlite/node_modules
+  - &restore-example-cache
+    key: v1-dependencies-{{ checksum "yarn.lock" }}
+    name: Restoring examples node_modules/ cache
+  - &save-example-cache
+    key: v1-dependencies-{{ checksum "yarn.lock" }}
+    name: Saving examples node_modules/ cache
+    paths:
+      - examples/angular/node_modules
+      - examples/react/node_modules
 
 docker-defaults: &docker-defaults
   docker:
-    - image: circleci/node:10
+    - image: circleci/node:10-browsers
 
 defaults: &defaults
   <<: *docker-defaults
@@ -107,6 +119,16 @@ jobs:
             docker push $IMAGE_NAME:latest
             docker push $IMAGE_NAME:$IMAGE_TAG
 
+  test-examples:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-example-cache
+      - restore_cache: *restore-npm-cache
+      - run: yarn build:examples
+      - run: yarn test:examples
+      - save_cache: *save-example-cache
+
   test:
     <<: *defaults
     steps:
@@ -128,6 +150,12 @@ workflows:
           filters:
             tags:
               ignore: /^v.*/
+      - test-examples:
+          requires:
+            - install-dependencies
+          filters:
+            tags:
+              ignore: /^v.*/
       - test:
           requires:
             - install-dependencies
@@ -137,6 +165,7 @@ workflows:
       - build:
           requires:
             - lint
+            - test-examples
             - test
           filters:
             tags:
