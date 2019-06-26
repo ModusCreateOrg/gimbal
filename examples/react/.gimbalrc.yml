@@ -1,2 +1,7 @@
+plugins:
+  - '@modus/gimbal-plugin-last-value'
+  - plugin: '@modus/gimbal-plugin-sqlite'
+    lastValue: true
+
 jobs:
   - audit

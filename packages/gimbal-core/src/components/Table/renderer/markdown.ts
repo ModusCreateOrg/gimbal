@@ -1,16 +1,42 @@
 // @ts-ignore
 import stripAnsi from 'strip-ansi';
-import { RendererArgs } from '@/typings/components/Table';
+import { Column, RendererArgs } from '@/typings/components/Table';
 import renderCli from './cli';
 
+type AlignmentValues = '----' | ':---:' | '---:';
+
+interface Alignment {
+  center: AlignmentValues;
+  left: AlignmentValues;
+  right: AlignmentValues;
+}
+
+interface BorderItem {
+  [name: string]: AlignmentValues;
+}
+
+const alignments: Alignment = {
+  center: ':---:',
+  left: '----',
+  right: '---:',
+};
+
 const renderMarkdown = ({ columns, data, options }: RendererArgs): string => {
-  data.unshift({
-    label: '----',
-    rawLabel: '----',
-    threshold: ':---:',
-    success: ':---:',
-    value: ':---:',
+  const item: BorderItem = {
+    label: alignments.left,
+    rawLabel: alignments.left,
+    threshold: alignments.center,
+    success: alignments.center,
+    value: alignments.center,
+  };
+
+  columns.forEach((column: Column): void => {
+    const char = alignments[column.align || 'left'];
+
+    item[column.key] = char;
   });
+
+  data.unshift(item);
 
   return stripAnsi(renderCli({ columns, data, options }));
 };

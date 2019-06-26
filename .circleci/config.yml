@@ -20,7 +20,9 @@ aliases:
     name: Saving examples node_modules/ cache
     paths:
       - examples/angular/node_modules
+      - examples/angular/gimbal.db
       - examples/react/node_modules
+      - examples/react/gimbal.db
 
 docker-defaults: &docker-defaults
   docker:

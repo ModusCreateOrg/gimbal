@@ -23,5 +23,10 @@ configs:
       - path: dist/example-angular/vendor-*.js
         maxSize: 700 KB
 
+plugins:
+  - '@modus/gimbal-plugin-last-value'
+  - plugin: '@modus/gimbal-plugin-sqlite'
+    lastValue: true
+
 jobs:
   - audit --build-dir dist/example-angular
