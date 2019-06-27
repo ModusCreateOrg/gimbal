@@ -6,6 +6,7 @@ audits:
   - heap-snapshot
 
 configs:
+  buildDir: dist/example-angular
   heap-snapshot:
     threshold:
       Nodes: 81
@@ -38,6 +39,3 @@ plugins:
   - '@modus/gimbal-plugin-last-value'
   - plugin: '@modus/gimbal-plugin-sqlite'
     lastValue: true
-
-jobs:
-  - audit --build-dir dist/example-angular
