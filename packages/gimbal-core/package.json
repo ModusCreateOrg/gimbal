@@ -1,6 +1,6 @@
 {
   "name": "@modus/gimbal-core",
-  "version": "1.0.13",
+  "version": "1.1.0",
   "description": "Core utilities for Modus Gimbal",
   "author": "Mitchell Simoens <mitchellsimoens@gmail.com>",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",

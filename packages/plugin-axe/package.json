@@ -1,6 +1,6 @@
 {
   "name": "@modus/gimbal-plugin-axe",
-  "version": "1.0.13",
+  "version": "1.1.0",
   "description": "Plugin to add axe audits to Gimbal",
   "author": "Mitchell Simoens <mitchellsimoens@gmail.com>",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
@@ -43,7 +43,7 @@
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
-    "@modus/gimbal-core": "1.0.13",
+    "@modus/gimbal-core": "1.1.0",
     "axe-puppeteer": "1.0.0",
     "deepmerge": "3.3.0"
   }
