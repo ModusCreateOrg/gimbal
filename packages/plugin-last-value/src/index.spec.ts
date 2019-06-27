@@ -24,13 +24,6 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
       {
         dir: 'foo',
         event,
-        modules: {
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          get: (): any => {},
-          metas: {},
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          register: (): any => {},
-        },
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         program: Command as any,
         utils: {
@@ -74,13 +67,6 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
         event: {
           ...event,
           on,
-        },
-        modules: {
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          get: (): any => {},
-          metas: {},
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          register: (): any => {},
         },
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         program: Command as any,
@@ -152,13 +138,6 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
           ...event,
           on,
         },
-        modules: {
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          get: (): any => {},
-          metas: {},
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          register: (): any => {},
-        },
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         program: Command as any,
         utils: {
@@ -207,7 +186,6 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
             size: 1,
           },
         },
-        {},
       ],
       // from 'vcs/comment/render/table/start' event
       [
@@ -222,7 +200,6 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
             size: 1,
           },
         },
-        {},
       ],
     ]);
 
@@ -243,7 +220,6 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
         fire: expect.any(Function),
         on: expect.any(Function),
       },
-      {},
     );
 
     expect(saveReport).toHaveBeenCalledWith(
@@ -300,13 +276,6 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
         event: {
           ...event,
           on,
-        },
-        modules: {
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          get: (): any => {},
-          metas: {},
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          register: (): any => {},
         },
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         program: Command as any,

@@ -1,10 +1,14 @@
-import { addColumn, createRenderer, renderDifference, renderDiffPercentage } from './render';
 import { Table } from '@/typings/components/Table';
-import { Metas } from '@/typings/plugin/last-value/util';
+
+beforeEach((): void => {
+  jest.resetModules();
+});
 
 describe('@modus/gimbal-plugin-last-value/render', (): void => {
   describe('renderDiffPercentage', (): void => {
-    it('should render a diff as a percent', (): void => {
+    it('should render a diff as a percent', async (): Promise<void> => {
+      const { renderDiffPercentage } = await import('./render');
+
       const ret = renderDiffPercentage('10%', {
         command: 'foo',
         label: 'Foo',
@@ -23,7 +27,9 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
       expect(ret).toBe('10%\n  +80%');
     });
 
-    it('should render a diff as a negative percent', (): void => {
+    it('should render a diff as a negative percent', async (): Promise<void> => {
+      const { renderDiffPercentage } = await import('./render');
+
       const ret = renderDiffPercentage('10%', {
         command: 'foo',
         label: 'Foo',
@@ -42,7 +48,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
       expect(ret).toBe('10%\n  -80%');
     });
 
-    it('should render just last value when no last value change', (): void => {
+    it('should render just last value when no last value change', async (): Promise<void> => {
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -60,12 +66,14 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       delete item.lastValueChange;
 
+      const { renderDiffPercentage } = await import('./render');
+
       const ret = renderDiffPercentage('10%', item);
 
       expect(ret).toBe('10%');
     });
 
-    it('should render just last value when no last value diff', (): void => {
+    it('should render just last value when no last value diff', async (): Promise<void> => {
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -83,12 +91,16 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       delete item.lastValueDiff;
 
+      const { renderDiffPercentage } = await import('./render');
+
       const ret = renderDiffPercentage('10%', item);
 
       expect(ret).toBe('10%');
     });
 
-    it('should decimalize', (): void => {
+    it('should decimalize', async (): Promise<void> => {
+      const { renderDiffPercentage } = await import('./render');
+
       const ret = renderDiffPercentage('10%', {
         command: 'foo',
         label: 'Foo',
@@ -109,7 +121,9 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
   });
 
   describe('renderDifference', (): void => {
-    it('should render difference in bytes', (): void => {
+    it('should render difference in bytes', async (): Promise<void> => {
+      const { renderDifference } = await import('./render');
+
       const ret = renderDifference(10, {
         command: 'foo',
         label: 'Foo',
@@ -128,7 +142,9 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
       expect(ret).toBe('10\n  +8 B');
     });
 
-    it('should render difference in bytes as negative', (): void => {
+    it('should render difference in bytes as negative', async (): Promise<void> => {
+      const { renderDifference } = await import('./render');
+
       const ret = renderDifference(10, {
         command: 'foo',
         label: 'Foo',
@@ -147,7 +163,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
       expect(ret).toBe('10\n  -8 B');
     });
 
-    it('should render just last value', (): void => {
+    it('should render just last value', async (): Promise<void> => {
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -165,6 +181,8 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       delete item.lastValueDiff;
 
+      const { renderDifference } = await import('./render');
+
       const ret = renderDifference(10, item);
 
       expect(ret).toBe('10');
@@ -172,7 +190,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
   });
 
   describe('createRenderer', (): void => {
-    it('should render values', (): void => {
+    it('should render values', async (): Promise<void> => {
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -197,19 +215,25 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
         type: 'foo',
         value: '10 B',
       };
-      const meta: Metas = {
-        foo: {
+
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+      jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        getMeta: (): any => ({
           thresholdLimit: 'upper',
           thresholdType: 'number',
-        },
-      };
-      const renderer = createRenderer(config, meta);
+        }),
+      }));
+
+      const { createRenderer } = await import('./render');
+
+      const renderer = createRenderer(config);
       const ret = renderer(10, item);
 
       expect(ret).toBe('10\n  +8 B');
     });
 
-    it('should render diff values', (): void => {
+    it('should render diff values', async (): Promise<void> => {
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -234,19 +258,25 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
         type: 'foo',
         value: '20 B',
       };
-      const meta: Metas = {
-        foo: {
+
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+      jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        getMeta: (): any => ({
           thresholdLimit: 'upper',
           thresholdType: 'number',
-        },
-      };
-      const renderer = createRenderer(config, meta);
+        }),
+      }));
+
+      const { createRenderer } = await import('./render');
+
+      const renderer = createRenderer(config);
       const ret = renderer(20, item);
 
       expect(ret).toBe('20\n  +80%');
     });
 
-    it('should render last value', (): void => {
+    it('should render last value', async (): Promise<void> => {
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -271,19 +301,16 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
         type: 'foo',
         value: '20 B',
       };
-      const meta: Metas = {
-        foo: {
-          thresholdLimit: 'upper',
-          thresholdType: 'number',
-        },
-      };
-      const renderer = createRenderer(config, meta);
+
+      const { createRenderer } = await import('./render');
+
+      const renderer = createRenderer(config);
       const ret = renderer(20, item);
 
       expect(ret).toBe('20');
     });
 
-    it('should render empty string if no last value', (): void => {
+    it('should render empty string if no last value', async (): Promise<void> => {
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -308,13 +335,10 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
         type: 'foo',
         value: '20 B',
       };
-      const meta: Metas = {
-        foo: {
-          thresholdLimit: 'upper',
-          thresholdType: 'number',
-        },
-      };
-      const renderer = createRenderer(config, meta);
+
+      const { createRenderer } = await import('./render');
+
+      const renderer = createRenderer(config);
       const ret = renderer(undefined, item);
 
       expect(ret).toBe('');
@@ -322,7 +346,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
   });
 
   describe('addColumn', (): void => {
-    it('should add column', (): void => {
+    it('should add column', async (): Promise<void> => {
       const addColumnMock = jest.fn();
       const findColumn = jest.fn().mockReturnValue(3);
       const table = {
@@ -348,7 +372,9 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
         },
       };
 
-      addColumn(table as Table, config, {});
+      const { addColumn } = await import('./render');
+
+      addColumn(table as Table, config);
 
       expect(addColumnMock).toHaveBeenCalledWith(
         {
@@ -363,7 +389,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
       expect(findColumn).toHaveBeenCalledWith(expect.any(Function), true);
     });
 
-    it('should handle when no table', (): void => {
+    it('should handle when no table', async (): Promise<void> => {
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -375,7 +401,9 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
         },
       };
 
-      addColumn(undefined, config, {});
+      const { addColumn } = await import('./render');
+
+      addColumn(undefined, config);
     });
   });
 });

@@ -250,6 +250,15 @@ configs:
 
 More about configuring thresholds can be found on the individual documentation pages of each [commands](./docs/command) and [modules](./docs/module).
 
+## Available Plugins
+
+There are some plugins that are available that increase Gimbal's functionality:
+
+- [@modus/gimbal-plugin-axe](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/plugin-axe)
+- [@modus/gimbal-plugin-last-value](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/plugin-last-value)
+- [@modus/gimbal-plugin-mysql](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/plugin-mysql)
+- [@modus/gimbal-plugin-sqlite](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/plugin-sqlite)
+
 ## Continous Integration
 
 Feel free to use our [sample configuration](./docs/ci) files for major CI systems.

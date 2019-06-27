@@ -5,7 +5,9 @@
     "rootDirs": ["src"],
     "baseUrl": ".",
     "paths": {
-      "@/typings/*": ["../typings/*"]
+      "@/typings/*": ["../typings/*"],
+      "@modus/gimbal-core": ["../gimbal-core/src/index.ts"],
+      "@modus/gimbal-core/lib/*": ["../gimbal-core/src/*"]
     }
   },
   "include": [

@@ -44,13 +44,6 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         {
           dir: 'foo',
           event,
-          modules: {
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            get: (): any => {},
-            metas: {},
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            register: (): any => {},
-          },
           /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           program: Command as any,
           utils: {
@@ -104,13 +97,6 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         {
           dir: 'foo',
           event,
-          modules: {
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            get: (): any => {},
-            metas: {},
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            register: (): any => {},
-          },
           /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           program: Command as any,
           utils: {
@@ -169,13 +155,6 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         {
           dir: 'foo',
           event,
-          modules: {
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            get: (): any => {},
-            metas: {},
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            register: (): any => {},
-          },
           /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           program: Command as any,
           utils: {
@@ -239,13 +218,6 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
           event: {
             ...event,
             on,
-          },
-          modules: {
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            get: (): any => {},
-            metas: {},
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            register: (): any => {},
           },
           /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           program: Command as any,
@@ -323,13 +295,6 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
           event: {
             ...event,
             on,
-          },
-          modules: {
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            get: (): any => {},
-            metas: {},
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            register: (): any => {},
           },
           /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           program: Command as any,

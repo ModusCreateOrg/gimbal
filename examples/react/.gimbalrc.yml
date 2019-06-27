@@ -1,7 +1,16 @@
+audits:
+  - axe
+  - size
+  - lighthouse
+  - unused-source
+  - heap-snapshot
+
 plugins:
+  - plugin: '@modus/gimbal-plugin-axe'
+    thresholds:
+      bypass: serious
+      landmark-one-main: moderate
+      page-has-heading-one: moderate
   - '@modus/gimbal-plugin-last-value'
   - plugin: '@modus/gimbal-plugin-sqlite'
     lastValue: true
-
-jobs:
-  - audit

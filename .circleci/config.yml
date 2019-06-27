@@ -9,6 +9,7 @@ aliases:
       - node_modules
       - packages/gimbal/node_modules
       - packages/gimbal-core/node_modules
+      - packages/plugin-axe/node_modules
       - packages/plugin-last-value/node_modules
       - packages/plugin-mysql/node_modules
       - packages/plugin-sqlite/node_modules
@@ -152,23 +153,22 @@ workflows:
           filters:
             tags:
               ignore: /^v.*/
-      - test-examples:
-          requires:
-            - install-dependencies
-          filters:
-            tags:
-              ignore: /^v.*/
       - test:
           requires:
             - install-dependencies
           filters:
             tags:
               ignore: /^v.*/
-      - build:
+      - test-examples:
           requires:
             - lint
-            - test-examples
             - test
+          filters:
+            tags:
+              ignore: /^v.*/
+      - build:
+          requires:
+            - test-examples
           filters:
             tags:
               ignore: /^v.*/

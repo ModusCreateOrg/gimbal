@@ -1,5 +1,3 @@
-// the paths like outDir, rootDir, paths and include are
-// relative to this tsconfig.json
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
@@ -11,6 +9,8 @@
       "@/*": ["./src/*"],
       "@modus/gimbal-core": ["../gimbal-core/src/index.ts"],
       "@modus/gimbal-core/lib/*": ["../gimbal-core/src/*"],
+      "@modus/gimbal-plugin-axe": ["../plugin-axe/src/index.ts"],
+      "@modus/gimbal-plugin-axe/lib/*": ["../plugin-axe/src/*"],
       "@modus/gimbal-plugin-last-value": ["../plugin-last-value/src/index.ts"],
       "@modus/gimbal-plugin-last-value/lib/*": ["../plugin-last-value/src/*"],
       "@modus/gimbal-plugin-mysql": ["../plugin-mysql/src/index.ts"],

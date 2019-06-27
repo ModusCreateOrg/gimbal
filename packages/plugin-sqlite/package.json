@@ -30,7 +30,7 @@
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
-    "deepmerge": "3.2.1",
+    "deepmerge": "3.3.0",
     "mkdirp": "0.5.1",
     "sqlite3": "4.0.9"
   },

@@ -68,6 +68,11 @@ yarn audit
 This repo is organized as a [monorepo](https://en.wikipedia.org/wiki/Monorepo) that uses [Lerna](https://lerna.js.org/). Packages:
 
 - [Gimbal](./packages/gimbal)
+- [Gimbal Core](./packages/gimbal-core)
+- [Axe Plugin](./packages/plugin-axe)
+- [Last Value Plugin](./packages/plugin-last-value)
+- [MySQL Plugin](./packages/plugin-mysql)
+- [SQLite Plugin](./packages/plugin-sqlite)
 
 ## Questions and Support
 

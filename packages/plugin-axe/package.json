@@ -1,20 +1,14 @@
 {
-  "name": "@modus/gimbal-plugin-last-value",
+  "name": "@modus/gimbal-plugin-axe",
   "version": "1.0.13",
-  "description": "Track last value for Gimbal audits",
+  "description": "Plugin to add axe audits to Gimbal",
+  "author": "Mitchell Simoens <mitchellsimoens@gmail.com>",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
   "license": "MIT",
-  "main": "lib/plugin-last-value/src/index.js",
+  "main": "lib/plugin-axe/index.js",
   "files": [
     "lib"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ModusCreateOrg/gimbal.git"
-  },
   "scripts": {
     "build": "ttsc -p .",
     "build:check": "ttsc --noEmit -p .",
@@ -28,15 +22,29 @@
     "test:coveralls": "cat ./coverage/lcov.info | coveralls",
     "test:nocov": "jest"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "gimbal",
+    "axe",
+    "puppeteer",
+    "audit",
+    "typescript",
+    "javascript",
+    "webdevelopment",
+    "ci"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ModusCreateOrg/gimbal.git"
+  },
   "bugs": {
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
     "@modus/gimbal-core": "1.0.13",
-    "bytes": "3.1.0",
+    "axe-puppeteer": "1.0.0",
     "deepmerge": "3.3.0"
-  },
-  "devDependencies": {
-    "@types/bytes": "3.0.0"
   }
 }

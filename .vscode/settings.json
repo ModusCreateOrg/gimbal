@@ -16,6 +16,9 @@
     "directory": "./packages/gimbal-core",
     "changeProcessCWD": true
   }, {
+    "directory": "./packages/plugin-axe",
+    "changeProcessCWD": true
+  }, {
     "directory": "./packages/plugin-last-value",
     "changeProcessCWD": true
   }, {

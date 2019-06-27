@@ -2,12 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import program from 'commander';
 import readPkg from 'read-pkg';
+import updateNotifier from 'update-notifier';
 import Command, { preparseOptions } from '@/command';
 import Config from '@/config';
 import processAudits from '@/config/audits';
 import processJobs from '@/config/jobs';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
-import updateNotifier from 'update-notifier';
 
 (async (): Promise<void> => {
   const isBuilt = path.extname(__filename) === '.js';

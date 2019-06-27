@@ -1,9 +1,9 @@
 import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
-import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import findPort from '@modus/gimbal-core/lib/utils/port';
+import { get } from '@modus/gimbal-core/lib/module/registry';
+import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import Config from '@/config';
 import Chrome from '@/module/chrome';
-import { get } from '@/module/registry';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
 import { Modules } from '@/typings/module';
@@ -16,11 +16,9 @@ import '@/module/size/register';
 import '@/module/unused-source/register';
 
 interface AuditOptions {
-  chrome?: Chrome;
-  url?: string;
+  chrome: Chrome;
+  url: string;
 }
-
-const shouldRunModule = (audits: string[], module: string): boolean => audits.indexOf(module) !== -1;
 
 const doAudit = async (options: AuditOptions, audits: Modules[], commandOptions: CommandOptions): Promise<Report> => {
   const rets: ReportItem[] = [];
@@ -87,17 +85,10 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
     }
   }
 
-  // if we are going to calculate unused CSS, take heap snapshot(s) or run lighthouse audits
-  // we need to host the app and use chrome
-  const needChromeAndServe =
-    shouldRunModule(audits, 'heap-snapshot') ||
-    shouldRunModule(audits, 'lighthouse') ||
-    shouldRunModule(audits, 'unused-source');
-
-  const servePort = needChromeAndServe ? await findPort() : null;
+  const servePort = await findPort();
   const buildDir = resolvePath(options.cwd, options.buildDir as string);
-  const serve = servePort ? new Serve({ port: servePort, public: buildDir }) : null;
-  const chrome = needChromeAndServe ? new Chrome() : undefined;
+  const serve = new Serve({ port: servePort, public: buildDir });
+  const chrome = new Chrome();
 
   let report: Report | Report[];
 
@@ -118,7 +109,7 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
           doAudit(
             {
               chrome,
-              url: servePort ? `http://localhost:${servePort}${route}` : undefined,
+              url: `http://localhost:${servePort}${route}`,
             },
             audits,
             {
@@ -137,7 +128,7 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
     report = await doAudit(
       {
         chrome,
-        url: servePort ? `http://localhost:${servePort}${options.route}` : undefined,
+        url: `http://localhost:${servePort}${options.route}`,
       },
       audits,
       options,

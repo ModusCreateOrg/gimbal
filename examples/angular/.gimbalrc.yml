@@ -1,3 +1,10 @@
+audits:
+  - axe
+  - size
+  - lighthouse
+  - unused-source
+  - heap-snapshot
+
 configs:
   heap-snapshot:
     threshold:
@@ -24,6 +31,10 @@ configs:
         maxSize: 700 KB
 
 plugins:
+  - plugin: '@modus/gimbal-plugin-axe'
+    thresholds:
+      landmark-one-main: moderate
+      region: moderate
   - '@modus/gimbal-plugin-last-value'
   - plugin: '@modus/gimbal-plugin-sqlite'
     lastValue: true

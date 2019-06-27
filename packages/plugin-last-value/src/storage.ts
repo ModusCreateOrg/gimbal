@@ -1,9 +1,8 @@
 import { doesItemFail, getItemDiff } from './util';
 import { Report, ReportItem } from '@/typings/command';
 import { Config, LastReportItem, GetEvent, SaveEvent } from '@/typings/plugin/last-value';
-import { Metas } from '@/typings/plugin/last-value/util';
 
-const applyRow = (archiveItem: LastReportItem, config: Config, report: Report, metaMap: Metas): void => {
+const applyRow = (archiveItem: LastReportItem, config: Config, report: Report): void => {
   const { failOnBreach } = config;
   const parent = report.data && report.data.find((item: ReportItem): boolean => item.type === archiveItem.type);
 
@@ -21,7 +20,7 @@ const applyRow = (archiveItem: LastReportItem, config: Config, report: Report, m
         /* eslint-disable-next-line no-param-reassign */
         item.rawLastValue = match.rawValue;
 
-        const diffInfo = getItemDiff(item as LastReportItem, metaMap);
+        const diffInfo = getItemDiff(item as LastReportItem);
 
         if (diffInfo) {
           /* eslint-disable-next-line no-param-reassign */
@@ -31,7 +30,7 @@ const applyRow = (archiveItem: LastReportItem, config: Config, report: Report, m
         }
 
         if (failOnBreach && item.success) {
-          const itemSuccess = !doesItemFail(item as LastReportItem, config, metaMap);
+          const itemSuccess = !doesItemFail(item as LastReportItem, config);
 
           /* eslint-disable-next-line no-param-reassign */
           item.success = itemSuccess;
@@ -57,7 +56,6 @@ export const getLastReport = async (
   report: Report,
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   Emitter: any,
-  metaMap: Metas,
 ): Promise<void> => {
   const [, command] = eventName.split('/');
   const getEvent: GetEvent = {
@@ -75,7 +73,7 @@ export const getLastReport = async (
 
     if (archived.data) {
       archived.data.forEach((archiveItem: LastReportItem): void => {
-        applyRow(archiveItem, config, report, metaMap);
+        applyRow(archiveItem, config, report);
       });
     }
   }

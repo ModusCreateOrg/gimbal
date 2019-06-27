@@ -1,3 +1,4 @@
+import { getMeta } from '@modus/gimbal-core/lib/module/registry';
 import checkThreshold, { isPercentage, percentToNumber } from '@modus/gimbal-core/lib/utils/threshold';
 import { Meta, Types } from '@/typings/module';
 import { Config, ItemFailReasons, LastReportItem } from '@/typings/plugin/last-value';
@@ -77,8 +78,13 @@ const checkSizeThreshold = (item: LastReportItem, config: Config, meta: Meta): I
   return checkDiff(item, diff, thresholds.size, thresholds.diffPercentage, 'size', 'sizeDiffPercentage', meta);
 };
 
-const getThresholdType = (item: LastReportItem, metaMap: Metas): Types | void => {
-  const meta = metaMap[item.type];
+const getThresholdType = (item: LastReportItem, metaMap?: Metas): Types | void => {
+  const meta = (metaMap && metaMap[item.type]) || getMeta(item.type);
+
+  if (!meta) {
+    return undefined;
+  }
+
   let { thresholdType } = meta;
   const { thresholdTypes } = meta;
 
@@ -89,7 +95,7 @@ const getThresholdType = (item: LastReportItem, metaMap: Metas): Types | void =>
   return thresholdType;
 };
 
-export const getItemDiff = (item: LastReportItem, metaMap: Metas): void | DiffRet => {
+export const getItemDiff = (item: LastReportItem, metaMap?: Metas): void | DiffRet => {
   const thresholdType = getThresholdType(item, metaMap);
 
   switch (thresholdType) {
@@ -105,12 +111,17 @@ export const getItemDiff = (item: LastReportItem, metaMap: Metas): void | DiffRe
 };
 
 /* eslint-disable-next-line import/prefer-default-export */
-export const doesItemFail = (item: LastReportItem, config: Config, metaMap: Metas): ItemFailReasons => {
+export const doesItemFail = (item: LastReportItem, config: Config, metaMap?: Metas): ItemFailReasons => {
   if (item.lastValue == null || item.rawValue === item.rawLastValue) {
     return false;
   }
 
-  const meta = metaMap[item.type];
+  const meta = (metaMap && metaMap[item.type]) || getMeta(item.type);
+
+  if (!meta) {
+    return false;
+  }
+
   const thresholdType = getThresholdType(item, metaMap);
 
   switch (thresholdType) {
