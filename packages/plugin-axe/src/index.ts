@@ -71,7 +71,7 @@ const parseEntry = (entry: Result, success: boolean, config: Config): ReportItem
     thresholdLimit: 'upper',
     threshold,
     type,
-    value: entry.impact,
+    value: entry.impact == null ? '' : entry.impact,
   };
 };
 
