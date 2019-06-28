@@ -1,5 +1,5 @@
+import Config from '@modus/gimbal-core/lib/config';
 import audit from '@/command/audit';
-import Config from '@/config';
 import { preparseOptions } from '@/command';
 
 (async (): Promise<void> => {

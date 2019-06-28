@@ -1,9 +1,9 @@
 import program, { Command as CommandType } from 'commander';
 import figlet from 'figlet';
 import path from 'path';
+import Config from '@modus/gimbal-core/lib/config';
 import EventEmitter from '@modus/gimbal-core/lib/event';
 import { readDir, stats } from '@modus/gimbal-core/lib/utils/fs';
-import Config from '@/config';
 import Logger from '@/logger';
 import output from '@/output';
 import { StartEvent, EndEvent, ActionStartEvent, ActionEndEvent, Report } from '@/typings/command';

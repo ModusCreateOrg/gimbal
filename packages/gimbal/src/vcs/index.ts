@@ -1,5 +1,5 @@
 import { URL } from 'url';
-import Config from '@/config';
+import Config from '@modus/gimbal-core/lib/config';
 import { Cls, VCS as VCSTypes } from '@/typings/vcs';
 import GitHubCls from './GitHub';
 

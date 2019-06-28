@@ -7,6 +7,7 @@ import resolver from '@/config/resolver';
 import { PluginConfig, Plugin, PluginOptions } from '@/typings/config/plugin';
 import { CommandOptions } from '@/typings/utils/command';
 import { getOptionsFromCommand } from '@/utils/command';
+import { LoadEndEvent } from '@/typings/config';
 
 interface Map {
   [label: string]: PluginConfig;
@@ -66,6 +67,15 @@ const parsePlugins = async (
         );
       },
     ),
+  );
+};
+
+export const init = (): void => {
+  event.on(
+    'config/load/end',
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    async (_eventName: string, { commandOptions, config: { plugins }, dir }: LoadEndEvent): Promise<void | any[]> =>
+      plugins && plugins.length ? parsePlugins(plugins, dir, commandOptions) : undefined,
   );
 };
 

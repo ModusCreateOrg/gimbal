@@ -1,10 +1,11 @@
+import Config from '@modus/gimbal-core/lib/config';
 import fs from 'fs';
 import path from 'path';
 import program from 'commander';
 import readPkg from 'read-pkg';
 import updateNotifier from 'update-notifier';
 import Command, { preparseOptions } from '@/command';
-import Config from '@/config';
+import initConfig from '@/config';
 import processAudits from '@/config/audits';
 import processJobs from '@/config/jobs';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
@@ -38,6 +39,8 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 
   // register commands with commander
   await Command.registerCommands();
+
+  initConfig();
 
   // need to parse the options before commander kicks off so the config file
   // is loaded. This way things like plugins will be ready

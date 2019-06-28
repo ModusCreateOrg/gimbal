@@ -1,4 +1,4 @@
-import Config from '@/config';
+import Config from '@modus/gimbal-core/lib/config';
 import { Cls } from '@/typings/ci';
 import CircleCICls from './CircleCI';
 import TravisCICls from './TravisCI';

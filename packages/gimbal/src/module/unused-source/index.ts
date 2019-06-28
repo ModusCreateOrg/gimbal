@@ -2,8 +2,8 @@ import deepmerge from 'deepmerge';
 import minimatch from 'minimatch';
 import { CoverageEntry, Page } from 'puppeteer';
 import { URL } from 'url';
+import Config from '@modus/gimbal-core/lib/config';
 import EventEmitter from '@modus/gimbal-core/lib/event';
-import Config from '@/config';
 import { Report } from '@/typings/command';
 import { SizeConfigs } from '@/typings/module/size';
 import {

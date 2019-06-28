@@ -1,5 +1,5 @@
 import yaml from 'js-yaml';
-import { readFile } from '@modus/gimbal-core/lib/utils/fs';
+import { readFile } from '../../utils/fs';
 import { Config } from '@/typings/config';
 
 const yamlLoader = async (file: string): Promise<Config> => {

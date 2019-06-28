@@ -5,6 +5,7 @@ import { Modules } from '@/typings/module';
 import { Config as HeapSnapshotConfig } from '@/typings/module/heap-snapshot';
 import { SizeConfigs } from '@/typings/module/size';
 import { UnusedSourceConfig } from '@/typings/module/unused-source';
+import { CommandOptions } from '@/typings/utils/command';
 
 export type PluginType = string | Plugin;
 
@@ -43,28 +44,12 @@ export interface LoaderMap {
 export interface LoadStartEvent {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   Config: any; // would cause circular dependency if imported the command class
+  commandOptions: CommandOptions;
+  dir: string;
   file: string;
   force: boolean;
 }
 
-export interface LoadEndEvent {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  Config: any; // would cause circular dependency if imported the command class
+export interface LoadEndEvent extends LoadStartEvent {
   config: Config;
-  file: string;
-  force: boolean;
-}
-
-export interface PluginStartEvent {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  Config: any; // would cause circular dependency if imported the command class
-  dir: string;
-  plugins: PluginType[];
-}
-
-export interface PluginEndEvent {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  Config: any; // would cause circular dependency if imported the command class
-  dir: string;
-  plugins: PluginType[];
 }

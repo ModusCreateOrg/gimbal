@@ -1,8 +1,8 @@
-import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
+import Config from '@modus/gimbal-core/lib/config';
 import findPort from '@modus/gimbal-core/lib/utils/port';
 import { get } from '@modus/gimbal-core/lib/module/registry';
+import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import Queue from '@modus/gimbal-core/lib/utils/Queue';
-import Config from '@/config';
 import Chrome from '@/module/chrome';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';

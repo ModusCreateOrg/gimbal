@@ -1,8 +1,8 @@
 import deepmerge from 'deepmerge';
 // @ts-ignore
 import lighthouse from 'lighthouse';
+import Config from '@modus/gimbal-core/lib/config';
 import EventEmitter from '@modus/gimbal-core/lib/event';
-import Config from '@/config';
 import { Report } from '@/typings/command';
 import {
   Audit,

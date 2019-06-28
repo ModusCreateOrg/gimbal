@@ -1,6 +1,6 @@
 import { Metrics, Page } from 'puppeteer';
+import Config from '@modus/gimbal-core/lib/config';
 import EventEmitter from '@modus/gimbal-core/lib/event';
-import Config from '@/config';
 import { Report } from '@/typings/command';
 import {
   Config as HeapSnapshotConfig,

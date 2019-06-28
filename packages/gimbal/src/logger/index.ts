@@ -1,6 +1,6 @@
 import colors from 'colors/safe';
+import Config from '@modus/gimbal-core/lib/config';
 import { pad } from '@modus/gimbal-core/lib/utils/string';
-import Config from '@/config';
 
 const colorsArray = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'gray'];
 let last: number;

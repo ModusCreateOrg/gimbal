@@ -1,7 +1,7 @@
 import path from 'path';
+import Config from '@modus/gimbal-core/lib/config';
 import EventEmitter from '@modus/gimbal-core/lib/event';
 import { mkdirp, resolvePath, writeFile } from '@modus/gimbal-core/lib/utils/fs';
-import Config from '@/config';
 import Logger from '@/logger';
 import { Report } from '@/typings/command';
 import {
