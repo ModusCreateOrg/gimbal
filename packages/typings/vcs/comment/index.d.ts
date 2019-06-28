@@ -11,24 +11,17 @@ export interface CommentBuildStartEvent {
   vcs: GitHub;
 }
 
-export interface CommentBuildEndEvent {
-  ci: CircleCI | TravisCI;
+export interface CommentBuildEndEvent extends CommentBuildStartEvent {
   markdown: string;
-  report: Report;
-  vcs: GitHub;
 }
 
 export interface CommentRenderTableStartEvent {
   commandOptions: CommandOptions;
   reportItem: ReportItem;
-  table: TableComp;
 }
 
-export interface CommentRenderTableEndEvent {
-  commandOptions: CommandOptions;
+export interface CommentRenderTableEndEvent extends CommentRenderTableStartEvent {
   renderedTable: string;
-  reportItem: ReportItem;
-  table: TableComp;
 }
 
 export interface CommentStartEvent {
@@ -38,9 +31,6 @@ export interface CommentStartEvent {
   vcs: GitHub;
 }
 
-export interface CommentEndEvent {
-  ci: CircleCI | TravisCI;
+export interface CommentEndEvent extends CommentStartEvent {
   comment: string;
-  report: Report;
-  vcs: GitHub;
 }

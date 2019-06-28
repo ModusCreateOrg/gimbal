@@ -84,19 +84,21 @@ const getResult = async (
 };
 
 const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[]): SizeConfigs[] => {
+  const newDestinationArray = destinationArray.slice();
+
   sourceArray.forEach((sourceItem: SizeConfigs): void => {
-    const match = destinationArray.find((destItem: SizeConfigs): boolean => destItem.path === sourceItem.path);
+    const match = newDestinationArray.find((destItem: SizeConfigs): boolean => destItem.path === sourceItem.path);
 
     if (match) {
       // apply config onto default
       Object.assign(match, sourceItem);
     } else {
       // is a new item
-      destinationArray.push(sourceItem);
+      newDestinationArray.push(sourceItem);
     }
   });
 
-  return destinationArray;
+  return newDestinationArray;
 };
 
 const sizeModule = async (

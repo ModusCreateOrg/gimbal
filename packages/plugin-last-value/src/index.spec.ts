@@ -97,7 +97,7 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
 
     expect(on.mock.calls).toEqual([
       ['output/cli/report/end', expect.any(Function)],
-      ['vcs/comment/render/table/start', expect.any(Function)],
+      ['output/markdown/render/table/start', expect.any(Function)],
       ['command/*/action/end', expect.any(Function)],
       ['command/*/end', expect.any(Function)],
     ]);
@@ -167,7 +167,7 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
 
     expect(on.mock.calls).toEqual([
       ['output/cli/report/end', expect.any(Function)],
-      ['vcs/comment/render/table/start', expect.any(Function)],
+      ['output/markdown/render/table/start', expect.any(Function)],
       ['command/*/action/end', expect.any(Function)],
       ['command/*/end', expect.any(Function)],
     ]);
@@ -187,7 +187,7 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
           },
         },
       ],
-      // from 'vcs/comment/render/table/start' event
+      // from 'output/markdown/render/table/start' event
       [
         'table',
         {
@@ -306,7 +306,7 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
 
     expect(on.mock.calls).toEqual([
       ['output/cli/report/end', expect.any(Function)],
-      ['vcs/comment/render/table/start', expect.any(Function)],
+      ['output/markdown/render/table/start', expect.any(Function)],
       ['command/*/action/end', expect.any(Function)],
       ['command/*/end', expect.any(Function)],
     ]);

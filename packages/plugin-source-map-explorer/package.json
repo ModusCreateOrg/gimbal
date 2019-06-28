@@ -1,0 +1,59 @@
+{
+  "name": "@modus/gimbal-plugin-source-map-explorer",
+  "version": "1.1.0",
+  "description": "Adds Source Map Explorer auditing to Gimbal",
+  "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
+  "license": "MIT",
+  "main": "lib/plugin-source-map-explorer/src/index.js",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ModusCreateOrg/gimbal.git"
+  },
+  "scripts": {
+    "build": "ttsc -p .",
+    "build:check": "ttsc --noEmit -p .",
+    "build:cleanup": "rimraf lib/gimbal-core",
+    "build:watch": "ttsc --watch -p .",
+    "link": "npm link",
+    "lint": "eslint 'src/**/*.ts'",
+    "postbuild": "yarn run build:cleanup",
+    "prepublish": "yarn build",
+    "test": "jest --coverage",
+    "test:coveralls": "cat ./coverage/lcov.info | coveralls",
+    "test:nocov": "jest"
+  },
+  "bugs": {
+    "url": "https://github.com/ModusCreateOrg/gimbal/issues"
+  },
+  "keywords": [
+    "gimbal",
+    "sourcemap",
+    "source",
+    "map",
+    "webpack",
+    "audit",
+    "typescript",
+    "javascript",
+    "webdevelopment",
+    "ci"
+  ],
+  "dependencies": {
+    "@modus/gimbal-core": "1.1.0",
+    "bytes": "3.1.0",
+    "deepmerge": "3.3.0",
+    "globby": "9.2.0",
+    "minimatch": "3.0.4",
+    "source-map-explorer": "2.0.1"
+  },
+  "devDependencies": {
+    "@types/bytes": "3.0.0",
+    "@types/globby": "9.1.0",
+    "@types/minimatch": "3.0.3"
+  }
+}

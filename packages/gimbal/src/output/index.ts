@@ -171,7 +171,7 @@ const output = async (report: Report, commandOptions: CommandOptions): Promise<v
 
       await EventEmitter.fire('output/markdown/report/start', markdownReportStartEvent);
 
-      const contents = markdownOutput(report, commandOptions);
+      const contents = await markdownOutput(report, commandOptions);
 
       const markdownReportEndEvent: MarkdownReportEndEvent = {
         commandOptions,

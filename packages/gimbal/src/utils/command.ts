@@ -9,7 +9,8 @@ const defaultConfig: CommandOptions = {
   verbose: false,
 };
 
-const getOptions = (cmd?: Command, existingOptions?: CommandOptions): CommandOptions => {
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+const getOptions = (cmd?: Command, existingOptions?: CommandOptions, Config?: any): CommandOptions => {
   const existing: CommandOptions = existingOptions || defaultConfig;
   const options: CommandOptions = {
     ...existing,
@@ -23,7 +24,7 @@ const getOptions = (cmd?: Command, existingOptions?: CommandOptions): CommandOpt
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         (option: any): void => {
           const name = option.attributeName();
-          const value = cmd[name];
+          const value = Config ? Config.get(`configs.${name}`, cmd[name]) : cmd[name];
 
           if (value != null) {
             options[name] = value;
@@ -57,12 +58,12 @@ const getOptions = (cmd?: Command, existingOptions?: CommandOptions): CommandOpt
 };
 
 /* eslint-disable-next-line import/prefer-default-export, @typescript-eslint/no-explicit-any */
-export const getOptionsFromCommand = (cmd?: any, defaults?: any): CommandOptions => {
+export const getOptionsFromCommand = (cmd?: any, defaults?: any, Config?: any): CommandOptions => {
   // get command options first
-  const cmdOptions: CommandOptions = getOptions(cmd);
+  const cmdOptions: CommandOptions = getOptions(cmd, undefined, Config);
   // get the global options to always take precedent over command options
   // in case there are option conflicts
-  const options: CommandOptions = getOptions(program, cmdOptions);
+  const options: CommandOptions = getOptions(program, cmdOptions, Config);
 
   if (defaults) {
     const parsed = typeof defaults === 'function' ? defaults(options) : defaults;

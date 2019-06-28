@@ -4,6 +4,12 @@ audits:
   - lighthouse
   - unused-source
   - heap-snapshot
+  - source-map-explorer
+
+outputs:
+  html: artifacts/gimbal.html
+  json: artifacts/gimbal.json
+  markdown: artifacts/gimbal.md
 
 plugins:
   - plugin: '@modus/gimbal-plugin-axe'
@@ -11,6 +17,29 @@ plugins:
       bypass: serious
       landmark-one-main: moderate
       page-has-heading-one: moderate
+  - plugin: '@modus/gimbal-plugin-source-map-explorer'
+    bundles:
+      - path: '**/main.*.js'
+        thresholds:
+          App.js: 450 B
+          index.js: 100 B
+          logo.svg: 250 B
+          serviceWorker.js: 300 B
+          <unmapped>: 150 B
+      - path: '**/2.*.js'
+        thresholds:
+          react/index.js: 50 B
+          object-assign/index.js: 1 KB
+          react-dom/index.js: 300 B
+          react/cjs/react.production.min.js: 7 KB
+          react-dom/cjs/react-dom.production.min.js: 110 KB
+          scheduler/index.js: 50 B
+          scheduler/cjs/scheduler.production.min.js: 5 KB
+          webpack/buildin/global.js: 150 B
+          <unmapped>: 150 B
+      - '!precache-manifest*'
+      - '!service-worker.js'
+      - '!**/runtime*.js'
   - '@modus/gimbal-plugin-last-value'
   - plugin: '@modus/gimbal-plugin-sqlite'
     lastValue: true

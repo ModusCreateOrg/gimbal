@@ -15,6 +15,8 @@
       "@modus/gimbal-plugin-last-value/lib/*": ["../plugin-last-value/src/*"],
       "@modus/gimbal-plugin-mysql": ["../plugin-mysql/src/index.ts"],
       "@modus/gimbal-plugin-mysql/lib/*": ["../plugin-mysql/src/*"],
+      "@modus/gimbal-plugin-source-map-explorer": ["../plugin-source-map-explorer/src/index.ts"],
+      "@modus/gimbal-plugin-source-map-explorer/lib/*": ["../plugin-source-map-explorer/src/*"],
       "@modus/gimbal-plugin-sqlite": ["../plugin-sqlite/src/index.ts"],
       "@modus/gimbal-plugin-sqlite/lib/*": ["../plugin-sqlite/src/*"]
     }

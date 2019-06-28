@@ -86,7 +86,7 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
   }
 
   const servePort = await findPort();
-  const buildDir = resolvePath(options.cwd, Config.get('configs.buildDir', options.buildDir));
+  const buildDir = resolvePath(options.cwd, options.buildDir as string);
   const serve = new Serve({ port: servePort, public: buildDir });
   const chrome = new Chrome();
 

@@ -157,7 +157,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
                   threshold: 'minor',
                   thresholdLimit: 'upper',
                   type: 'axe',
-                  value: undefined,
+                  value: '',
                 },
                 {
                   label: 'bar',

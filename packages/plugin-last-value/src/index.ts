@@ -40,7 +40,7 @@ const LastValue = async ({ event, program }: PluginOptions, config: Config): Pro
   );
 
   event.on(
-    'vcs/comment/render/table/start',
+    'output/markdown/render/table/start',
     (name: string, { commandOptions, table }: CliReportEndEvent): EventRet =>
       inspectCommandOptions(commandOptions, (): void => addColumn(table, pluginConfig)),
   );

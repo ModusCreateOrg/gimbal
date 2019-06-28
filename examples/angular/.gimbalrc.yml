@@ -4,6 +4,7 @@ audits:
   - lighthouse
   - unused-source
   - heap-snapshot
+  - source-map-explorer
 
 configs:
   buildDir: dist/example-angular
@@ -31,11 +32,36 @@ configs:
       - path: dist/example-angular/vendor-*.js
         maxSize: 700 KB
 
+outputs:
+  html: artifacts/gimbal.html
+  json: artifacts/gimbal.json
+  markdown: artifacts/gimbal.md
+
 plugins:
   - plugin: '@modus/gimbal-plugin-axe'
     thresholds:
       landmark-one-main: moderate
       region: moderate
+  - plugin: '@modus/gimbal-plugin-source-map-explorer'
+    bundles:
+      - path: 'main*.js'
+        thresholds:
+          $_lazy_route_resource lazy namespace object: 600 B
+          src/app/app.component.html: 1.5 KB
+          src/app/app*: 600 B
+          src/environments/environment.ts: 550 B
+          src/main.ts: 1.5 KB
+          <unmapped>: 5.5 KB
+      - path: 'styles*.js'
+        thresholds:
+          node_modules/style-loader/lib/addStyles.js: 10 KB
+          node_modules/style-loader/lib/urls.js: 3 KB
+          src/styles.css: 500 B
+          src/styles.css?b364: 800 B
+          <unmapped>: 2 KB
+      - '!**/polyfills*.js'
+      - '!**/runtime*.js'
+      - '!**/vendor*.js'
   - '@modus/gimbal-plugin-last-value'
   - plugin: '@modus/gimbal-plugin-sqlite'
     lastValue: true

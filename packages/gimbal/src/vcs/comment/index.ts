@@ -1,8 +1,7 @@
 import EventEmitter from '@modus/gimbal-core/lib/event';
 import whichCI from '@/ci';
 import Config from '@/config';
-import { createTable } from '@/output/cli';
-import { outputTable, tableConfig } from '@/output/markdown';
+import { outputTable } from '@/output/markdown';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import {
@@ -24,23 +23,41 @@ const renderItem = async (reportItem: ReportItem, commandOptions: CommandOptions
     0,
   );
 
-  const table = createTable(commandOptions, tableConfig);
-
   const commentRenderTableStartEvent: CommentRenderTableStartEvent = {
     commandOptions,
     reportItem,
-    table,
   };
 
   await EventEmitter.fire(`vcs/comment/render/table/start`, commentRenderTableStartEvent);
 
-  const renderedTable = outputTable(reportItem, commandOptions, { table });
+  const output = [];
+
+  if (reportItem.data && reportItem.data[0] && reportItem.data[0].data && reportItem.data[0].data.length) {
+    const buffered = [`## ${reportItem.label}`];
+
+    await Promise.all(
+      reportItem.data.map(
+        async (childItem: ReportItem): Promise<void> => {
+          const rendered = await outputTable(childItem, commandOptions);
+
+          buffered.push(`### ${childItem.label}`, rendered);
+        },
+      ),
+    );
+
+    output.push(...buffered);
+  } else {
+    const rendered = await outputTable(reportItem, commandOptions);
+
+    output.push(`## ${reportItem.label}`, rendered);
+  }
+
+  const renderedTable = output.join('\n\n');
 
   const commentRenderTableEndEvent: CommentRenderTableEndEvent = {
     commandOptions,
     renderedTable,
     reportItem,
-    table,
   };
 
   await EventEmitter.fire(`vcs/comment/render/table/end`, commentRenderTableEndEvent);

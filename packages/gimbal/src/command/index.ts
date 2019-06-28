@@ -101,7 +101,7 @@ class Command {
     }
 
     try {
-      const commandOptions = getOptionsFromCommand(cmd);
+      const commandOptions = getOptionsFromCommand(cmd, undefined, Config);
 
       const startEvent: StartEvent = {
         args,
@@ -173,7 +173,7 @@ export const preparseOptions = (): CommandOptions => {
 
   cmd.parseOptions(parsed.args); // this applies option values onto the command/program
 
-  return getOptionsFromCommand(cmd);
+  return getOptionsFromCommand(cmd, undefined, Config);
 };
 
 export default Command;
