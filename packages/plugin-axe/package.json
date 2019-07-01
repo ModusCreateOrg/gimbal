@@ -5,7 +5,7 @@
   "author": "Mitchell Simoens <mitchellsimoens@gmail.com>",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
   "license": "MIT",
-  "main": "lib/plugin-axe/index.js",
+  "main": "lib/plugin-axe/src/index.js",
   "files": [
     "lib"
   ],
