@@ -1,5 +1,4 @@
 import program, { Command as CommandType } from 'commander';
-import figlet from 'figlet';
 import path from 'path';
 import Config from '@modus/gimbal-core/lib/config';
 import EventEmitter from '@modus/gimbal-core/lib/event';
@@ -134,8 +133,6 @@ class Command {
       };
 
       await EventEmitter.fire(`command/${this.command}/action/end`, actionEndEvent);
-
-      Logger.log(figlet.textSync(this.title));
 
       await output(report, commandOptions);
 
