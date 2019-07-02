@@ -58,7 +58,7 @@
   }, {
     "type": "node",
     "request": "launch",
-    "name": "gimbal heap-snapshot",
+    "name": "test cmd",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -67,81 +67,8 @@
     ],
     "args": [
       "${workspaceFolder}/packages/gimbal/src/index.ts",
-      "heap-snapshot",
       "--cwd",
-      "${workspaceFolder}/examples/${input:appInput}/build",
-      "--config",
-      "../.gimbalrc.yml"
-    ],
-    "env": {
-      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
-    },
-    "skipFiles": [
-      "<node_internals>/**/*.js"
-    ]
-  }, {
-    "type": "node",
-    "request": "launch",
-    "name": "gimbal lighthouse",
-    "runtimeArgs": [
-      "-r",
-      "ts-node/register",
-      "-r",
-      "tsconfig-paths/register"
-    ],
-    "args": [
-      "${workspaceFolder}/packages/gimbal/src/index.ts",
-      "lighthouse",
-      "--cwd",
-      "${workspaceFolder}/examples/${input:appInput}/build",
-      "--config",
-      "../.gimbalrc.yml"
-    ],
-    "env": {
-      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
-    },
-    "skipFiles": [
-      "<node_internals>/**/*.js"
-    ]
-  }, {
-    "type": "node",
-    "request": "launch",
-    "name": "gimbal size",
-    "runtimeArgs": [
-      "-r",
-      "ts-node/register",
-      "-r",
-      "tsconfig-paths/register"
-    ],
-    "args": [
-      "${workspaceFolder}/packages/gimbal/src/index.ts",
-      "size",
-      "--cwd",
-      "${workspaceFolder}/examples/${input:appInput}"
-    ],
-    "env": {
-      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
-    },
-    "skipFiles": [
-      "<node_internals>/**/*.js"
-    ]
-  }, {
-    "type": "node",
-    "request": "launch",
-    "name": "gimbal unused-source",
-    "runtimeArgs": [
-      "-r",
-      "ts-node/register",
-      "-r",
-      "tsconfig-paths/register"
-    ],
-    "args": [
-      "${workspaceFolder}/packages/gimbal/src/index.ts",
-      "unused-source",
-      "--cwd",
-      "${workspaceFolder}/examples/${input:appInput}/build",
-      "--config",
-      "../.gimbalrc.yml"
+      "${workspaceFolder}/../modir"
     ],
     "env": {
       "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"

@@ -32,11 +32,13 @@ const renderItem = async (table: HorizontalTable, item: Data, index: number, col
     ]);
 
     if (item.data.length) {
-      await Promise.all(
-        item.data.map(
-          (child: Data, childIndex: number): Promise<void> => renderItem(table, child, childIndex, columns),
-        ),
+      const queue = new Queue();
+
+      item.data.forEach((child: Data, childIndex: number): void =>
+        queue.add((): Promise<void> => renderItem(table, child, childIndex, columns)),
       );
+
+      await queue.run();
     }
   } else {
     const ret = await Promise.all(

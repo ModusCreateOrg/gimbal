@@ -49,7 +49,9 @@ const SourceMapExplorer = async (pluginOptions: PluginOptions, config: Config): 
   });
 
   const catchAll = pluginConfig.bundles.filter((bundleConfig: BundleType): boolean =>
-    typeof bundleConfig === 'string' ? bundleConfig === '**/*.js' : (bundleConfig as BundleObject).path === '**/*.js',
+    typeof bundleConfig === 'string'
+      ? bundleConfig === '**/*.js'
+      : (bundleConfig as BundleObject).path === '**/*.js' && (bundleConfig as BundleObject).disable !== true,
   );
   const exclusions = pluginConfig.bundles.filter((bundleConfig: BundleType): boolean =>
     typeof bundleConfig === 'string' ? bundleConfig[0] === '!' : (bundleConfig as BundleObject).path[0] === '!',

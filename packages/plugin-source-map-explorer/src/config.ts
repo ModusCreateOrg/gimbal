@@ -5,6 +5,7 @@ export interface BundleThreshold {
 }
 
 export interface BundleObject {
+  disable?: boolean;
   path: string;
   thresholds: BundleThreshold;
 }
