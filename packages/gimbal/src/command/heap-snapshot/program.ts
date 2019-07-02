@@ -5,6 +5,7 @@ import Command from '@/command';
 export default new Command({
   action,
   command: 'heap-snapshot',
+  deprecated: true,
   options: [
     {
       defaultValue: '/',
@@ -22,5 +23,4 @@ export default new Command({
       },
     },
   ],
-  title: 'Heap Snapshot Checks',
 });

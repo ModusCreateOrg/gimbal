@@ -47,5 +47,4 @@ export default new Command({
       },
     },
   ],
-  title: 'Web Performance Audit',
 });

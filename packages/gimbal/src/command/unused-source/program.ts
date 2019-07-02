@@ -5,6 +5,7 @@ import Command from '@/command';
 export default new Command({
   action,
   command: 'unused-source',
+  deprecated: true,
   options: [
     {
       defaultValue: '/',
@@ -22,5 +23,4 @@ export default new Command({
       },
     },
   ],
-  title: 'Unused Source Checks',
 });

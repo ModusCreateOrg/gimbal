@@ -5,5 +5,5 @@ import Command from '@/command';
 export default new Command({
   action,
   command: 'size',
-  title: 'Size Checks',
+  deprecated: true,
 });

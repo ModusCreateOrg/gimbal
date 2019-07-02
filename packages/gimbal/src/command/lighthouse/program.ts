@@ -5,6 +5,7 @@ import Command from '@/command';
 export default new Command({
   action,
   command: 'lighthouse',
+  deprecated: true,
   options: [
     {
       description: 'Location to output the lighthouse HTML report to.',
@@ -26,5 +27,4 @@ export default new Command({
       },
     },
   ],
-  title: 'Lighthouse Audits',
 });

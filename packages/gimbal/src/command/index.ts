@@ -29,8 +29,8 @@ interface Option {
 interface Config {
   action: Action;
   command: string;
+  deprecated?: boolean;
   options?: Option[];
-  title: string;
 }
 
 class Command {
@@ -38,9 +38,9 @@ class Command {
 
   private command: string;
 
-  private options?: Option[];
+  private deprecated?: boolean;
 
-  private title: string;
+  private options?: Option[];
 
   public static async registerCommands(): Promise<void[]> {
     const commands = await readDir(__dirname);
@@ -60,8 +60,8 @@ class Command {
   public constructor(config: Config) {
     this.action = config.action;
     this.command = config.command;
+    this.deprecated = config.deprecated;
     this.options = config.options;
-    this.title = config.title;
 
     this.create();
   }
@@ -91,6 +91,12 @@ class Command {
   public async run(...actionArgs: ActionCreatorArg[]): Promise<void> {
     let cmd: CommandType;
     let args: string[] = [];
+
+    if (this.deprecated) {
+      Logger.log(
+        `The "${this.command}" command is deprecated and will be removed soon. Please use the "audit" config in a configuration file. See: https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal/docs/config`,
+      );
+    }
 
     if (actionArgs.length === 1) {
       cmd = actionArgs[0] as CommandType;
