@@ -19,7 +19,7 @@ export interface Config {
 export type Finder = (item: Column | Data, index: number) => boolean;
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 export type Data = any;
-export type Renderer = (value: Data, item: Data) => string;
+export type Renderer = (value: Data, item: Data) => string | Promise<string>;
 export type Renders = 'cli' | 'html' | 'markdown';
 
 export interface RendererArgs {
@@ -37,6 +37,6 @@ export interface Table {
   getColumn: (index: number) => Column | void;
   remove: (item: Data) => void;
   removeColumn: (column: Column) => void;
-  render: (type: Renders) => string;
+  render: (type: Renders) => Promise<string>;
   set: (data: Data[]) => void;
 }

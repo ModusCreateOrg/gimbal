@@ -1,19 +1,9 @@
 import realdeepmerge from 'deepmerge';
-import { Emitter } from '@/typings/event';
 import { Meta } from '@/typings/module';
 import { Module } from '@/typings/module/registry';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Deepmerge = (x: any, y: any) => any;
-
-const event: Emitter = {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  fire: (): any => {},
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  on: (): any => {},
-};
-
-const Command = {};
 
 beforeEach((): void => {
   jest.resetModules();
@@ -23,35 +13,29 @@ describe('@modus/gimbal-plugin-axe', (): void => {
   it('should register module', async (): Promise<void> => {
     const deepmergeMock = jest.fn();
     const register = jest.fn();
+    const bus = jest.fn().mockResolvedValue({
+      event: {
+        on(): void {},
+      },
+      register,
+    });
 
     jest.doMock(
       'deepmerge',
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       (): Deepmerge => (x: any, y: any): any => {
         deepmergeMock(x, y);
+
         return realdeepmerge(x, y);
       },
     );
-
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
-      register,
-    }));
 
     const { default: Axe } = await import('./index');
 
     await Axe(
       {
+        bus,
         dir: 'foo',
-        event,
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        program: Command as any,
-        utils: {
-          envOrDefault: (): string => 'foo',
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          getOptionsFromCommand: (): any => {},
-          resolvePath: (): string => 'foo',
-        },
       },
       {
         showSuccesses: false,
@@ -75,6 +59,8 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         },
       },
     );
+
+    expect(bus).toHaveBeenCalledWith('module/registry');
 
     expect(register).toHaveBeenCalledWith(
       'axe',
@@ -217,6 +203,12 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         expect(withTags).not.toHaveBeenCalled();
       },
     );
+    const bus = jest.fn().mockResolvedValue({
+      event: {
+        on(): void {},
+      },
+      register,
+    });
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     function AxePuppeteer(): any {}
@@ -235,14 +227,10 @@ describe('@modus/gimbal-plugin-axe', (): void => {
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       (): Deepmerge => (x: any, y: any): any => {
         deepmergeMock(x, y);
+
         return realdeepmerge(x, y);
       },
     );
-
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
-      register,
-    }));
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     jest.doMock('axe-puppeteer', (): any => ({
@@ -253,16 +241,8 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
     await Axe(
       {
+        bus,
         dir: 'foo',
-        event,
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        program: Command as any,
-        utils: {
-          envOrDefault: (): string => 'foo',
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          getOptionsFromCommand: (): any => {},
-          resolvePath: (): string => 'foo',
-        },
       },
       {
         showSuccesses: true,
@@ -286,6 +266,8 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         },
       },
     );
+
+    expect(bus).toHaveBeenCalledWith('module/registry');
 
     expect(register).toHaveBeenCalledWith(
       'axe',
@@ -417,6 +399,12 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         expect(withTags).toHaveBeenCalledWith(['blah']);
       },
     );
+    const bus = jest.fn().mockResolvedValue({
+      event: {
+        on(): void {},
+      },
+      register,
+    });
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     function AxePuppeteer(): any {}
@@ -435,14 +423,10 @@ describe('@modus/gimbal-plugin-axe', (): void => {
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       (): Deepmerge => (x: any, y: any): any => {
         deepmergeMock(x, y);
+
         return realdeepmerge(x, y);
       },
     );
-
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
-      register,
-    }));
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     jest.doMock('axe-puppeteer', (): any => ({
@@ -453,16 +437,8 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
     await Axe(
       {
+        bus,
         dir: 'foo',
-        event,
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        program: Command as any,
-        utils: {
-          envOrDefault: (): string => 'foo',
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          getOptionsFromCommand: (): any => {},
-          resolvePath: (): string => 'foo',
-        },
       },
       {
         disabledRules: 'rule-1',
@@ -496,6 +472,8 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         },
       },
     );
+
+    expect(bus).toHaveBeenCalledWith('module/registry');
 
     expect(register).toHaveBeenCalledWith(
       'axe',
@@ -533,35 +511,29 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         expect(newPage).toHaveBeenCalledWith();
       },
     );
+    const bus = jest.fn().mockResolvedValue({
+      event: {
+        on(): void {},
+      },
+      register,
+    });
 
     jest.doMock(
       'deepmerge',
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       (): Deepmerge => (x: any, y: any): any => {
         deepmergeMock(x, y);
+
         return realdeepmerge(x, y);
       },
     );
-
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
-      register,
-    }));
 
     const { default: Axe } = await import('./index');
 
     await Axe(
       {
+        bus,
         dir: 'foo',
-        event,
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        program: Command as any,
-        utils: {
-          envOrDefault: (): string => 'foo',
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          getOptionsFromCommand: (): any => {},
-          resolvePath: (): string => 'foo',
-        },
       },
       {
         showSuccesses: true,
@@ -585,6 +557,8 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         },
       },
     );
+
+    expect(bus).toHaveBeenCalledWith('module/registry');
 
     expect(register).toHaveBeenCalledWith(
       'axe',

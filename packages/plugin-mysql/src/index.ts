@@ -1,6 +1,8 @@
+import envOrDefault from '@modus/gimbal-core/lib/utils/env';
 import deepmerge from 'deepmerge';
 import mysqlMod, { Connection, MysqlError } from 'mysql';
 import { PluginOptions } from '@/typings/config/plugin';
+import { GetEvent, SaveEvent } from '@/typings/plugin/last-value';
 import { EnvOrDefault } from '@/typings/utils/env';
 
 interface ItemConfig {
@@ -18,12 +20,12 @@ const defaultConfig: Config = {
   lastValue: false,
 };
 
-const createConnection = (config: ItemConfig, envOrDefault: EnvOrDefault): Promise<Connection> =>
+const createConnection = (config: ItemConfig, env: EnvOrDefault): Promise<Connection> =>
   new Promise((resolve, reject): void => {
     const connection = mysqlMod.createConnection({
-      host: envOrDefault('GIMBAL_MYSQL_HOST', 'localhost'),
-      user: envOrDefault('GIMBAL_MYSQL_USERNAME', 'root'),
-      password: envOrDefault('GIMBAL_MYSQL_PASSWORD'),
+      host: env('GIMBAL_MYSQL_HOST', 'localhost'),
+      user: env('GIMBAL_MYSQL_USERNAME', 'root'),
+      password: env('GIMBAL_MYSQL_PASSWORD'),
       database: config.database,
     });
 
@@ -36,11 +38,12 @@ const createConnection = (config: ItemConfig, envOrDefault: EnvOrDefault): Promi
     });
   });
 
-const mysql = async ({ event, utils: { envOrDefault } }: PluginOptions, config: Config): Promise<void> => {
+const mysql = async ({ bus }: PluginOptions, config: Config): Promise<void> => {
   const mysqlConfig = deepmerge(defaultConfig, config);
 
   if (mysqlConfig.lastValue) {
     const { getLastReport, init, saveLastReport } = await import('./last-value');
+    const event = await bus('event');
     const itemConfig: ItemConfig = deepmerge(
       {
         ...mysqlConfig,
@@ -56,12 +59,13 @@ const mysql = async ({ event, utils: { envOrDefault } }: PluginOptions, config: 
 
     event.on(
       'plugin/last-value/report/get',
-      (eventName, { command }): Promise<void> => getLastReport(command, connection, itemConfig),
+      (_eventName: string, { command }: GetEvent): Promise<void> => getLastReport(command, connection, itemConfig),
     );
 
     event.on(
       'plugin/last-value/report/save',
-      (eventName, { command, report }): Promise<void> => saveLastReport(command, report, connection, itemConfig),
+      (_eventName: string, { command, report }: SaveEvent): Promise<void> =>
+        saveLastReport(command, report, connection, itemConfig),
     );
   }
 };

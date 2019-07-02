@@ -3,7 +3,6 @@ import TravisCI from '@/ci/TravisCI';
 import GitHub from '@/vcs/GitHub';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
-import TableComp from '@modus/gimbal-core/lib/components/Table';
 
 export interface CommentBuildStartEvent {
   ci: CircleCI | TravisCI;

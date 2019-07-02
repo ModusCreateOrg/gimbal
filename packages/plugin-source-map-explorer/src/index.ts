@@ -43,7 +43,7 @@ const arrayMerge = (destinationArray: BundleType[], sourceArray: BundleType[]): 
   return newDestArray;
 };
 
-const SourceMapExplorer = async (_pluginOptions: PluginOptions, config: Config): Promise<void> => {
+const SourceMapExplorer = async (pluginOptions: PluginOptions, config: Config): Promise<void> => {
   const pluginConfig: Config = deepmerge(defaultConfig, config, {
     arrayMerge,
   });
@@ -66,7 +66,7 @@ const SourceMapExplorer = async (_pluginOptions: PluginOptions, config: Config):
   // next the exclusions.
   pluginConfig.bundles = [...inclusions, ...catchAll, ...exclusions];
 
-  registerModule(pluginConfig);
+  registerModule(pluginOptions, pluginConfig);
 };
 
 export default SourceMapExplorer;

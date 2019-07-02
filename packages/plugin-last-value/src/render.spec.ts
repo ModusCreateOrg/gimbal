@@ -1,4 +1,10 @@
 import { Table } from '@/typings/components/Table';
+import { PluginOptions } from '@/typings/config/plugin';
+
+const pluginOptions: PluginOptions = {
+  bus(): void {},
+  dir: 'foo',
+};
 
 beforeEach((): void => {
   jest.resetModules();
@@ -191,6 +197,14 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
   describe('createRenderer', (): void => {
     it('should render values', async (): Promise<void> => {
+      const bus = jest.fn().mockResolvedValue({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        getMeta: (): any => ({
+          thresholdLimit: 'upper',
+          thresholdType: 'number',
+        }),
+      });
+
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -201,6 +215,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
           size: 1,
         },
       };
+
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -216,24 +231,32 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
         value: '10 B',
       };
 
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
+      const { createRenderer } = await import('./render');
+
+      const renderer = createRenderer(
+        {
+          ...pluginOptions,
+          bus,
+        },
+        config,
+      );
+
+      const ret = await renderer(10, item);
+
+      expect(ret).toBe('10\n  +8 B');
+
+      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry']]);
+    });
+
+    it('should render diff values', async (): Promise<void> => {
+      const bus = jest.fn().mockResolvedValue({
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         getMeta: (): any => ({
           thresholdLimit: 'upper',
           thresholdType: 'number',
         }),
-      }));
+      });
 
-      const { createRenderer } = await import('./render');
-
-      const renderer = createRenderer(config);
-      const ret = renderer(10, item);
-
-      expect(ret).toBe('10\n  +8 B');
-    });
-
-    it('should render diff values', async (): Promise<void> => {
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -244,6 +267,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
           size: 1,
         },
       };
+
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -259,24 +283,32 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
         value: '20 B',
       };
 
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
+      const { createRenderer } = await import('./render');
+
+      const renderer = createRenderer(
+        {
+          ...pluginOptions,
+          bus,
+        },
+        config,
+      );
+
+      const ret = await renderer(20, item);
+
+      expect(ret).toBe('20\n  +80%');
+
+      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry']]);
+    });
+
+    it('should render last value', async (): Promise<void> => {
+      const bus = jest.fn().mockResolvedValue({
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         getMeta: (): any => ({
           thresholdLimit: 'upper',
           thresholdType: 'number',
         }),
-      }));
+      });
 
-      const { createRenderer } = await import('./render');
-
-      const renderer = createRenderer(config);
-      const ret = renderer(20, item);
-
-      expect(ret).toBe('20\n  +80%');
-    });
-
-    it('should render last value', async (): Promise<void> => {
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -287,6 +319,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
           size: 1,
         },
       };
+
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -304,13 +337,30 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       const { createRenderer } = await import('./render');
 
-      const renderer = createRenderer(config);
-      const ret = renderer(20, item);
+      const renderer = createRenderer(
+        {
+          ...pluginOptions,
+          bus,
+        },
+        config,
+      );
+
+      const ret = await renderer(20, item);
 
       expect(ret).toBe('20');
+
+      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry']]);
     });
 
     it('should render empty string if no last value', async (): Promise<void> => {
+      const bus = jest.fn().mockResolvedValue({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        getMeta: (): any => ({
+          thresholdLimit: 'upper',
+          thresholdType: 'number',
+        }),
+      });
+
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -321,6 +371,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
           size: 1,
         },
       };
+
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -338,10 +389,19 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       const { createRenderer } = await import('./render');
 
-      const renderer = createRenderer(config);
-      const ret = renderer(undefined, item);
+      const renderer = createRenderer(
+        {
+          ...pluginOptions,
+          bus,
+        },
+        config,
+      );
+
+      const ret = await renderer(undefined, item);
 
       expect(ret).toBe('');
+
+      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry']]);
     });
   });
 
@@ -356,11 +416,12 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
         getColumn(): void {},
         remove(): void {},
         removeColumn(): void {},
-        render: (): string => 'foo',
+        render: (): Promise<string> => Promise.resolve('foo'),
         set(): void {},
         addColumn: addColumnMock,
         findColumn,
       };
+
       const config = {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
@@ -374,7 +435,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       const { addColumn } = await import('./render');
 
-      addColumn(table as Table, config);
+      addColumn(table as Table, pluginOptions, config);
 
       expect(addColumnMock).toHaveBeenCalledWith(
         {
@@ -403,7 +464,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       const { addColumn } = await import('./render');
 
-      addColumn(undefined, config);
+      addColumn(undefined, pluginOptions, config);
     });
   });
 });

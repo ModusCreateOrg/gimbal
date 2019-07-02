@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import http from 'http';
 // @ts-ignore
 import handler from 'serve-handler';
-import EventEmitter from '@modus/gimbal-core/lib/event';
+import EventEmitter from '@/event';
 import {
   CloseStartEvent,
   CloseEndEvent,

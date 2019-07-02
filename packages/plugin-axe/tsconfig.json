@@ -10,6 +10,9 @@
       "@modus/gimbal-core/lib/*": ["../gimbal-core/src/*"]
     }
   },
+  "exclude": [
+    "src/**/*.spec.ts"
+  ],
   "include": [
     "src"
   ]

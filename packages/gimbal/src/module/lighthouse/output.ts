@@ -1,6 +1,6 @@
-import { dirname } from 'path';
 import { mkdirp, resolvePath, writeFile } from '@modus/gimbal-core/lib/utils/fs';
 import checkThreshold from '@modus/gimbal-core/lib/utils/threshold';
+import { dirname } from 'path';
 import { Report, ReportItem } from '@/typings/command';
 import { Audit, Config } from '@/typings/module/lighthouse';
 import { CommandOptions } from '@/typings/utils/command';

@@ -1,20 +1,10 @@
 import realdeepmerge from 'deepmerge';
 import sqlite3 from 'sqlite3';
-import { Emitter } from '@/typings/event';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Deepmerge = (x: any, y: any) => any;
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Mkdirp = (filepath: string) => Promise<any>;
-
-const event: Emitter = {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  fire: (): any => {},
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  on: (): any => {},
-};
-
-const Command = {};
 
 beforeEach((): void => {
   jest.resetModules();
@@ -24,12 +14,14 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
   describe('no database stuff', (): void => {
     it('should initialize core', async (): Promise<void> => {
       const deepmergeMock = jest.fn();
+      const bus = jest.fn();
 
       jest.doMock(
         'deepmerge',
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         (): Deepmerge => (x: any, y: any): any => {
           deepmergeMock(x, y);
+
           return realdeepmerge(x, y);
         },
       );
@@ -38,16 +30,8 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
+          bus,
           dir: 'foo',
-          event,
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          program: Command as any,
-          utils: {
-            envOrDefault: (): string => 'foo',
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            getOptionsFromCommand: (): any => {},
-            resolvePath: (): string => 'foo',
-          },
         },
         {
           file: ':memory:',
@@ -63,17 +47,29 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
           file: ':memory:',
         },
       );
+
+      expect(bus).not.toHaveBeenCalled();
     });
 
     it('should resolve path to file', async (): Promise<void> => {
       const deepmergeMock = jest.fn();
       const resolvePath = jest.fn().mockReturnValue('foo/bar');
+      const bus = jest.fn();
+
+      jest.doMock(
+        '@modus/gimbal-core/lib/utils/fs',
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        (): any => ({
+          resolvePath,
+        }),
+      );
 
       jest.doMock(
         'deepmerge',
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         (): Deepmerge => (x: any, y: any): any => {
           deepmergeMock(x, y);
+
           return realdeepmerge(x, y);
         },
       );
@@ -82,21 +78,13 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
+          bus,
           commandOptions: {
             comment: true,
             cwd: 'cwd',
             verbose: false,
           },
           dir: 'foo',
-          event,
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          program: Command as any,
-          utils: {
-            envOrDefault: (): string => 'foo',
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            getOptionsFromCommand: (): any => {},
-            resolvePath,
-          },
         },
         {},
       );
@@ -110,6 +98,8 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
       );
 
       expect(resolvePath).toHaveBeenCalledWith('cwd', 'gimbal.db');
+
+      expect(bus).not.toHaveBeenCalled();
     });
   });
 
@@ -120,12 +110,16 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
       const mkdirpMock = jest.fn().mockResolvedValue('good');
       const init = jest.fn().mockResolvedValue('good');
       const on = jest.fn();
+      const bus = jest.fn().mockResolvedValue({
+        on,
+      });
 
       jest.doMock(
         'deepmerge',
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         (): Deepmerge => (x: any, y: any): any => {
           deepmergeMock(x, y);
+
           return realdeepmerge(x, y);
         },
       );
@@ -141,24 +135,13 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
+          bus,
           commandOptions: {
             comment: true,
             cwd: 'cwd',
             verbose: false,
           },
           dir: 'foo',
-          event: {
-            ...event,
-            on,
-          },
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          program: Command as any,
-          utils: {
-            envOrDefault: (): string => 'foo',
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            getOptionsFromCommand: (): any => {},
-            resolvePath,
-          },
         },
         {
           file: ':memory:',
@@ -191,6 +174,8 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
         ['plugin/last-value/report/get', expect.any(Function)],
         ['plugin/last-value/report/save', expect.any(Function)],
       ]);
+
+      expect(bus).toHaveBeenCalledWith('event');
     });
 
     it('should trigger event listeners', async (): Promise<void> => {
@@ -205,12 +190,16 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
         .fn()
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         .mockImplementation((eventName, cb): any => cb(eventName, { command: 'foo', report: 'bar' }));
+      const bus = jest.fn().mockResolvedValue({
+        on,
+      });
 
       jest.doMock(
         'deepmerge',
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         (): Deepmerge => (x: any, y: any): any => {
           deepmergeMock(x, y);
+
           return realdeepmerge(x, y);
         },
       );
@@ -228,24 +217,13 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
+          bus,
           commandOptions: {
             comment: true,
             cwd: 'cwd',
             verbose: false,
           },
           dir: 'foo',
-          event: {
-            ...event,
-            on,
-          },
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          program: Command as any,
-          utils: {
-            envOrDefault: (): string => 'foo',
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            getOptionsFromCommand: (): any => {},
-            resolvePath,
-          },
         },
         {
           file: ':memory:',
@@ -297,6 +275,13 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
         },
         table: 'hello_there',
       });
+
+      expect(on.mock.calls).toEqual([
+        ['plugin/last-value/report/get', expect.any(Function)],
+        ['plugin/last-value/report/save', expect.any(Function)],
+      ]);
+
+      expect(bus).toHaveBeenCalledWith('event');
     });
   });
 });

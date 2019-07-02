@@ -8,6 +8,9 @@
       "@/typings/*": ["../typings/*"]
     }
   },
+  "exclude": [
+    "src/**/*.spec.ts"
+  ],
   "include": [
     "src"
   ]

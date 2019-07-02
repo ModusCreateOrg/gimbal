@@ -2,8 +2,9 @@ import bytes from 'bytes';
 import { doesItemFail } from './util';
 import { Table } from '@/typings/components/Table';
 import { Config, LastReportItem } from '@/typings/plugin/last-value';
+import { PluginOptions } from '@/typings/config/plugin';
 
-type Renderer = (lastValue: number | string | void, item: LastReportItem) => string;
+type Renderer = (lastValue: number | string | void, item: LastReportItem) => Promise<string>;
 
 const bytesConfig = {
   unitSeparator: ' ',
@@ -37,11 +38,11 @@ export const renderDifference = (lastValue: number, item: LastReportItem): strin
   return `${lastValue}`;
 };
 
-export const createRenderer = (config: Config): Renderer => (
+export const createRenderer = (pluginOptions: PluginOptions, config: Config): Renderer => async (
   lastValue: number | string | void,
   item: LastReportItem,
-): string => {
-  const failure = doesItemFail(item, config);
+): Promise<string> => {
+  const failure = await doesItemFail(item, config, pluginOptions);
 
   switch (failure) {
     case 'number':
@@ -57,7 +58,7 @@ export const createRenderer = (config: Config): Renderer => (
   }
 };
 
-export const addColumn = (table: Table | void, config: Config): void => {
+export const addColumn = (table: Table | void, pluginOptions: PluginOptions, config: Config): void => {
   if (table) {
     const index = (table.findColumn((column): boolean => column.header === 'Value', true) as number) + 1;
 
@@ -66,7 +67,7 @@ export const addColumn = (table: Table | void, config: Config): void => {
         header: 'Last Value',
         key: 'lastValue',
         align: 'center',
-        renderer: createRenderer(config),
+        renderer: createRenderer(pluginOptions, config),
       },
       index,
     );

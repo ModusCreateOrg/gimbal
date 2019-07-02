@@ -1,7 +1,7 @@
-import path from 'path';
-import Config from '@modus/gimbal-core/lib/config';
-import EventEmitter from '@modus/gimbal-core/lib/event';
 import { mkdirp, resolvePath, writeFile } from '@modus/gimbal-core/lib/utils/fs';
+import path from 'path';
+import Config from '@/config';
+import EventEmitter from '@/event';
 import Logger from '@/logger';
 import { Report } from '@/typings/command';
 import {
@@ -84,7 +84,7 @@ const doCliOutput = async (report: Report, commandOptions: CommandOptions): Prom
 
   await EventEmitter.fire('output/cli/report/start', cliWriteStartEvent);
 
-  const cliContents = table.render('cli');
+  const cliContents = await table.render('cli');
 
   Logger.log(cliContents);
 

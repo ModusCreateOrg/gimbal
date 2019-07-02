@@ -7,8 +7,8 @@
     "gimbal": "bin/index.js"
   },
   "files": [
-    "bin/**/*",
-    "lib/**/*"
+    "bin",
+    "lib"
   ],
   "scripts": {
     "build": "ttsc -p .",
@@ -84,6 +84,7 @@
     "get-port": "5.0.0",
     "globby": "10.0.0",
     "gzip-size": "5.1.1",
+    "js-yaml": "3.13.1",
     "lighthouse": "5.1.0",
     "marked": "0.6.3",
     "minimatch": "3.0.4",
@@ -93,13 +94,14 @@
     "read-pkg": "5.1.1",
     "serve-handler": "6.0.2",
     "strip-ansi": "5.2.0",
-    "update-notifier": "3.0.0"
+    "update-notifier": "3.0.1"
   },
   "devDependencies": {
     "@types/bytes": "3.0.0",
     "@types/copyfiles": "2.1.1",
     "@types/get-folder-size": "2.0.0",
     "@types/globby": "9.1.0",
+    "@types/js-yaml": "3.12.1",
     "@types/marked": "0.6.5",
     "@types/minimatch": "3.0.3",
     "@types/mkdirp": "0.5.2",

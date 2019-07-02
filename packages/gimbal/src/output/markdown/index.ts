@@ -1,6 +1,6 @@
-import EventEmitter from '@modus/gimbal-core/lib/event';
 import { TableInstanceOptions } from 'cli-table3';
 import { createTable } from '../cli';
+import EventEmitter from '@/event';
 import { Report, ReportItem } from '@/typings/command';
 import { Config } from '@/typings/components/Table';
 import { CliOutputOptions } from '@/typings/output/cli';
@@ -62,7 +62,7 @@ export const outputTable = async (
     });
   }
 
-  const markdown = table.render('markdown');
+  const markdown = await table.render('markdown');
 
   if (!hasTable) {
     const commentRenderTableStartEvent: MarkdownRenderTableEndEvent = {

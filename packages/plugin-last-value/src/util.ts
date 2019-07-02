@@ -1,8 +1,8 @@
-import { getMeta } from '@modus/gimbal-core/lib/module/registry';
 import checkThreshold, { isPercentage, percentToNumber } from '@modus/gimbal-core/lib/utils/threshold';
 import { Meta, Types } from '@/typings/module';
 import { Config, ItemFailReasons, LastReportItem } from '@/typings/plugin/last-value';
-import { DiffRet, Metas } from '@/typings/plugin/last-value/util';
+import { DiffRet } from '@/typings/plugin/last-value/util';
+import { PluginOptions } from '@/typings/config/plugin';
 
 const getNumberDiff = (item: LastReportItem): DiffRet => {
   const lastValue = Number(item.rawLastValue);
@@ -78,8 +78,10 @@ const checkSizeThreshold = (item: LastReportItem, config: Config, meta: Meta): I
   return checkDiff(item, diff, thresholds.size, thresholds.diffPercentage, 'size', 'sizeDiffPercentage', meta);
 };
 
-const getThresholdType = (item: LastReportItem, metaMap?: Metas): Types | void => {
-  const meta = (metaMap && metaMap[item.type]) || getMeta(item.type);
+const getThresholdType = async (item: LastReportItem, pluginOptions: PluginOptions): Promise<Types | void> => {
+  const { bus } = pluginOptions;
+  const { getMeta } = await bus('module/registry');
+  const meta = getMeta(item.type);
 
   if (!meta) {
     return undefined;
@@ -95,8 +97,8 @@ const getThresholdType = (item: LastReportItem, metaMap?: Metas): Types | void =
   return thresholdType;
 };
 
-export const getItemDiff = (item: LastReportItem, metaMap?: Metas): void | DiffRet => {
-  const thresholdType = getThresholdType(item, metaMap);
+export const getItemDiff = async (item: LastReportItem, pluginOptions: PluginOptions): Promise<DiffRet | void> => {
+  const thresholdType = await getThresholdType(item, pluginOptions);
 
   switch (thresholdType) {
     case 'number':
@@ -111,18 +113,25 @@ export const getItemDiff = (item: LastReportItem, metaMap?: Metas): void | DiffR
 };
 
 /* eslint-disable-next-line import/prefer-default-export */
-export const doesItemFail = (item: LastReportItem, config: Config, metaMap?: Metas): ItemFailReasons => {
+export const doesItemFail = async (
+  item: LastReportItem,
+  config: Config,
+  pluginOptions: PluginOptions,
+): Promise<ItemFailReasons> => {
   if (item.lastValue == null || item.rawValue === item.rawLastValue) {
     return false;
   }
 
-  const meta = (metaMap && metaMap[item.type]) || getMeta(item.type);
+  const { bus } = pluginOptions;
+  const { getMeta } = await bus('module/registry');
+
+  const meta = getMeta(item.type);
 
   if (!meta) {
     return false;
   }
 
-  const thresholdType = getThresholdType(item, metaMap);
+  const thresholdType = await getThresholdType(item, pluginOptions);
 
   switch (thresholdType) {
     case 'number':

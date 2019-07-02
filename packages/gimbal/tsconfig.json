@@ -21,6 +21,9 @@
       "@modus/gimbal-plugin-sqlite/lib/*": ["../plugin-sqlite/src/*"]
     }
   },
+  "exclude": [
+    "src/**/*.spec.ts"
+  ],
   "include": [
     "src"
   ]

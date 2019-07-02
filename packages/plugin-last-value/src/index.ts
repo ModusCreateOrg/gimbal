@@ -28,27 +28,33 @@ const inspectCommandOptions = (commandOptions: CommandOptions, callback: Inspect
   return undefined;
 };
 
-const LastValue = async ({ event, program }: PluginOptions, config: Config): Promise<void> => {
+const LastValue = async (pluginOptions: PluginOptions, config: Config): Promise<void> => {
+  const { bus } = pluginOptions;
   const pluginConfig = deepmerge(defaultConfig, config);
+  const event = await bus('event');
+  const program = await bus('commander');
 
   program.option('--no-check-last-values', 'Set to disable checking last values vs current values.', true);
 
   event.on(
     'output/cli/report/end',
     (name: string, { commandOptions, table }: CliReportEndEvent): EventRet =>
-      inspectCommandOptions(commandOptions, (): void => addColumn(table, pluginConfig)),
+      inspectCommandOptions(commandOptions, (): void => addColumn(table, pluginOptions, pluginConfig)),
   );
 
   event.on(
     'output/markdown/render/table/start',
     (name: string, { commandOptions, table }: CliReportEndEvent): EventRet =>
-      inspectCommandOptions(commandOptions, (): void => addColumn(table, pluginConfig)),
+      inspectCommandOptions(commandOptions, (): void => addColumn(table, pluginOptions, pluginConfig)),
   );
 
   event.on(
     'command/*/action/end',
     (name: string, { commandOptions, report }: ActionEndEvent): EventRet =>
-      inspectCommandOptions(commandOptions, (): Promise<void> => getLastReport(name, pluginConfig, report, event)),
+      inspectCommandOptions(
+        commandOptions,
+        (): Promise<void> => getLastReport(name, pluginOptions, pluginConfig, report, event),
+      ),
   );
 
   event.on(

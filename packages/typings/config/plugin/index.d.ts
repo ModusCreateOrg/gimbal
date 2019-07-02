@@ -1,19 +1,10 @@
-import { Command } from 'commander';
-import { Emitter } from '@/typings/event';
-import { ResolvePath } from '@/typings/utils/fs';
-import { CommandOptions, GetOptionsFromCommand } from '@/typings/utils/command';
-import { EnvOrDefault } from '@/typings/utils/env';
+import { CommandOptions } from '@/typings/utils/command';
 
 export interface PluginOptions {
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  bus: (path: string) => any;
   commandOptions?: CommandOptions;
   dir: string;
-  event: Emitter;
-  program: Command;
-  utils: {
-    getOptionsFromCommand: GetOptionsFromCommand;
-    resolvePath: ResolvePath;
-    envOrDefault: EnvOrDefault;
-  };
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */

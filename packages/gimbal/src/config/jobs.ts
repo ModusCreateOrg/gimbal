@@ -1,6 +1,6 @@
-import EventEmitter from '@modus/gimbal-core/lib/event';
 import spawn from '@modus/gimbal-core/lib/utils/spawn';
 import { splitOnWhitespace } from '@modus/gimbal-core/lib/utils/string';
+import EventEmitter from '@/event';
 import Logger from '@/logger';
 import { ArrayJob, Job, JobRet, JobStartEvent, JobEndEvent, JobsStartEvent, JobsEndEvent } from '@/typings/config/jobs';
 import { CommandOptions } from '@/typings/utils/command';

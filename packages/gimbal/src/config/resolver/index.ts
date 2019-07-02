@@ -1,6 +1,6 @@
+import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import { existsSync } from 'fs';
 import path from 'path';
-import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 
 const IS_FILE_RE = /^[./]/;
 const IS_GIMBAL_RE = /^@\//;

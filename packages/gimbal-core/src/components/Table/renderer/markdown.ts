@@ -21,7 +21,7 @@ const alignments: Alignment = {
   right: '---:',
 };
 
-const renderMarkdown = ({ columns, data, options }: RendererArgs): string => {
+const renderMarkdown = async ({ columns, data, options }: RendererArgs): Promise<string> => {
   const item: BorderItem = {
     label: alignments.left,
     rawLabel: alignments.left,
@@ -38,7 +38,7 @@ const renderMarkdown = ({ columns, data, options }: RendererArgs): string => {
 
   data.unshift(item);
 
-  return stripAnsi(renderCli({ columns, data, options }));
+  return stripAnsi(await renderCli({ columns, data, options }));
 };
 
 export default renderMarkdown;

@@ -1,4 +1,3 @@
-import { register } from '@modus/gimbal-core/lib/module/registry';
 /* eslint-disable-next-line import/no-extraneous-dependencies */
 import { ImpactValue, Result } from 'axe-core';
 import { AxePuppeteer } from 'axe-puppeteer';
@@ -75,8 +74,10 @@ const parseEntry = (entry: Result, success: boolean, config: Config): ReportItem
   };
 };
 
-const Axe = async (_options: PluginOptions, config: Config): Promise<void> => {
+const Axe = async ({ bus }: PluginOptions, config: Config): Promise<void> => {
   const pluginConfig = deepmerge(defaultConfig, config);
+
+  const { register } = await bus('module/registry');
 
   register(
     type,

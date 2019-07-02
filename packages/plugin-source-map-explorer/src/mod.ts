@@ -1,10 +1,10 @@
 import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
-import { register } from '@modus/gimbal-core/lib/module/registry';
 import bytes from 'bytes';
 import globby from 'globby';
 import minimatch from 'minimatch';
 import explore, { ExploreBundleResult, ExploreResult } from 'source-map-explorer';
 import { Report, ReportItem } from '@/typings/command';
+import { PluginOptions } from '@/typings/config/plugin';
 import { Options } from '@/typings/module/registry';
 import { BundleObject, BundleType, Config, meta, type } from './config';
 
@@ -123,4 +123,8 @@ export const runModule = (pluginConfig: Config): RunModuleFn => async ({
   };
 };
 
-export const registerModule = (pluginConfig: Config): void => register(type, meta, runModule(pluginConfig));
+export const registerModule = async ({ bus }: PluginOptions, pluginConfig: Config): Promise<void> => {
+  const { register } = await bus('module/registry');
+
+  register(type, meta, runModule(pluginConfig));
+};

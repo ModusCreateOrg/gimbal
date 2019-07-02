@@ -19,7 +19,6 @@
   "scripts": {
     "build": "ttsc -p .",
     "build:check": "ttsc --noEmit -p .",
-    "build:cleanup": "rimraf lib/gimbal-core",
     "build:watch": "ttsc --watch -p .",
     "lint": "eslint 'src/**/*.ts'",
     "prepublish": "yarn build",
@@ -39,7 +38,6 @@
     "get-port": "5.0.0",
     "globby": "10.0.0",
     "is-ci": "2.0.0",
-    "js-yaml": "3.13.1",
     "minimatch": "3.0.4",
     "mkdirp": "0.5.1",
     "pidusage": "2.0.17",
@@ -50,7 +48,6 @@
     "@types/get-folder-size": "2.0.0",
     "@types/globby": "9.1.0",
     "@types/is-ci": "2.0.0",
-    "@types/js-yaml": "3.12.1",
     "@types/minimatch": "3.0.3",
     "@types/mkdirp": "0.5.2",
     "@types/pidusage": "2.0.1"

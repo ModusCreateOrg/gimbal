@@ -93,7 +93,7 @@ class Table {
     this.data = data;
   }
 
-  public render(type: Renders): string {
+  public render(type: Renders): Promise<string> {
     const { columns, data, options } = this;
 
     switch (type) {
@@ -104,7 +104,7 @@ class Table {
       case 'html':
         return htmlRenderer({ columns, data, options });
       default:
-        return '';
+        return Promise.resolve('');
     }
   }
 }

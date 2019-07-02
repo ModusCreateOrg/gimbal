@@ -1,13 +1,25 @@
 import program from 'commander';
 import deepmerge from 'deepmerge';
-import event from '@modus/gimbal-core/lib/event';
-import envOrDefault from '@modus/gimbal-core/lib/utils/env';
-import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import resolver from '@/config/resolver';
+import EventEmitter from '@/event';
 import { PluginConfig, Plugin, PluginOptions } from '@/typings/config/plugin';
 import { CommandOptions } from '@/typings/utils/command';
-import { getOptionsFromCommand } from '@/utils/command';
 import { LoadEndEvent } from '@/typings/config';
+
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+const bus = async (name: string): Promise<any> => {
+  if (name === 'commander') {
+    return program;
+  }
+
+  const imported = await import(`${__dirname}/../../${name}`);
+
+  if (imported.default) {
+    return imported.default;
+  }
+
+  return imported;
+};
 
 interface Map {
   [label: string]: PluginConfig;
@@ -15,14 +27,8 @@ interface Map {
 
 // this is the object that gets passed to a plugin function
 const options: PluginOptions = {
+  bus,
   dir: __dirname,
-  event,
-  program,
-  utils: {
-    getOptionsFromCommand,
-    resolvePath,
-    envOrDefault,
-  },
 };
 
 const map: Map = {};
@@ -61,22 +67,17 @@ const parsePlugins = async (
         // it that could cause issues.
         // Also return it in case it's a promise, we can
         // wait for it.
-        return func(
-          { ...options, commandOptions: { ...commandOptions }, utils: { ...options.utils }, dir },
-          deepmerge(pluginConfig, {}),
-        );
+        return func({ ...options, commandOptions: { ...commandOptions }, dir }, deepmerge(pluginConfig, {}));
       },
     ),
   );
 };
 
-export const init = (): void => {
-  event.on(
-    'config/load/end',
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    async (_eventName: string, { commandOptions, config: { plugins }, dir }: LoadEndEvent): Promise<void | any[]> =>
-      plugins && plugins.length ? parsePlugins(plugins, dir, commandOptions) : undefined,
-  );
-};
+EventEmitter.on(
+  'config/load/end',
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  async (_eventName: string, { commandOptions, config: { plugins }, dir }: LoadEndEvent): Promise<void | any[]> =>
+    plugins && plugins.length ? parsePlugins(plugins, dir, commandOptions) : undefined,
+);
 
 export default parsePlugins;

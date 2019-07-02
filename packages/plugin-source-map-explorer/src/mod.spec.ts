@@ -1,3 +1,10 @@
+import { PluginOptions } from '@/typings/config/plugin';
+
+const pluginOptions: PluginOptions = {
+  bus: (): string => '',
+  dir: 'foo',
+};
+
 beforeEach((): void => {
   jest.resetModules();
 });
@@ -190,17 +197,23 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
   describe('registerModule', (): void => {
     it('should register module', async (): Promise<void> => {
       const register = jest.fn();
-
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
+      const bus = jest.fn().mockResolvedValue({
         register,
-      }));
+      });
 
       const { registerModule } = await import('./mod');
 
-      registerModule({
-        bundles: [],
-      });
+      await registerModule(
+        {
+          ...pluginOptions,
+          bus,
+        },
+        {
+          bundles: [],
+        },
+      );
+
+      expect(bus).toHaveBeenCalledWith('module/registry');
 
       expect(register).toHaveBeenCalledWith(
         'source-map-explorer',

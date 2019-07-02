@@ -1,9 +1,11 @@
+import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import deepmerge from 'deepmerge';
 import mkdirpMod from 'mkdirp';
 import { dirname } from 'path';
 import sqlite3 from 'sqlite3';
 import { promisify } from 'util';
 import { PluginOptions } from '@/typings/config/plugin';
+import { GetEvent, SaveEvent } from '@/typings/plugin/last-value';
 
 const mkdirp = promisify(mkdirpMod);
 
@@ -25,10 +27,7 @@ const defaultConfig: Config = {
 
 const willNeedDatabase = (config: Config): boolean => config.lastValue !== false;
 
-const sqlite = async (
-  { commandOptions, event, utils: { resolvePath } }: PluginOptions,
-  config: Config,
-): Promise<void> => {
+const sqlite = async ({ bus, commandOptions }: PluginOptions, config: Config): Promise<void> => {
   const sqliteConfig = deepmerge(defaultConfig, config);
 
   if (commandOptions && sqliteConfig.file !== ':memory:') {
@@ -40,6 +39,7 @@ const sqlite = async (
       await mkdirp(dirname(sqliteConfig.file));
     }
 
+    const event = await bus('event');
     const db = new sqlite3.Database(sqliteConfig.file);
 
     if (config.lastValue) {
@@ -59,12 +59,13 @@ const sqlite = async (
 
       event.on(
         'plugin/last-value/report/get',
-        (eventName, { command }): Promise<void> => getLastReport(command, pluginConfig),
+        (_eventName: string, { command }: GetEvent): Promise<void> => getLastReport(command, pluginConfig),
       );
 
       event.on(
         'plugin/last-value/report/save',
-        (eventName, { command, report }): Promise<void> => saveLastReport(command, report, pluginConfig),
+        (_eventName: string, { command, report }: SaveEvent): Promise<void> =>
+          saveLastReport(command, report, pluginConfig),
       );
     }
   }

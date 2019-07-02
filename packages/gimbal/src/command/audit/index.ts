@@ -1,10 +1,10 @@
-import Config from '@modus/gimbal-core/lib/config';
 import { addSpinner, finishSpinner, startSpinner } from '@modus/gimbal-core/lib/logger';
-import { get } from '@modus/gimbal-core/lib/module/registry';
 import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import findPort from '@modus/gimbal-core/lib/utils/port';
 import Queue from '@modus/gimbal-core/lib/utils/Queue';
+import Config from '@/config';
 import Chrome from '@/module/chrome';
+import { get } from '@/module/registry';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
 import { Modules } from '@/typings/module';

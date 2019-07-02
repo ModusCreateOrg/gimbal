@@ -1,4 +1,4 @@
-import { register } from '@modus/gimbal-core/lib/module/registry';
+import { register } from '@/module/registry';
 import UnusedSource from '@/module/unused-source';
 import { Report } from '@/typings/command';
 import { Options } from '@/typings/module/registry';

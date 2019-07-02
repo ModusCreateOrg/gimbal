@@ -1,3 +1,11 @@
+import { PluginOptions } from '@/typings/config/plugin';
+import { Emitter } from '@/typings/event';
+
+const pluginOptions: PluginOptions = {
+  bus(): void {},
+  dir: 'foo',
+};
+
 beforeEach((): void => {
   jest.resetModules();
 });
@@ -6,7 +14,7 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
   describe('getLastReport', (): void => {
     it('should handle no last report', async (): Promise<void> => {
       const report = { success: true };
-      const getEvent = jest.fn().mockResolvedValue(null);
+      const fire = jest.fn().mockResolvedValue({ rets: [] });
       const config = {
         failOnBreach: true,
         saveOnlyOnSuccess: true,
@@ -18,23 +26,32 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
-      Emitter.on('plugin/last-value/report/get', getEvent);
+      const bus = jest.fn().mockResolvedValue({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        getMeta: (): any => ({}),
+      });
 
       const { getLastReport } = await import('./storage');
 
-      await getLastReport('command/size', config, report, Emitter);
+      await getLastReport('command/size', { ...pluginOptions, bus }, config, report, EventEmitter);
 
-      expect(getEvent).toHaveBeenCalledWith('plugin/last-value/report/get', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/get', {
         command: 'size',
       });
+
+      expect(bus).not.toHaveBeenCalled();
     });
 
     it('should handle no child data', async (): Promise<void> => {
       const report = { success: true };
-      const getEvent = jest.fn().mockResolvedValue({
-        report: {},
+      const fire = jest.fn().mockResolvedValue({
+        rets: [{ report: {} }],
       });
       const config = {
         failOnBreach: true,
@@ -47,17 +64,26 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
-      Emitter.on('plugin/last-value/report/get', getEvent);
+      const bus = jest.fn().mockResolvedValue({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        getMeta: (): any => ({}),
+      });
 
       const { getLastReport } = await import('./storage');
 
-      await getLastReport('command/size', config, report, Emitter);
+      await getLastReport('command/size', { ...pluginOptions, bus }, config, report, EventEmitter);
 
-      expect(getEvent).toHaveBeenCalledWith('plugin/last-value/report/get', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/get', {
         command: 'size',
       });
+
+      expect(bus).not.toHaveBeenCalled();
     });
 
     it('should handle no parent data', async (): Promise<void> => {
@@ -73,29 +99,33 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         success: true,
         type: 'size',
       };
-      const getEvent = jest.fn().mockResolvedValue({
-        report: {
-          data: [
-            {
+      const fire = jest.fn().mockResolvedValue({
+        rets: [
+          {
+            report: {
               data: [
                 {
-                  label: 'Bar',
-                  rawLabel: 'Bar',
-                  rawValue: 3,
+                  data: [
+                    {
+                      label: 'Bar',
+                      rawLabel: 'Bar',
+                      rawValue: 3,
+                      success: true,
+                      type: 'size',
+                      value: '3',
+                    },
+                  ],
+                  label: 'Foo',
+                  rawLabel: 'Foo',
                   success: true,
                   type: 'size',
-                  value: '3',
                 },
               ],
-              label: 'Foo',
-              rawLabel: 'Foo',
               success: true,
               type: 'size',
             },
-          ],
-          success: true,
-          type: 'size',
-        },
+          },
+        ],
       });
       const config = {
         failOnBreach: true,
@@ -108,17 +138,26 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
-      Emitter.on('plugin/last-value/report/get', getEvent);
+      const bus = jest.fn().mockResolvedValue({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        getMeta: (): any => ({}),
+      });
 
       const { getLastReport } = await import('./storage');
 
-      await getLastReport('command/size', config, report, Emitter);
+      await getLastReport('command/size', { ...pluginOptions, bus }, config, report, EventEmitter);
 
-      expect(getEvent).toHaveBeenCalledWith('plugin/last-value/report/get', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/get', {
         command: 'size',
       });
+
+      expect(bus).not.toHaveBeenCalled();
     });
 
     it('should handle no matched child data', async (): Promise<void> => {
@@ -144,29 +183,33 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         success: true,
         type: 'size',
       };
-      const getEvent = jest.fn().mockResolvedValue({
-        report: {
-          data: [
-            {
+      const fire = jest.fn().mockResolvedValue({
+        rets: [
+          {
+            report: {
               data: [
                 {
-                  label: 'Bar',
-                  rawLabel: 'Bar',
-                  rawValue: 3,
+                  data: [
+                    {
+                      label: 'Bar',
+                      rawLabel: 'Bar',
+                      rawValue: 3,
+                      success: true,
+                      type: 'size',
+                      value: '3',
+                    },
+                  ],
+                  label: 'Foo',
+                  rawLabel: 'Foo',
                   success: true,
                   type: 'size',
-                  value: '3',
                 },
               ],
-              label: 'Foo',
-              rawLabel: 'Foo',
               success: true,
               type: 'size',
             },
-          ],
-          success: true,
-          type: 'size',
-        },
+          },
+        ],
       });
       const config = {
         failOnBreach: true,
@@ -179,17 +222,26 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
-      Emitter.on('plugin/last-value/report/get', getEvent);
+      const bus = jest.fn().mockResolvedValue({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        getMeta: (): any => ({}),
+      });
 
       const { getLastReport } = await import('./storage');
 
-      await getLastReport('command/size', config, report, Emitter);
+      await getLastReport('command/size', { ...pluginOptions, bus }, config, report, EventEmitter);
 
-      expect(getEvent).toHaveBeenCalledWith('plugin/last-value/report/get', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/get', {
         command: 'size',
       });
+
+      expect(bus).not.toHaveBeenCalled();
     });
 
     it('should handle not changing success', async (): Promise<void> => {
@@ -215,29 +267,33 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         success: false,
         type: 'size',
       };
-      const getEvent = jest.fn().mockResolvedValue({
-        report: {
-          data: [
-            {
+      const fire = jest.fn().mockResolvedValue({
+        rets: [
+          {
+            report: {
               data: [
                 {
+                  data: [
+                    {
+                      label: 'Foo',
+                      rawLabel: 'Foo',
+                      rawValue: 3,
+                      success: true,
+                      type: 'size',
+                      value: '3',
+                    },
+                  ],
                   label: 'Foo',
                   rawLabel: 'Foo',
-                  rawValue: 3,
                   success: true,
                   type: 'size',
-                  value: '3',
                 },
               ],
-              label: 'Foo',
-              rawLabel: 'Foo',
               success: true,
               type: 'size',
             },
-          ],
-          success: true,
-          type: 'size',
-        },
+          },
+        ],
       });
       const config = {
         failOnBreach: true,
@@ -250,17 +306,26 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
-      Emitter.on('plugin/last-value/report/get', getEvent);
+      const bus = jest.fn().mockResolvedValue({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        getMeta: (): any => ({}),
+      });
 
       const { getLastReport } = await import('./storage');
 
-      await getLastReport('command/size', config, report, Emitter);
+      await getLastReport('command/size', { ...pluginOptions, bus }, config, report, EventEmitter);
 
-      expect(getEvent).toHaveBeenCalledWith('plugin/last-value/report/get', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/get', {
         command: 'size',
       });
+
+      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry'], ['module/registry']]);
     });
 
     it('should apply last values on report', async (): Promise<void> => {
@@ -288,18 +353,26 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         success: true,
         type: 'size',
       };
-      const getEvent = jest.fn().mockResolvedValue({
-        report: {
-          data: [
-            {
+      const fire = jest.fn().mockResolvedValue({
+        rets: [
+          {
+            report: {
               data: [
                 {
+                  data: [
+                    {
+                      label: 'Foo',
+                      rawLabel: 'Foo',
+                      rawValue: 2,
+                      success: true,
+                      type: 'size',
+                      value: '2',
+                    },
+                  ],
                   label: 'Foo',
                   rawLabel: 'Foo',
-                  rawValue: 2,
                   success: true,
                   type: 'size',
-                  value: '2',
                 },
               ],
               label: 'Foo',
@@ -307,12 +380,8 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
               success: true,
               type: 'size',
             },
-          ],
-          label: 'Foo',
-          rawLabel: 'Foo',
-          success: true,
-          type: 'size',
-        },
+          },
+        ],
       });
       const config = {
         failOnBreach: true,
@@ -325,22 +394,23 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
-      Emitter.on('plugin/last-value/report/get', getEvent);
-
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
+      const bus = jest.fn().mockResolvedValue({
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         getMeta: (): any => ({
           thresholdLimit: 'upper',
           thresholdType: 'number',
         }),
-      }));
+      });
 
       const { getLastReport } = await import('./storage');
 
-      await getLastReport('command/size', config, report, Emitter);
+      await getLastReport('command/size', { ...pluginOptions, bus }, config, report, EventEmitter);
 
       expect(report).toEqual({
         data: [
@@ -371,9 +441,11 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         type: 'size',
       });
 
-      expect(getEvent).toHaveBeenCalledWith('plugin/last-value/report/get', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/get', {
         command: 'size',
       });
+
+      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry'], ['module/registry']]);
     });
 
     it('should apply last values on report as a string that fails', async (): Promise<void> => {
@@ -401,31 +473,35 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         success: true,
         type: 'size',
       };
-      const getEvent = jest.fn().mockResolvedValue({
-        report: JSON.stringify({
-          data: [
-            {
+      const fire = jest.fn().mockResolvedValue({
+        rets: [
+          {
+            report: JSON.stringify({
               data: [
                 {
+                  data: [
+                    {
+                      label: 'Foo',
+                      rawLabel: 'Foo',
+                      rawValue: 2,
+                      success: true,
+                      type: 'size',
+                      value: '2',
+                    },
+                  ],
                   label: 'Foo',
                   rawLabel: 'Foo',
-                  rawValue: 2,
                   success: true,
                   type: 'size',
-                  value: '2',
                 },
               ],
               label: 'Foo',
               rawLabel: 'Foo',
               success: true,
               type: 'size',
-            },
-          ],
-          label: 'Foo',
-          rawLabel: 'Foo',
-          success: true,
-          type: 'size',
-        }),
+            }),
+          },
+        ],
       });
       const config = {
         failOnBreach: true,
@@ -438,22 +514,23 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
-      Emitter.on('plugin/last-value/report/get', getEvent);
-
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
+      const bus = jest.fn().mockResolvedValue({
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         getMeta: (): any => ({
           thresholdLimit: 'upper',
           thresholdType: 'number',
         }),
-      }));
+      });
 
       const { getLastReport } = await import('./storage');
 
-      await getLastReport('command/size', config, report, Emitter);
+      await getLastReport('command/size', { ...pluginOptions, bus }, config, report, EventEmitter);
 
       expect(report).toEqual({
         data: [
@@ -484,9 +561,11 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         type: 'size',
       });
 
-      expect(getEvent).toHaveBeenCalledWith('plugin/last-value/report/get', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/get', {
         command: 'size',
       });
+
+      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry'], ['module/registry']]);
     });
 
     it('should handle unknown threshold type', async (): Promise<void> => {
@@ -514,31 +593,35 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         success: true,
         type: 'size',
       };
-      const getEvent = jest.fn().mockResolvedValue({
-        report: JSON.stringify({
-          data: [
-            {
+      const fire = jest.fn().mockResolvedValue({
+        rets: [
+          {
+            report: JSON.stringify({
               data: [
                 {
+                  data: [
+                    {
+                      label: 'Foo',
+                      rawLabel: 'Foo',
+                      rawValue: 2,
+                      success: true,
+                      type: 'size',
+                      value: '2',
+                    },
+                  ],
                   label: 'Foo',
                   rawLabel: 'Foo',
-                  rawValue: 2,
                   success: true,
                   type: 'size',
-                  value: '2',
                 },
               ],
               label: 'Foo',
               rawLabel: 'Foo',
               success: true,
               type: 'size',
-            },
-          ],
-          label: 'Foo',
-          rawLabel: 'Foo',
-          success: true,
-          type: 'size',
-        }),
+            }),
+          },
+        ],
       });
       const config = {
         failOnBreach: true,
@@ -551,18 +634,19 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
-      Emitter.on('plugin/last-value/report/get', getEvent);
-
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
+      const bus = jest.fn().mockResolvedValue({
         getMeta: (): void => undefined,
-      }));
+      });
 
       const { getLastReport } = await import('./storage');
 
-      await getLastReport('command/size', config, report, Emitter);
+      await getLastReport('command/size', { ...pluginOptions, bus }, config, report, EventEmitter);
 
       expect(report).toEqual({
         data: [
@@ -591,9 +675,11 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         type: 'size',
       });
 
-      expect(getEvent).toHaveBeenCalledWith('plugin/last-value/report/get', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/get', {
         command: 'size',
       });
+
+      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry']]);
     });
 
     it('should allow threshold breach failure', async (): Promise<void> => {
@@ -621,31 +707,35 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         success: true,
         type: 'size',
       };
-      const getEvent = jest.fn().mockResolvedValue({
-        report: JSON.stringify({
-          data: [
-            {
+      const fire = jest.fn().mockResolvedValue({
+        rets: [
+          {
+            report: JSON.stringify({
               data: [
                 {
+                  data: [
+                    {
+                      label: 'Foo',
+                      rawLabel: 'Foo',
+                      rawValue: 2,
+                      success: true,
+                      type: 'size',
+                      value: '2',
+                    },
+                  ],
                   label: 'Foo',
                   rawLabel: 'Foo',
-                  rawValue: 2,
                   success: true,
                   type: 'size',
-                  value: '2',
                 },
               ],
               label: 'Foo',
               rawLabel: 'Foo',
               success: true,
               type: 'size',
-            },
-          ],
-          label: 'Foo',
-          rawLabel: 'Foo',
-          success: true,
-          type: 'size',
-        }),
+            }),
+          },
+        ],
       });
       const config = {
         failOnBreach: false,
@@ -658,22 +748,32 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
-      Emitter.on('plugin/last-value/report/get', getEvent);
-
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      jest.doMock('@modus/gimbal-core/lib/module/registry', (): any => ({
+      const bus = jest.fn().mockResolvedValue({
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         getMeta: (): any => ({
           thresholdLimit: 'upper',
           thresholdType: 'number',
         }),
-      }));
+      });
 
       const { getLastReport } = await import('./storage');
 
-      await getLastReport('command/size', config, report, Emitter);
+      await getLastReport(
+        'command/size',
+        {
+          ...pluginOptions,
+          bus,
+        },
+        config,
+        report,
+        EventEmitter,
+      );
 
       expect(report).toEqual({
         data: [
@@ -704,9 +804,11 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         type: 'size',
       });
 
-      expect(getEvent).toHaveBeenCalledWith('plugin/last-value/report/get', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/get', {
         command: 'size',
       });
+
+      expect(bus).toHaveBeenCalledWith('module/registry');
     });
   });
 
@@ -747,17 +849,19 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const saveEvent = jest.fn().mockResolvedValue('foo');
+      const fire = jest.fn();
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
-
-      Emitter.on('plugin/last-value/report/save', saveEvent);
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
       const { saveReport } = await import('./storage');
 
-      await saveReport('command/size', config, report, Emitter);
+      await saveReport('command/size', config, report, EventEmitter);
 
-      expect(saveEvent).toHaveBeenCalledWith('plugin/last-value/report/save', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/save', {
         command: 'size',
         report: {
           data: [
@@ -822,17 +926,19 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const saveEvent = jest.fn().mockResolvedValue('foo');
+      const fire = jest.fn();
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
-
-      Emitter.on('plugin/last-value/report/save', saveEvent);
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
       const { saveReport } = await import('./storage');
 
-      await saveReport('command/size', config, report, Emitter);
+      await saveReport('command/size', config, report, EventEmitter);
 
-      expect(saveEvent).not.toHaveBeenCalled();
+      expect(fire).not.toHaveBeenCalled();
     });
 
     it('should save failed report', async (): Promise<void> => {
@@ -871,17 +977,19 @@ describe('@modus/gimbal-plugin-last-value/storage', (): void => {
         },
       };
 
-      const saveEvent = jest.fn().mockResolvedValue('foo');
+      const fire = jest.fn();
 
-      const { default: Emitter } = await import('@modus/gimbal-core/lib/event');
-
-      Emitter.on('plugin/last-value/report/save', saveEvent);
+      const EventEmitter: Emitter = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        on(): any {},
+        fire,
+      };
 
       const { saveReport } = await import('./storage');
 
-      await saveReport('command/size', config, report, Emitter);
+      await saveReport('command/size', config, report, EventEmitter);
 
-      expect(saveEvent).toHaveBeenCalledWith('plugin/last-value/report/save', {
+      expect(fire).toHaveBeenCalledWith('plugin/last-value/report/save', {
         command: 'size',
         report: {
           data: [

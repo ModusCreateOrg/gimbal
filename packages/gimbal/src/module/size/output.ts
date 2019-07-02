@@ -1,6 +1,6 @@
+import checkThreshold from '@modus/gimbal-core/lib/utils/threshold';
 import bytes from 'bytes';
 import { relative } from 'path';
-import checkThreshold from '@modus/gimbal-core/lib/utils/threshold';
 import { Report, ReportItem } from '@/typings/command';
 import { FileResult } from '@/typings/module/size';
 import { CommandOptions } from '@/typings/utils/command';

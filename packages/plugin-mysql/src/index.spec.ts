@@ -1,5 +1,4 @@
 import realdeepmerge from 'deepmerge';
-import { Emitter } from '@/typings/event';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 jest.mock('mysql', (): any => ({
@@ -9,15 +8,6 @@ jest.mock('mysql', (): any => ({
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Deepmerge = (x: any, y: any) => any;
-
-const event: Emitter = {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  fire: (): any => {},
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  on: (): any => {},
-};
-
-const Command = {};
 
 beforeEach((): void => {
   jest.resetModules();
@@ -42,16 +32,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       await plugin(
         {
+          bus: (): string => 'null',
           dir: 'foo',
-          event,
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          program: Command as any,
-          utils: {
-            envOrDefault: (): string => 'foo',
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            getOptionsFromCommand: (): any => {},
-            resolvePath: (): string => 'foo',
-          },
         },
         {
           lastValue: false,
@@ -95,16 +77,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       const check = plugin(
         {
+          bus: (): string => 'null',
           dir: 'foo',
-          event,
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          program: Command as any,
-          utils: {
-            envOrDefault: (): string => 'foo',
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            getOptionsFromCommand: (): any => {},
-            resolvePath: (): string => 'foo',
-          },
         },
         {
           lastValue: true,
@@ -126,6 +100,12 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
       const init = jest.fn().mockResolvedValue('good');
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       const connect = jest.fn().mockImplementation((callback: any): any => callback(null));
+      const on = jest.fn();
+
+      const bus = jest.fn().mockResolvedValue({
+        fire(): void {},
+        on,
+      });
 
       jest.doMock(
         'deepmerge',
@@ -153,16 +133,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       await plugin(
         {
+          bus,
           dir: 'foo',
-          event,
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          program: Command as any,
-          utils: {
-            envOrDefault: (): string => 'foo',
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            getOptionsFromCommand: (): any => {},
-            resolvePath: (): string => 'foo',
-          },
         },
         {
           lastValue: true,
@@ -179,6 +151,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         database: 'gimbal',
         table: 'gimbal_archive',
       });
+
+      expect(bus).toHaveBeenCalledWith('event');
     });
 
     it('should add event listeners', async (): Promise<void> => {
@@ -187,6 +161,11 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       const connect = jest.fn().mockImplementation((callback: any): any => callback(null));
       const on = jest.fn();
+
+      const bus = jest.fn().mockResolvedValue({
+        fire(): void {},
+        on,
+      });
 
       jest.doMock(
         'deepmerge',
@@ -214,19 +193,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       await plugin(
         {
+          bus,
           dir: 'foo',
-          event: {
-            ...event,
-            on,
-          },
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          program: Command as any,
-          utils: {
-            envOrDefault: (): string => 'foo',
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            getOptionsFromCommand: (): any => {},
-            resolvePath: (): string => 'foo',
-          },
         },
         {
           lastValue: true,
@@ -248,6 +216,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         ['plugin/last-value/report/get', expect.any(Function)],
         ['plugin/last-value/report/save', expect.any(Function)],
       ]);
+
+      expect(bus).toHaveBeenCalledWith('event');
     });
 
     it('should trigger event listeners', async (): Promise<void> => {
@@ -262,6 +232,11 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         .fn()
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         .mockImplementation((eventName, cb): any => cb(eventName, { command: 'foo', report: 'bar' }));
+
+      const bus = jest.fn().mockResolvedValue({
+        fire(): void {},
+        on,
+      });
 
       jest.doMock(
         'deepmerge',
@@ -291,19 +266,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       await plugin(
         {
+          bus,
           dir: 'foo',
-          event: {
-            ...event,
-            on,
-          },
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          program: Command as any,
-          utils: {
-            envOrDefault: (): string => 'foo',
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            getOptionsFromCommand: (): any => {},
-            resolvePath: (): string => 'foo',
-          },
         },
         {
           lastValue: {
@@ -365,6 +329,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         database: 'foo-db',
         table: 'foo-table',
       });
+
+      expect(bus).toHaveBeenCalledWith('event');
     });
   });
 });

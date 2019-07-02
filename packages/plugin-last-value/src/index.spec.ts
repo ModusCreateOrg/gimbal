@@ -1,12 +1,3 @@
-import { Emitter } from '@/typings/event';
-
-const event: Emitter = {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  fire: (): any => {},
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  on: (): any => {},
-};
-
 beforeEach((): void => {
   jest.resetModules();
 });
@@ -14,24 +5,21 @@ beforeEach((): void => {
 describe('@modus/gimbal-plugin-last-value', (): void => {
   it('should add option to commander', async (): Promise<void> => {
     const option = jest.fn();
-    const Command = {
-      option,
-    };
+    const bus = jest
+      .fn()
+      .mockResolvedValueOnce({
+        on(): void {},
+      })
+      .mockResolvedValueOnce({
+        option,
+      });
 
     const { default: plugin } = await import('./index');
 
     await plugin(
       {
+        bus,
         dir: 'foo',
-        event,
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        program: Command as any,
-        utils: {
-          envOrDefault: (): string => 'foo',
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          getOptionsFromCommand: (): any => {},
-          resolvePath: (): string => 'foo',
-        },
       },
       {
         failOnBreach: false,
@@ -50,32 +38,29 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
       'Set to disable checking last values vs current values.',
       true,
     );
+
+    expect(bus.mock.calls).toEqual([['event'], ['commander']]);
   });
 
   it('should add listeners', async (): Promise<void> => {
     const option = jest.fn();
     const on = jest.fn();
-    const Command = {
-      option,
-    };
+
+    const bus = jest
+      .fn()
+      .mockResolvedValueOnce({
+        on,
+      })
+      .mockResolvedValueOnce({
+        option,
+      });
 
     const { default: plugin } = await import('./index');
 
     await plugin(
       {
+        bus,
         dir: 'foo',
-        event: {
-          ...event,
-          on,
-        },
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        program: Command as any,
-        utils: {
-          envOrDefault: (): string => 'foo',
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          getOptionsFromCommand: (): any => {},
-          resolvePath: (): string => 'foo',
-        },
       },
       {
         failOnBreach: false,
@@ -101,6 +86,8 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
       ['command/*/action/end', expect.any(Function)],
       ['command/*/end', expect.any(Function)],
     ]);
+
+    expect(bus.mock.calls).toEqual([['event'], ['commander']]);
   });
 
   it('should handle listeners', async (): Promise<void> => {
@@ -114,9 +101,15 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
     const addColumn = jest.fn().mockResolvedValue('foo');
     const getLastReport = jest.fn().mockResolvedValue('foo');
     const saveReport = jest.fn().mockResolvedValue('foo');
-    const Command = {
-      option,
-    };
+
+    const bus = jest
+      .fn()
+      .mockResolvedValueOnce({
+        on,
+      })
+      .mockResolvedValueOnce({
+        option,
+      });
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     jest.doMock('./render', (): any => ({
@@ -133,19 +126,8 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
 
     await plugin(
       {
+        bus,
         dir: 'foo',
-        event: {
-          ...event,
-          on,
-        },
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        program: Command as any,
-        utils: {
-          envOrDefault: (): string => 'foo',
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          getOptionsFromCommand: (): any => {},
-          resolvePath: (): string => 'foo',
-        },
       },
       {
         failOnBreach: false,
@@ -177,6 +159,10 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
       [
         'table',
         {
+          bus,
+          dir: 'foo',
+        },
+        {
           failOnBreach: false,
           saveOnlyOnSuccess: true,
           thresholds: {
@@ -190,6 +176,10 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
       // from 'output/markdown/render/table/start' event
       [
         'table',
+        {
+          bus: expect.any(Function),
+          dir: 'foo',
+        },
         {
           failOnBreach: false,
           saveOnlyOnSuccess: true,
@@ -206,6 +196,10 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
     expect(getLastReport).toHaveBeenCalledWith(
       'command/*/action/end',
       {
+        bus: expect.any(Function),
+        dir: 'foo',
+      },
+      {
         failOnBreach: false,
         saveOnlyOnSuccess: true,
         thresholds: {
@@ -217,7 +211,6 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
       },
       'bar',
       {
-        fire: expect.any(Function),
         on: expect.any(Function),
       },
     );
@@ -236,10 +229,11 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
       },
       'bar',
       {
-        fire: expect.any(Function),
         on: expect.any(Function),
       },
     );
+
+    expect(bus.mock.calls).toEqual([['event'], ['commander']]);
   });
 
   it('should not fire listeners', async (): Promise<void> => {
@@ -253,9 +247,15 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
     const addColumn = jest.fn().mockResolvedValue('foo');
     const getLastReport = jest.fn().mockResolvedValue('foo');
     const saveReport = jest.fn().mockResolvedValue('foo');
-    const Command = {
-      option,
-    };
+
+    const bus = jest
+      .fn()
+      .mockResolvedValueOnce({
+        on,
+      })
+      .mockResolvedValueOnce({
+        option,
+      });
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     jest.doMock('./render', (): any => ({
@@ -272,19 +272,8 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
 
     await plugin(
       {
+        bus,
         dir: 'foo',
-        event: {
-          ...event,
-          on,
-        },
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        program: Command as any,
-        utils: {
-          envOrDefault: (): string => 'foo',
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          getOptionsFromCommand: (): any => {},
-          resolvePath: (): string => 'foo',
-        },
       },
       {
         failOnBreach: false,
@@ -316,5 +305,7 @@ describe('@modus/gimbal-plugin-last-value', (): void => {
     expect(getLastReport).not.toHaveBeenCalled();
 
     expect(saveReport).not.toHaveBeenCalled();
+
+    expect(bus.mock.calls).toEqual([['event'], ['commander']]);
   });
 });

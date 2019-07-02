@@ -4,7 +4,7 @@
   "description": "MySQL storage helpers for Gimbal and Gimbal plugins",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "lib/plugin-mysql/src/index.js",
   "files": [
     "lib"
   ],
@@ -18,9 +18,11 @@
   "scripts": {
     "build": "ttsc -p .",
     "build:check": "ttsc --noEmit -p .",
+    "build:cleanup": "rimraf lib/gimbal-core",
     "build:watch": "ttsc --watch -p .",
     "link": "npm link",
     "lint": "eslint 'src/**/*.ts'",
+    "postbuild": "yarn run build:cleanup",
     "prepublish": "yarn build",
     "test": "jest --coverage",
     "test:coveralls": "cat ./coverage/lcov.info | coveralls",
@@ -30,6 +32,7 @@
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
+    "@modus/gimbal-core": "1.1.2",
     "deepmerge": "3.3.0",
     "mysql": "2.17.1"
   },

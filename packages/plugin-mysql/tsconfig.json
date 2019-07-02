@@ -2,13 +2,17 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "lib",
-    "rootDir": "src",
+    "rootDirs": ["src"],
     "baseUrl": ".",
     "paths": {
       "@/typings/*": ["../typings/*"],
-      "@/*": ["./src/*"]
+      "@modus/gimbal-core": ["../gimbal-core/src/index.ts"],
+      "@modus/gimbal-core/lib/*": ["../gimbal-core/src/*"]
     }
   },
+  "exclude": [
+    "src/**/*.spec.ts"
+  ],
   "include": [
     "src"
   ]

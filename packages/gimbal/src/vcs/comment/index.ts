@@ -1,6 +1,6 @@
-import Config from '@modus/gimbal-core/lib/config';
-import EventEmitter from '@modus/gimbal-core/lib/event';
 import whichCI from '@/ci';
+import Config from '@/config';
+import EventEmitter from '@/event';
 import { outputTable } from '@/output/markdown';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';

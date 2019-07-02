@@ -1,5 +1,5 @@
-import { register } from '@modus/gimbal-core/lib/module/registry';
 import Lighthouse from '@/module/lighthouse';
+import { register } from '@/module/registry';
 import { Report } from '@/typings/command';
 import { Options } from '@/typings/module/registry';
 import meta from './meta';

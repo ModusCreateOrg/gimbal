@@ -1,3 +1,4 @@
+import { readFile, resolvePath, stats, getDirectorySize } from '@modus/gimbal-core/lib/utils/fs';
 // @ts-ignore
 import brotliSize from 'brotli-size';
 import bytes from 'bytes';
@@ -5,9 +6,8 @@ import deepmerge from 'deepmerge';
 import globby from 'globby';
 import gzipSize from 'gzip-size';
 import minimatch from 'minimatch';
-import Config from '@modus/gimbal-core/lib/config';
-import EventEmitter from '@modus/gimbal-core/lib/event';
-import { readFile, resolvePath, stats, getDirectorySize } from '@modus/gimbal-core/lib/utils/fs';
+import Config from '@/config';
+import EventEmitter from '@/event';
 import { Report } from '@/typings/command';
 import {
   FileResult,

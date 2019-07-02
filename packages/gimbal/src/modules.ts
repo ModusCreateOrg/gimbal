@@ -1,6 +1,6 @@
-import Config from '@modus/gimbal-core/lib/config';
 import audit from '@/command/audit';
 import { preparseOptions } from '@/command';
+import Config from '@/config';
 
 (async (): Promise<void> => {
   // Parse config. Audits will consume config automatically

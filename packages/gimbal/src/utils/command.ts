@@ -1,6 +1,6 @@
+import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import program, { Command } from 'commander';
 import { existsSync } from 'fs';
-import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import { CommandOptions } from '@/typings/utils/command';
 
 const defaultConfig: CommandOptions = {

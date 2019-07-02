@@ -1,8 +1,8 @@
+import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import minimatch from 'minimatch';
 import { FireRet } from '@/typings/event';
 import { Callback, CreatedCallback, Config } from '@/typings/event/Event';
 import { Data } from '@/typings/utils/Queue';
-import Queue from '../utils/Queue';
 import Event from './Event';
 
 interface EventMap {

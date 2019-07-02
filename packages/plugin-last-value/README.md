@@ -102,7 +102,9 @@ The `date` field isn't needed by this plugin but is a good way for the storage p
 This plugin will fire two events to get and save last value reports. The plugin would need to listen to them to support this plugin:
 
 ```javascript
-module.exports = ({ event }, pluginConfig) => {
+module.exports = async ({ bus }, pluginConfig) => {
+  const event = await bus('event');
+
   event.on('plugin/last-value/report/get', (eventName, { command }) => getLastValue(command));
 
   event.on('plugin/last-value/report/save', (eventName, { command, report }) => saveLastValue(command, report));
