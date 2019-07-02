@@ -72,6 +72,16 @@ configs:
     outputHtml: artifacts/lighthouse.html
 ```
 
+## Audits
+
+A configuration file can specify what specific audits to run. With this, you can just run `gimbal` in the directory where the configuration file is in and it will only run those audits. For example, if you wanted to run the lighthouse and size audits, you would specify the `audits` array:
+
+```yaml
+audits:
+  - lighthouse
+  - size
+```
+
 ## Jobs
 
 A configuration file can also specify what commands to run. This means, if you have a configuration file that specifies what jobs, then all you need to do is execute `gimbal` in that directory and Gimbal will run those commands for you. Example:
