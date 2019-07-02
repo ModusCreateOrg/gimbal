@@ -1,4 +1,4 @@
-import { readFile } from '@modus/gimbal-core/src/utils/fs';
+import { readFile } from '@modus/gimbal-core/lib/utils/fs';
 import yaml from 'js-yaml';
 import { Config } from '@/typings/config';
 

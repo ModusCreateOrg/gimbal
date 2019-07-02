@@ -1,4 +1,4 @@
-import { exists, resolvePath } from '@modus/gimbal-core/src/utils/fs';
+import { exists, resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import deepmerge from 'deepmerge';
 import globby from 'globby';
 import { extname } from 'path';
