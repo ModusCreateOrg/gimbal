@@ -34,7 +34,7 @@
   "dependencies": {
     "@modus/gimbal-core": "1.1.4",
     "bytes": "3.1.0",
-    "deepmerge": "3.3.0"
+    "deepmerge": "4.0.0"
   },
   "devDependencies": {
     "@types/bytes": "3.0.0"
