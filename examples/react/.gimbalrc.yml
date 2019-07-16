@@ -41,21 +41,21 @@ plugins:
       - '!service-worker.js'
       - '!**/runtime*.js'
   - '@modus/gimbal-plugin-last-value'
-  # - plugin: '@modus/gimbal-plugin-mysql'
-  #   enabled: ${env:CI, true, false}
-  #   commandPrefix:
-  #     - react-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
-  #     - react-example-${env:CIRCLE_BRANCH}
-  #     - react-example
-  #   lastValue:
-  #     database: gimbal_github
-  #   host: ${env:GIMBAL_MYSQL_HOST}
-  #   password: ${env:GIMBAL_MYSQL_PASSWORD}
-  #   user: ${env:GIMBAL_MYSQL_USERNAME}
-  - plugin: '@modus/gimbal-plugin-sqlite'
+  - plugin: '@modus/gimbal-plugin-mysql'
     enabled: ${env:CI, true, false}
     commandPrefix:
       - react-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
       - react-example-${env:CIRCLE_BRANCH}
       - react-example
-    lastValue: true
+    lastValue:
+      database: gimbal_github
+    host: ${env:GIMBAL_MYSQL_HOST}
+    password: ${env:GIMBAL_MYSQL_PASSWORD}
+    user: ${env:GIMBAL_MYSQL_USERNAME}
+  # - plugin: '@modus/gimbal-plugin-sqlite'
+  #   enabled: ${env:CI, true, false}
+  #   commandPrefix:
+  #     - react-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
+  #     - react-example-${env:CIRCLE_BRANCH}
+  #     - react-example
+  #   lastValue: true

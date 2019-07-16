@@ -38,34 +38,7 @@ const createConnection = (config: ItemConfig, env: EnvOrDefault): Promise<Connec
       password: config.password || env('GIMBAL_MYSQL_PASSWORD'),
       port: config.port || env('GIMBAL_MYSQL_PORT', 3306),
       database: config.database,
-      ssl: {
-        // DO NOT DO THIS
-        // set up your ca correctly to trust the connection
-        rejectUnauthorized: false,
-      },
     });
-
-    // eslint-disable-next-line
-    console.log(JSON.stringify(config, null, 2));
-    // eslint-disable-next-line
-    console.log(
-      JSON.stringify(
-        {
-          host: config.host || env('GIMBAL_MYSQL_HOST', 'localhost'),
-          user: config.user || env('GIMBAL_MYSQL_USERNAME', 'root'),
-          password: config.password || env('GIMBAL_MYSQL_PASSWORD'),
-          port: config.port || env('GIMBAL_MYSQL_PORT', 3306),
-          database: config.database,
-          ssl: {
-            // DO NOT DO THIS
-            // set up your ca correctly to trust the connection
-            rejectUnauthorized: false,
-          },
-        },
-        null,
-        2,
-      ),
-    );
 
     connection.connect((error: MysqlError | null): void => {
       if (error) {
