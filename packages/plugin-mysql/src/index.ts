@@ -5,33 +5,75 @@ import { PluginOptions } from '@/typings/config/plugin';
 import { GetEvent, SaveEvent } from '@/typings/plugin/last-value';
 import { EnvOrDefault } from '@/typings/utils/env';
 
-interface ItemConfig {
+interface Base {
+  commandPrefix?: string | string[];
+  host?: string;
+  password?: string;
+  port?: number;
+  strict?: boolean;
+  user?: string;
+}
+
+interface Config extends Base {
+  lastValue: Item;
+}
+
+interface ItemConfig extends Base {
   database: string;
   table: string;
 }
 
 type Item = boolean | ItemConfig;
 
-interface Config {
-  lastValue: Item;
-}
-
 const defaultConfig: Config = {
   lastValue: false,
+  strict: true,
 };
 
-const createConnection = (config: ItemConfig, env: EnvOrDefault): Promise<Connection> =>
+const createConnection = (config: ItemConfig, env: EnvOrDefault): Promise<Connection | void> =>
   new Promise((resolve, reject): void => {
     const connection = mysqlMod.createConnection({
-      host: env('GIMBAL_MYSQL_HOST', 'localhost'),
-      user: env('GIMBAL_MYSQL_USERNAME', 'root'),
-      password: env('GIMBAL_MYSQL_PASSWORD'),
+      host: config.host || env('GIMBAL_MYSQL_HOST', 'localhost'),
+      user: config.user || env('GIMBAL_MYSQL_USERNAME', 'root'),
+      password: config.password || env('GIMBAL_MYSQL_PASSWORD'),
+      port: config.port || env('GIMBAL_MYSQL_PORT', 3306),
       database: config.database,
+      ssl: {
+        // DO NOT DO THIS
+        // set up your ca correctly to trust the connection
+        rejectUnauthorized: false,
+      },
     });
+
+    // eslint-disable-next-line
+    console.log(JSON.stringify(config, null, 2));
+    // eslint-disable-next-line
+    console.log(
+      JSON.stringify(
+        {
+          host: config.host || env('GIMBAL_MYSQL_HOST', 'localhost'),
+          user: config.user || env('GIMBAL_MYSQL_USERNAME', 'root'),
+          password: config.password || env('GIMBAL_MYSQL_PASSWORD'),
+          port: config.port || env('GIMBAL_MYSQL_PORT', 3306),
+          database: config.database,
+          ssl: {
+            // DO NOT DO THIS
+            // set up your ca correctly to trust the connection
+            rejectUnauthorized: false,
+          },
+        },
+        null,
+        2,
+      ),
+    );
 
     connection.connect((error: MysqlError | null): void => {
       if (error) {
-        reject(error);
+        if (config.strict) {
+          reject(error);
+        } else {
+          resolve();
+        }
       } else {
         resolve(connection);
       }

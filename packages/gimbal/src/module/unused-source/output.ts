@@ -10,7 +10,7 @@ const parseReport = (raw: Entry[], options: CommandOptions): Report => {
   const data: ReportItem[] = raw.map(
     (entry: Entry): ReportItem => ({
       label: entry.url,
-      raw: entry,
+      // raw: entry,
       rawLabel: entry.url,
       rawThreshold: entry.threshold,
       rawValue: entry.unusedPercentage,
@@ -32,7 +32,7 @@ const parseReport = (raw: Entry[], options: CommandOptions): Report => {
         type,
       },
     ],
-    raw,
+    // raw,
     success,
   };
 };

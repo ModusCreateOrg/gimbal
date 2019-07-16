@@ -58,6 +58,12 @@ const parsePlugins = async (
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       (config: PluginConfig): any => {
         const { plugin, ...pluginConfig } = config;
+
+        if (pluginConfig.enabled === false) {
+          // global config to disable plugin
+          return undefined;
+        }
+
         const func = (plugin as Plugin).default;
 
         map[config.name] = config;

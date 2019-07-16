@@ -6,7 +6,7 @@ const defaultConfig: Config = {
     Frames: 2,
     LayoutCount: 5,
     Nodes: 75,
-    RecalcStyleCount: 5,
+    RecalcStyleCount: 6,
   },
 };
 

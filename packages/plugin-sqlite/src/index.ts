@@ -16,6 +16,7 @@ interface ItemConfig {
 type Item = boolean | ItemConfig;
 
 interface Config {
+  commandPrefix?: string | string[];
   file?: string;
   lastValue?: Item;
 }

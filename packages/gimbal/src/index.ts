@@ -7,6 +7,7 @@ import Command, { preparseOptions } from '@/command';
 import Config from '@/config';
 import processAudits from '@/config/audits';
 import processJobs from '@/config/jobs';
+import Logger from '@/logger';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 
 (async (): Promise<void> => {
@@ -42,39 +43,40 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
   // need to parse the options before commander kicks off so the config file
   // is loaded. This way things like plugins will be ready
   const options = preparseOptions();
-  const config = await Config.load(options.cwd, options);
 
-  // Notify of new package
-  updateNotifier({ pkg: packageJson }).notify();
+  try {
+    const config = await Config.load(options.cwd, options);
 
-  // kick off commander
-  program.parse(process.argv);
+    // Notify of new package
+    updateNotifier({ pkg: packageJson }).notify();
 
-  if (!program.args.length) {
-    if (config) {
-      const { audits, jobs } = config;
+    // kick off commander
+    program.parse(process.argv);
 
-      if (jobs) {
-        try {
+    if (!program.args.length) {
+      if (config) {
+        const { audits, jobs } = config;
+
+        if (jobs && jobs.length) {
           await processJobs(jobs, options);
-        } catch {
-          process.exit(1);
-        }
-      } else if (audits && audits.length) {
-        try {
+        } else if (audits && audits.length) {
           await processAudits();
-        } catch {
-          process.exit(1);
+        } else {
+          // no jobs so there is nothing to execute
+          // so let's show the help screen
+          program.help();
         }
       } else {
-        // no jobs so there is nothing to execute
+        // no config so there is nothing to execute
         // so let's show the help screen
         program.help();
       }
-    } else {
-      // no config so there is nothing to execute
-      // so let's show the help screen
-      program.help();
     }
+
+    process.exit(0);
+  } catch (e) {
+    Logger.log(e);
+
+    process.exit(1);
   }
 })();

@@ -21,5 +21,6 @@ export interface Config {
 }
 
 export interface PluginConfig extends Config {
+  enabled?: boolean;
   plugin: string | Plugin;
 }

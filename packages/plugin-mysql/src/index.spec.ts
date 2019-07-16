@@ -40,7 +40,7 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         },
       );
 
-      expect(deepmergeMock).toHaveBeenCalledWith({ lastValue: false }, { lastValue: false });
+      expect(deepmergeMock).toHaveBeenCalledWith({ lastValue: false, strict: true }, { lastValue: false });
     });
   });
 
@@ -88,11 +88,80 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
       await expect(check).rejects.toThrow(new Error('foobar'));
 
       expect(deepmergeMock.mock.calls).toEqual([
-        [{ lastValue: false }, { lastValue: true }],
-        [{ lastValue: true, database: 'gimbal', table: 'gimbal_archive' }, {}],
+        [{ lastValue: false, strict: true }, { lastValue: true }],
+        [{ lastValue: true, database: 'gimbal', strict: true, table: 'gimbal_archive' }, {}],
       ]);
       expect(connect).toHaveBeenCalledWith(expect.any(Function));
       expect(init).not.toHaveBeenCalled();
+    });
+
+    it('should allow for strict mode turned off on connection error', async (): Promise<void> => {
+      const deepmergeMock = jest.fn();
+      const init = jest.fn().mockResolvedValue('good');
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+      const connect = jest.fn().mockImplementation((callback: any): any => callback(new Error('foobar')));
+      const on = jest.fn();
+
+      const bus = jest.fn().mockResolvedValue({
+        fire(): void {},
+        on,
+      });
+
+      jest.doMock(
+        'deepmerge',
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        (): Deepmerge => (x: any, y: any): any => {
+          deepmergeMock(x, y);
+          return realdeepmerge(x, y);
+        },
+      );
+
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+      jest.doMock('mysql', (): any => ({
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        createConnection: (): any => ({
+          connect,
+        }),
+      }));
+
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+      jest.doMock('./last-value', (): any => ({
+        init,
+      }));
+
+      const { default: plugin } = await import('./index');
+
+      await plugin(
+        {
+          bus,
+          dir: 'foo',
+        },
+        {
+          lastValue: true,
+          strict: false,
+        },
+      );
+
+      expect(deepmergeMock.mock.calls).toEqual([
+        [{ lastValue: false, strict: true }, { lastValue: true, strict: false }],
+        [{ lastValue: true, database: 'gimbal', strict: false, table: 'gimbal_archive' }, {}],
+      ]);
+
+      expect(connect).toHaveBeenCalledWith(expect.any(Function));
+
+      expect(on.mock.calls).toEqual([
+        ['plugin/last-value/report/get', expect.any(Function)],
+        ['plugin/last-value/report/save', expect.any(Function)],
+      ]);
+
+      expect(bus).toHaveBeenCalledWith('event');
+
+      expect(init).toHaveBeenCalledWith(undefined, {
+        lastValue: true,
+        database: 'gimbal',
+        strict: false,
+        table: 'gimbal_archive',
+      });
     });
 
     it('should init last value', async (): Promise<void> => {
@@ -142,13 +211,14 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
       );
 
       expect(deepmergeMock.mock.calls).toEqual([
-        [{ lastValue: false }, { lastValue: true }],
-        [{ lastValue: true, database: 'gimbal', table: 'gimbal_archive' }, {}],
+        [{ lastValue: false, strict: true }, { lastValue: true }],
+        [{ lastValue: true, database: 'gimbal', strict: true, table: 'gimbal_archive' }, {}],
       ]);
       expect(connect).toHaveBeenCalledWith(expect.any(Function));
       expect(init).toHaveBeenCalledWith(expect.any(Object), {
         lastValue: true,
         database: 'gimbal',
+        strict: true,
         table: 'gimbal_archive',
       });
 
@@ -202,13 +272,14 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
       );
 
       expect(deepmergeMock.mock.calls).toEqual([
-        [{ lastValue: false }, { lastValue: true }],
-        [{ lastValue: true, database: 'gimbal', table: 'gimbal_archive' }, {}],
+        [{ lastValue: false, strict: true }, { lastValue: true }],
+        [{ lastValue: true, database: 'gimbal', strict: true, table: 'gimbal_archive' }, {}],
       ]);
       expect(connect).toHaveBeenCalledWith(expect.any(Function));
       expect(init).toHaveBeenCalledWith(expect.any(Object), {
         lastValue: true,
         database: 'gimbal',
+        strict: true,
         table: 'gimbal_archive',
       });
 
@@ -279,7 +350,7 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       expect(deepmergeMock.mock.calls).toEqual([
         [
-          { lastValue: false },
+          { lastValue: false, strict: true },
           {
             lastValue: {
               database: 'foo-db',
@@ -294,6 +365,7 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
               table: 'foo-table',
             },
             database: 'gimbal',
+            strict: true,
             table: 'gimbal_archive',
           },
           {
@@ -309,6 +381,7 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
           table: 'foo-table',
         },
         database: 'foo-db',
+        strict: true,
         table: 'foo-table',
       });
 
@@ -318,6 +391,7 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
           table: 'foo-table',
         },
         database: 'foo-db',
+        strict: true,
         table: 'foo-table',
       });
 
@@ -327,6 +401,7 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
           table: 'foo-table',
         },
         database: 'foo-db',
+        strict: true,
         table: 'foo-table',
       });
 
