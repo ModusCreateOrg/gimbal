@@ -1,6 +1,6 @@
 {
   "name": "@modus/gimbal-plugin-axe",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Plugin to add axe audits to Gimbal",
   "author": "Mitchell Simoens <mitchellsimoens@gmail.com>",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
