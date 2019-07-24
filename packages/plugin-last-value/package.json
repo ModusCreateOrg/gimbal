@@ -1,6 +1,6 @@
 {
   "name": "@modus/gimbal-plugin-last-value",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Track last value for Gimbal audits",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
-    "@modus/gimbal-core": "1.1.5",
+    "@modus/gimbal-core": "1.1.6",
     "bytes": "3.1.0",
     "deepmerge": "4.0.0"
   },
