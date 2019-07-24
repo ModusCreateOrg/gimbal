@@ -1,7 +1,7 @@
 {
   "name": "@modus/gimbal-typings",
   "private": true,
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "A common node module that doesn't get published to npm holding the typings",
   "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
   "license": "MIT",
