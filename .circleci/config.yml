@@ -71,15 +71,10 @@ jobs:
               # gives major version for latest, e.g. 1:latest
               MAJOR_VERSION=$(echo "$CIRCLE_TAG" | sed -E 's/v([[:digit:]]).([[:digit:]]).([[:digit:]])/\1:latest/g')
               docker build \
-                # used for the ARG in the Dockerfile to target a specific gimbal version
                 --build-arg GIMBAL_VERSION=$IMAGE_TAG \
-                # moduscreate/gimbal:latest
                 -t $IMAGE_NAME:latest \
-                # # moduscreate/gimbal:x.x.x
                 -t $IMAGE_NAME:$IMAGE_TAG \
-                # moduscreate/gimbal:x.x-latest
                 -t $IMAGE_NAME:$MINOR_VERSION \
-                # moduscreate/gimbal:x-latest
                 -t $IMAGE_NAME:$MAJOR_VERSION \
                 packages/gimbal
         - run:
