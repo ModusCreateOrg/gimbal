@@ -70,7 +70,7 @@
   "bugs": {
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
-  "homepage": "https://github.com/ModusCreateOrg/gimbal#readme",
+  "homepage": "https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal#readme",
   "dependencies": {
     "@modus/gimbal-core": "1.1.4",
     "@octokit/rest": "16.28.4",

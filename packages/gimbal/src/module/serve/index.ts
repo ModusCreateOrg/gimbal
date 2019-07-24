@@ -1,7 +1,9 @@
+import deepmerge from 'deepmerge';
 import { existsSync } from 'fs';
 import http from 'http';
 // @ts-ignore
 import handler from 'serve-handler';
+import Config from '@/config';
 import EventEmitter from '@/event';
 import {
   CloseStartEvent,
@@ -46,11 +48,11 @@ class Serve {
 
         await EventEmitter.fire(`module/serve/create-server/start`, createServerStartEvent);
 
-        const server = http.createServer((request, response): void =>
-          handler(request, response, {
-            public: dir,
-          }),
-        );
+        const handlerOptions = deepmerge(Config.get('configs.serve', {}), {
+          public: dir,
+        });
+
+        const server = http.createServer((request, response): void => handler(request, response, handlerOptions));
 
         const createServerEndEvent: CreateServerEndEvent = {
           dir,
