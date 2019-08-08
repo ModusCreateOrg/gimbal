@@ -33,3 +33,9 @@ export interface CommentStartEvent {
 export interface CommentEndEvent extends CommentStartEvent {
   comment: string;
 }
+
+export interface CommentObject {
+  onlyFailures?: boolean;
+}
+
+export type Comment = boolean | CommentObject;

@@ -17,6 +17,9 @@ import {
   JsonReportEndEvent,
   MarkdownReportStartEvent,
   MarkdownReportEndEvent,
+  OutputFn,
+  OutputItemObject,
+  OutputItem,
 } from '@/typings/output';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { CommandOptions } from '@/typings/utils/command';
@@ -24,6 +27,7 @@ import { outputTable } from './cli';
 import htmlOutput from './html';
 import jsonOutput from './json';
 import markdownOutput from './markdown';
+import { returnReportFailures } from './filter';
 
 const writeReport = async (file: string, type: string, contents: string): Promise<boolean> => {
   try {
@@ -98,7 +102,7 @@ const doCliOutput = async (report: Report, commandOptions: CommandOptions): Prom
   await EventEmitter.fire('output/cli/write/end', cliWriteEndEvent);
 };
 
-const doHtmlOutput = async (report: Report, commandOptions: CommandOptions, html: string): Promise<void> => {
+const doHtmlOutput: OutputFn = async (report: Report, commandOptions: CommandOptions, html: string): Promise<void> => {
   const file = html ? resolvePath(commandOptions.cwd, html) : commandOptions.outputHtml;
 
   if (file) {
@@ -127,7 +131,7 @@ const doHtmlOutput = async (report: Report, commandOptions: CommandOptions, html
   }
 };
 
-const doJsonOutput = async (report: Report, commandOptions: CommandOptions, json: string): Promise<void> => {
+const doJsonOutput: OutputFn = async (report: Report, commandOptions: CommandOptions, json: string): Promise<void> => {
   const file = json ? resolvePath(commandOptions.cwd, json) : commandOptions.outputJson;
 
   if (file) {
@@ -156,7 +160,11 @@ const doJsonOutput = async (report: Report, commandOptions: CommandOptions, json
   }
 };
 
-const doMarkdownOutput = async (report: Report, commandOptions: CommandOptions, markdown: string): Promise<void> => {
+const doMarkdownOutput: OutputFn = async (
+  report: Report,
+  commandOptions: CommandOptions,
+  markdown: string,
+): Promise<void> => {
   const file = markdown ? resolvePath(commandOptions.cwd, markdown) : commandOptions.outputMarkdown;
 
   if (file) {
@@ -185,23 +193,50 @@ const doMarkdownOutput = async (report: Report, commandOptions: CommandOptions, 
   }
 };
 
+const doOutput = async (
+  report: Report,
+  commandOptions: CommandOptions,
+  outputItem: OutputItem,
+  fn: OutputFn,
+): Promise<void> => {
+  const location = typeof outputItem === 'string' ? outputItem : outputItem.path;
+
+  if (outputItem && (outputItem as OutputItemObject).onlyFailures) {
+    if (!report.success) {
+      const filteredReport = returnReportFailures(report);
+
+      await fn(filteredReport, commandOptions, location);
+    }
+  } else {
+    await fn(report, commandOptions, location);
+  }
+};
+
 const output = async (report: Report, commandOptions: CommandOptions): Promise<void> => {
   const { cli, html, json, markdown } = Config.get('outputs', {});
 
   if (cli !== false) {
-    await doCliOutput(report, commandOptions);
+    if (cli && cli.onlyFailures) {
+      if (!report.success) {
+        const filteredReport = returnReportFailures(report);
+
+        await doCliOutput(filteredReport, commandOptions);
+      }
+    } else {
+      await doCliOutput(report, commandOptions);
+    }
   }
 
   if (html || commandOptions.outputHtml) {
-    await doHtmlOutput(report, commandOptions, html);
+    await doOutput(report, commandOptions, html, doHtmlOutput);
   }
 
   if (json || commandOptions.outputJson) {
-    await doJsonOutput(report, commandOptions, json);
+    await doOutput(report, commandOptions, json, doJsonOutput);
   }
 
   if (markdown || commandOptions.outputMarkdown) {
-    await doMarkdownOutput(report, commandOptions, markdown);
+    await doOutput(report, commandOptions, markdown, doMarkdownOutput);
   }
 };
 

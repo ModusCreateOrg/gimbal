@@ -114,7 +114,7 @@ const MarkdownOutput = async (report: Report, commandOptions: CommandOptions): P
     ),
   );
 
-  return output.join('\n\n');
+  return `${output.join('\n\n')}\n`;
 };
 
 export default MarkdownOutput;

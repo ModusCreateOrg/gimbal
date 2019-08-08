@@ -78,3 +78,12 @@ export interface MarkdownReportEndEvent {
   file: string;
   report: Report;
 }
+
+export interface OutputItemObject {
+  onlyFailures?: boolean;
+  path: string;
+}
+
+export type OutputItem = string | OutputItemObject;
+
+export type OutputFn = (report: Report, commandOptions: CommandOptions, location: string) => Promise<void>;

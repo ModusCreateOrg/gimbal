@@ -73,9 +73,13 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
       }
     }
 
+    Logger.log('Finished successfully');
+
     process.exit(0);
   } catch (e) {
     Logger.log(e);
+
+    Logger.log('Finished with failure');
 
     process.exit(1);
   }

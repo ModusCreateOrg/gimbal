@@ -2,6 +2,7 @@ import whichCI from '@/ci';
 import Config from '@/config';
 import EventEmitter from '@/event';
 import { outputTable } from '@/output/markdown';
+import { filterReportItemsFailures } from '@/output/filter';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 import {
@@ -11,9 +12,15 @@ import {
   CommentRenderTableEndEvent,
   CommentStartEvent,
   CommentEndEvent,
+  CommentObject,
+  Comment,
 } from '@/typings/vcs/comment';
 
-const renderItem = async (reportItem: ReportItem, commandOptions: CommandOptions): Promise<string> => {
+const renderItem = async (
+  reportItem: ReportItem,
+  commandOptions: CommandOptions,
+  comment: Comment,
+): Promise<string> => {
   if (!reportItem.data) {
     return '';
   }
@@ -47,7 +54,16 @@ const renderItem = async (reportItem: ReportItem, commandOptions: CommandOptions
 
     output.push(...buffered);
   } else {
-    const rendered = await outputTable(reportItem, commandOptions);
+    const { onlyFailures } = comment as CommentObject;
+    const rendered =
+      onlyFailures && reportItem.success
+        ? 'No Failures'
+        : await outputTable(
+            onlyFailures && reportItem
+              ? (filterReportItemsFailures(reportItem as ReportItem) as ReportItem)
+              : reportItem,
+            commandOptions,
+          );
 
     output.push(`## ${reportItem.label}`, rendered);
   }
@@ -90,9 +106,11 @@ const vcsComment = async (report: Report, commandOptions: CommandOptions): Promi
 
           await EventEmitter.fire(`vcs/comment/build/start`, commentBuildStartEvent);
 
-          const renderedReport = await Promise.all(
-            report.data.map((item: ReportItem): Promise<string> => renderItem(item, commandOptions)),
-          );
+          const renderedReport = report.data
+            ? await Promise.all(
+                report.data.map((item: ReportItem): Promise<string> => renderItem(item, commandOptions, comment)),
+              )
+            : [];
 
           let markdown = renderedReport.join('\n\n').trim();
 
