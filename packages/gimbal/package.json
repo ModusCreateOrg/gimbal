@@ -1,6 +1,6 @@
 {
   "name": "@modus/gimbal",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "A CLI tool for monitoring web performance in modern web projects",
   "main": "lib/gimbal/src/modules.js",
   "bin": {
@@ -72,7 +72,7 @@
   },
   "homepage": "https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal#readme",
   "dependencies": {
-    "@modus/gimbal-core": "1.1.9",
+    "@modus/gimbal-core": "1.1.10",
     "@octokit/rest": "16.28.4",
     "brotli-size": "3.0.1",
     "bytes": "3.1.0",
