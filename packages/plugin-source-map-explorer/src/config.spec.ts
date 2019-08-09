@@ -7,6 +7,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/config', (): void => {
     });
 
     expect(meta).toEqual({
+      maxNumRoutes: 1,
       thresholdLimit: 'upper',
       thresholdType: 'size',
     });

@@ -1,6 +1,5 @@
 import { readFile, resolvePath, stats, getDirectorySize } from '@modus/gimbal-core/lib/utils/fs';
-// @ts-ignore
-import brotliSize from 'brotli-size';
+import { sync as brotliSize } from 'brotli-size';
 import bytes from 'bytes';
 import deepmerge from 'deepmerge';
 import globby from 'globby';
@@ -27,7 +26,7 @@ type CompressionMechanisms = 'brotli' | 'gzip' | undefined;
 const getBundleSize = (source: Buffer, compression: CompressionMechanisms = 'gzip'): number => {
   switch (compression) {
     case 'brotli':
-      return brotliSize.sync(source);
+      return brotliSize(source);
     case 'gzip':
       return gzipSize.sync(source);
     default:

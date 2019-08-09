@@ -10,6 +10,7 @@ interface TypesMap {
 
 /* eslint-disable-next-line import/prefer-default-export */
 export interface Meta {
+  maxNumRoutes?: number;
   thresholdLimit: ReportThresholdLimit;
   thresholdType?: Types;
   thresholdTypes?: TypesMap;

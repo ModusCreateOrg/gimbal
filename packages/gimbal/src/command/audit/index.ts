@@ -4,7 +4,7 @@ import findPort from '@modus/gimbal-core/lib/utils/port';
 import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import Config from '@/config';
 import Chrome from '@/module/chrome';
-import { get } from '@/module/registry';
+import { get, getMeta } from '@/module/registry';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
 import { Modules } from '@/typings/module';
@@ -115,32 +115,41 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
     const queue = new Queue();
 
     options.route.forEach((route: string, index: number): void => {
-      audits.forEach((auditToRun: string): void =>
-        addSpinner(auditToRun, { status: 'stopped', text: `[ ${auditToRun} ] - ${route}` }),
-      );
+      const filteredAudits = audits.filter((name: string): boolean => {
+        const meta = getMeta(name);
 
-      queue.add(
-        (): Promise<Report> =>
-          doAudit(
-            {
-              chrome,
-              url: `http://localhost:${servePort}${route}`,
-            },
-            audits,
-            {
-              ...options,
-              route,
-              // if we will run size module, we should only do it once since
-              // it won't change across multiple runs
-              size: options.size && index === 0,
-            },
-          ),
-      );
+        if (meta && meta.maxNumRoutes && index >= meta.maxNumRoutes) {
+          return false;
+        }
+
+        return true;
+      });
+
+      if (filteredAudits.length) {
+        filteredAudits.forEach((name: string): void =>
+          addSpinner(name, { status: 'stopped', text: `[ ${name} ] - ${route}` }),
+        );
+
+        queue.add(
+          (): Promise<Report> =>
+            doAudit(
+              {
+                chrome,
+                url: `http://localhost:${servePort}${route}`,
+              },
+              filteredAudits,
+              {
+                ...options,
+                route,
+              },
+            ),
+        );
+      }
     });
 
     report = (await queue.run()) as Report[];
   } else {
-    audits.forEach((auditToRun: string): void => addSpinner(auditToRun, `[ ${auditToRun} ]`));
+    audits.forEach((name: string): void => addSpinner(name, `[ ${name} ]`));
 
     report = await doAudit(
       {

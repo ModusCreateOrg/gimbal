@@ -18,6 +18,22 @@ EXAMPLES_DIR="$BASE_DIR/examples"
 for file in $EXAMPLES_DIR/*; do
   cd $file
 
-  yarn
+  if [[ ! -d node_modules ]]; then
+    echo
+    echo "# Installing $file example"
+    echo
+
+    yarn
+  fi
+
+  # if either of these exists, continue
+  if [[ -d build ]] || [[ -d dist ]]; then
+    continue
+  fi
+
+  echo
+  echo "# Building $file example"
+  echo
+
   yarn build
 done

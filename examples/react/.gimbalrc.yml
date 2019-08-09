@@ -6,6 +6,10 @@ audits:
   - heap-snapshot
   - source-map-explorer
 
+configs:
+  comment:
+    onlyFailures: true
+
 outputs:
   html: artifacts/gimbal.html
   json: artifacts/gimbal.json

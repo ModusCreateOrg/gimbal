@@ -21,6 +21,7 @@ export const defaultConfig: Config = {
 };
 
 export const meta: Meta = {
+  maxNumRoutes: 1,
   thresholdLimit: 'upper',
   thresholdType: 'size',
 };

@@ -14,20 +14,22 @@ aliases:
       - packages/plugin-mysql/node_modules
       - packages/plugin-sqlite/node_modules
   - &restore-example-cache
-    key: v1-dependencies-{{ checksum "yarn.lock" }}
+    key: v1-dependencies-{{ checksum "examples/angular/yarn.lock" }}-{{ checksum "examples/react/yarn.lock" }}
     name: Restoring examples node_modules/ cache
   - &save-example-cache
-    key: v1-dependencies-{{ checksum "yarn.lock" }}
+    key: v1-dependencies-{{ checksum "examples/angular/yarn.lock" }}-{{ checksum "examples/react/yarn.lock" }}
     name: Saving examples node_modules/ cache
     paths:
+      - examples/angular/dist
       - examples/angular/node_modules
       - examples/angular/gimbal.db
+      - examples/react/build
       - examples/react/node_modules
       - examples/react/gimbal.db
 
 docker-defaults: &docker-defaults
   docker:
-    - image: circleci/node:10-browsers
+    - image: circleci/node:12-browsers
 
 defaults: &defaults
   <<: *docker-defaults

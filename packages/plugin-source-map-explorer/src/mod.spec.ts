@@ -217,7 +217,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
 
       expect(register).toHaveBeenCalledWith(
         'source-map-explorer',
-        { thresholdLimit: 'upper', thresholdType: 'size' },
+        { maxNumRoutes: 1, thresholdLimit: 'upper', thresholdType: 'size' },
         expect.any(Function),
       );
     });

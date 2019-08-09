@@ -56,7 +56,7 @@ const getThreshold = (entry: Result, { thresholds }: Config): ThresholdValueStri
 };
 
 const isSuccessful = (entry: Result, threshold: ThresholdValueString): boolean =>
-  threshold == null ? true : impactMap[threshold] >= impactMap[entry.impact];
+  threshold == null || !entry.impact ? true : impactMap[threshold] >= impactMap[entry.impact];
 
 const parseEntry = (entry: Result, success: boolean, config: Config): ReportItem => {
   const threshold = getThreshold(entry, config);

@@ -16,6 +16,8 @@ import {
   Comment,
 } from '@/typings/vcs/comment';
 
+const noFailuresText = 'No Failures';
+
 const renderItem = async (
   reportItem: ReportItem,
   commandOptions: CommandOptions,
@@ -38,32 +40,34 @@ const renderItem = async (
   await EventEmitter.fire(`vcs/comment/render/table/start`, commentRenderTableStartEvent);
 
   const output = [];
+  const { onlyFailures } = comment as CommentObject;
 
   if (reportItem.data && reportItem.data[0] && reportItem.data[0].data && reportItem.data[0].data.length) {
-    const buffered = [`## ${reportItem.label}`];
+    if (onlyFailures && !numFailed) {
+      output.push(noFailuresText);
+    } else {
+      const buffered = [`## ${reportItem.label}`];
 
-    await Promise.all(
-      reportItem.data.map(
-        async (childItem: ReportItem): Promise<void> => {
-          const rendered = await outputTable(childItem, commandOptions);
+      await Promise.all(
+        reportItem.data.map(
+          async (childItem: ReportItem): Promise<void> => {
+            const rendered =
+              onlyFailures && childItem.success ? noFailuresText : await outputTable(childItem, commandOptions);
 
-          buffered.push(`### ${childItem.label}`, rendered);
-        },
-      ),
-    );
+            buffered.push(`### ${childItem.label}`, rendered);
+          },
+        ),
+      );
 
-    output.push(...buffered);
+      output.push(...buffered);
+    }
+  } else if (onlyFailures && reportItem.success) {
+    output.push(noFailuresText);
   } else {
-    const { onlyFailures } = comment as CommentObject;
-    const rendered =
-      onlyFailures && reportItem.success
-        ? 'No Failures'
-        : await outputTable(
-            onlyFailures && reportItem
-              ? (filterReportItemsFailures(reportItem as ReportItem) as ReportItem)
-              : reportItem,
-            commandOptions,
-          );
+    const rendered = await outputTable(
+      onlyFailures && reportItem ? (filterReportItemsFailures(reportItem as ReportItem) as ReportItem) : reportItem,
+      commandOptions,
+    );
 
     output.push(`## ${reportItem.label}`, rendered);
   }
