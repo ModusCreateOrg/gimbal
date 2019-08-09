@@ -67,9 +67,9 @@ jobs:
               # gives version without the v prefix, e.g. 1.2.3
               IMAGE_TAG=${CIRCLE_TAG/v/''}
               # gives minor version for latest, e.g. 1.2:latest
-              MINOR_VERSION=$(echo "$CIRCLE_TAG" | sed -E 's/v([[:digit:]]).([[:digit:]]).([[:digit:]])/\1.\2-latest/g')
+              MINOR_VERSION=$(echo "$CIRCLE_TAG" | sed -E 's/v([[:digit:]]+).([[:digit:]]+).([[:digit:]]+)/\1.\2-latest/g')
               # gives major version for latest, e.g. 1:latest
-              MAJOR_VERSION=$(echo "$CIRCLE_TAG" | sed -E 's/v([[:digit:]]).([[:digit:]]).([[:digit:]])/\1-latest/g')
+              MAJOR_VERSION=$(echo "$CIRCLE_TAG" | sed -E 's/v([[:digit:]]+).([[:digit:]]+).([[:digit:]]+)/\1-latest/g')
               docker build \
                 --build-arg GIMBAL_VERSION=$IMAGE_TAG \
                 -t $IMAGE_NAME:latest \
