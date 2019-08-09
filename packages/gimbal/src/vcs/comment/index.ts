@@ -51,7 +51,7 @@ const renderItem = async (
       await Promise.all(
         reportItem.data.map(
           async (childItem: ReportItem): Promise<void> => {
-            if (!onlyFailures || childItem.success) {
+            if (!onlyFailures || (onlyFailures && !childItem.success)) {
               const rendered = await outputTable(childItem, commandOptions);
 
               buffered.push(`### ${childItem.label}`, rendered);
