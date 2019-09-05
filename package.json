@@ -16,7 +16,8 @@
     "test": "lerna run test --stream",
     "test:coveralls": "cat ./coverage/lcov.info | coveralls",
     "test:examples": "./bin/test_examples.sh",
-    "test:nocov": "lerna run test:nocov --stream"
+    "test:nocov": "lerna run test:nocov --stream",
+    "version:check": "versionator --exclude 'examples/**/package.json'"
   },
   "husky": {
     "hooks": {
@@ -33,31 +34,32 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@types/jest": "24.0.15",
-    "@types/node": "12.6.8",
-    "@typescript-eslint/eslint-plugin": "1.12.0",
-    "@typescript-eslint/parser": "1.13.0",
+    "@mitchellsimoens/versionator": "1.0.2",
+    "@types/jest": "24.0.18",
+    "@types/node": "12.7.4",
+    "@typescript-eslint/eslint-plugin": "2.1.0",
+    "@typescript-eslint/parser": "2.1.0",
     "@zerollup/ts-transform-paths": "1.7.3",
-    "eslint": "6.1.0",
-    "eslint-config-airbnb": "17.1.1",
-    "eslint-config-prettier": "6.0.0",
+    "eslint": "6.3.0",
+    "eslint-config-airbnb": "18.0.1",
+    "eslint-config-prettier": "6.2.0",
     "eslint-import-resolver-lerna": "1.1.0",
     "eslint-import-resolver-typescript": "1.1.1",
     "eslint-plugin-import": "2.18.2",
-    "eslint-plugin-jest": "22.15.0",
+    "eslint-plugin-jest": "22.17.0",
     "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-prettier": "3.1.0",
     "eslint-plugin-react": "7.14.3",
-    "husky": "3.0.3",
-    "jest": "24.8.0",
+    "husky": "3.0.5",
+    "jest": "24.9.0",
     "lerna": "3.16.4",
-    "lint-staged": "9.2.1",
+    "lint-staged": "9.2.5",
     "prettier": "1.18.2",
-    "rimraf": "2.6.3",
+    "rimraf": "3.0.0",
     "ts-jest": "24.0.2",
     "ts-node": "8.3.0",
     "tsconfig-paths": "3.8.0",
     "ttypescript": "1.5.7",
-    "typescript": "3.5.3"
+    "typescript": "3.6.2"
   }
 }

@@ -14,7 +14,7 @@ configs:
   lighthouse:
     threshold:
       accessibility: 100
-      'best-practices': 100
+      "best-practices": 100
       performance: 1
       pwa: 20
   size:
@@ -31,6 +31,8 @@ configs:
         maxSize: 5.25 KB
       - path: dist/example-angular/vendor-*.js
         maxSize: 700 KB
+      - path: dist/example-angular/
+        maxSize: 17 MB
 
 outputs:
   html: artifacts/gimbal.html
@@ -38,13 +40,13 @@ outputs:
   markdown: artifacts/gimbal.md
 
 plugins:
-  - plugin: '@modus/gimbal-plugin-axe'
+  - plugin: "@modus/gimbal-plugin-axe"
     thresholds:
       landmark-one-main: moderate
       region: moderate
-  - plugin: '@modus/gimbal-plugin-source-map-explorer'
+  - plugin: "@modus/gimbal-plugin-source-map-explorer"
     bundles:
-      - path: 'main*.js'
+      - path: "main*.js"
         thresholds:
           $_lazy_route_resource lazy namespace object: 600 B
           src/app/app.component.html: 1.5 KB
@@ -52,18 +54,18 @@ plugins:
           src/environments/environment.ts: 550 B
           src/main.ts: 1.5 KB
           <unmapped>: 5.5 KB
-      - path: 'styles*.js'
+      - path: "styles*.js"
         thresholds:
           node_modules/style-loader/lib/addStyles.js: 10 KB
           node_modules/style-loader/lib/urls.js: 3 KB
           src/styles.css: 500 B
           src/styles.css?b364: 800 B
           <unmapped>: 2 KB
-      - '!**/polyfills*.js'
-      - '!**/runtime*.js'
-      - '!**/vendor*.js'
-  - '@modus/gimbal-plugin-last-value'
-  - plugin: '@modus/gimbal-plugin-mysql'
+      - "!**/polyfills*.js"
+      - "!**/runtime*.js"
+      - "!**/vendor*.js"
+  - "@modus/gimbal-plugin-last-value"
+  - plugin: "@modus/gimbal-plugin-mysql"
     enabled: ${env:CI, true, false}
     commandPrefix:
       - angular-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}

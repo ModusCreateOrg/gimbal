@@ -6,7 +6,7 @@ class Event {
 
   private fn: Callback;
 
-  public priority: number = 0;
+  public priority = 0;
 
   public constructor(event: string, config: Callback | Config) {
     this.event = event;

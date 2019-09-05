@@ -22,7 +22,7 @@ interface GetObjectOptions {
 }
 
 class Config {
-  private CONFIG_FILE_GLOB: string = '.gimbalrc.{js,json,yaml,yml}';
+  private CONFIG_FILE_GLOB = '.gimbalrc.{js,json,yaml,yml}';
 
   private LOADERS: LoaderMap = {
     js: jsLoader,
@@ -35,9 +35,9 @@ class Config {
 
   private config?: ConfigType;
 
-  private loaded: boolean = false;
+  private loaded = false;
 
-  private loading: boolean = false;
+  private loading = false;
 
   public get isLoaded(): boolean {
     return this.loaded;
@@ -47,7 +47,7 @@ class Config {
     return this.loading;
   }
 
-  public async load(dir: string, commandOptions: CommandOptions, force: boolean = false): Promise<ConfigType | void> {
+  public async load(dir: string, commandOptions: CommandOptions, force = false): Promise<ConfigType | void> {
     if (this.loaded && !force) {
       throw new Error('Configuration is already loaded!');
     }

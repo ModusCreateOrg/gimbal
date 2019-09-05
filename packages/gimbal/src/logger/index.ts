@@ -47,7 +47,7 @@ const log = (...logs: LoggerArgs): void => console.log(...logs);
 
 // logs out the passed string with indentation.  The indentation is calculated
 // by multiplying the passed indent value and $indentLevel
-const logIndented = (val: LoggerArgs, indent: number = 0): void => {
+const logIndented = (val: LoggerArgs, indent = 0): void => {
   let item: string;
 
   if (val) {
@@ -77,7 +77,7 @@ const logIndented = (val: LoggerArgs, indent: number = 0): void => {
 
 // logs out a group of strings.  An array of strings or sub string arrays should
 // be passed in.
-const logGroup = (group: LoggerArgs, indent: number = 0): void => {
+const logGroup = (group: LoggerArgs, indent = 0): void => {
   group.forEach((val: LoggerArgs): void => {
     if (Array.isArray(val)) {
       logGroup(val, indent + 1);
@@ -105,7 +105,7 @@ export const setLevel = (level: string): void => {
   }
 };
 
-const createLoggerFunction = (level: string, time: boolean = false, ...prefixes: string[]): LoggerFunction => (
+const createLoggerFunction = (level: string, time = false, ...prefixes: string[]): LoggerFunction => (
   ...val: LoggerArgs
 ): void => {
   if (isLevelAllowed(level)) {
@@ -190,7 +190,7 @@ const getNextColor = (): string => {
 // 'group' property also has a method for each logging level.  These functions
 // expect an array of strings / sub-arrays to be passed in order to indent by
 // nested array level
-export const namedLogger = (name: string, timeStamp: boolean = true): Logger => {
+export const namedLogger = (name: string, timeStamp = true): Logger => {
   const nextColor = getNextColor();
 
   return createLogger((level: string, logger: Logger): void => {

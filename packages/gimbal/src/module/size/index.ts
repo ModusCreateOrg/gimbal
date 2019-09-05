@@ -82,11 +82,21 @@ const getResult = async (
   return undefined;
 };
 
-const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[]): SizeConfigs[] => {
+const arrayMerge = (
+  destinationArray: SizeConfigs[],
+  sourceArray: SizeConfigs[],
+  { cwd }: CommandOptions,
+): SizeConfigs[] => {
   const newDestinationArray = destinationArray.slice();
 
   sourceArray.forEach((sourceItem: SizeConfigs): void => {
-    const match = newDestinationArray.find((destItem: SizeConfigs): boolean => destItem.path === sourceItem.path);
+    const match = newDestinationArray.find((destItem: SizeConfigs): boolean => {
+      const { path: destPath } = destItem;
+      const { path: sourcePath } = sourceItem;
+
+      // check if the raw strings match or the resolved full paths match
+      return destPath === sourcePath || resolvePath(cwd, destPath) === resolvePath(cwd, sourcePath);
+    });
 
     if (match) {
       // apply config onto default
@@ -105,8 +115,10 @@ const sizeModule = async (
   config: SizeConfig | SizeConfigs[] = Config.get('configs.size', []),
 ): Promise<Report> => {
   const { cwd } = options;
-  const configObject = deepmerge(defaultConfig, Array.isArray(config) ? { threshold: config } : config, {
-    arrayMerge,
+  const configObject = deepmerge(defaultConfig(options), Array.isArray(config) ? { threshold: config } : config, {
+    arrayMerge(destinationArray: SizeConfigs[], sourceArray: SizeConfigs[]): SizeConfigs[] {
+      return arrayMerge(destinationArray, sourceArray, options);
+    },
   });
 
   const auditStartEvent: AuditStartEvent = {

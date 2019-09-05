@@ -23,7 +23,7 @@ export const startSpinner = (name: string): void => {
   }
 };
 
-export const finishSpinner = (name: string, success: boolean, text: string = ''): void => {
+export const finishSpinner = (name: string, success: boolean, text = ''): void => {
   const end = process.hrtime(spinnerTimes[name]);
   const nanoseconds = end[0] * 1e9 + end[1];
   const milliseconds = nanoseconds / 1e6;

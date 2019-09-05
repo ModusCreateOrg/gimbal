@@ -42,6 +42,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'error',
     // favor prettier here
     '@typescript-eslint/indent': 'off',
+    // sigh for now
+    '@typescript-eslint/ban-ts-ignore': 'off'
   },
   settings: {
     'import/resolver': {

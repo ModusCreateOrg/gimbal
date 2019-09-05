@@ -73,12 +73,12 @@
   "homepage": "https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal#readme",
   "dependencies": {
     "@modus/gimbal-core": "1.1.14",
-    "@octokit/rest": "16.28.7",
+    "@octokit/rest": "16.28.9",
     "brotli-size": "4.0.0",
     "bytes": "3.1.0",
     "cli-table3": "0.5.1",
     "colors": "1.3.3",
-    "commander": "2.20.0",
+    "commander": "3.0.1",
     "deepmerge": "4.0.0",
     "get-folder-size": "2.0.1",
     "get-port": "5.0.0",
@@ -106,7 +106,7 @@
     "@types/minimatch": "3.0.3",
     "@types/mkdirp": "0.5.2",
     "@types/pidusage": "2.0.1",
-    "@types/puppeteer": "1.19.0",
+    "@types/puppeteer": "1.19.1",
     "@types/read-pkg": "5.1.0",
     "@types/update-notifier": "2.5.0",
     "copyfiles": "2.1.1"

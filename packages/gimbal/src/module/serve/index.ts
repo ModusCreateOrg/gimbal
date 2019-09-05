@@ -33,6 +33,7 @@ class Serve {
 
   public start(): Promise<void> {
     return new Promise(
+      /* eslint-disable-next-line no-async-promise-executor */
       async (resolve): Promise<void> => {
         const { port, public: dir } = this;
 
@@ -95,6 +96,7 @@ class Serve {
 
   public stop(): Promise<void> {
     return new Promise(
+      /* eslint-disable-next-line no-async-promise-executor */
       async (resolve): Promise<void> => {
         const { server } = this;
 

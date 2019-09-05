@@ -41,7 +41,7 @@ export const startSpinner = (name: string): void => {
   updateSpinner(name, spinnerOptions);
 };
 
-export const finishSpinner = (name: string, success: boolean, output: string, text: string = ''): void => {
+export const finishSpinner = (name: string, success: boolean, output: string, text = ''): void => {
   const oldOptions: SpinniesOptions = getSpinner(name);
   const newText = oldOptions.text.replace(/^\s+/, '');
   const spinnerOptions: SpinniesFinish = {

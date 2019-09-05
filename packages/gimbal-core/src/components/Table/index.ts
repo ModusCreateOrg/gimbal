@@ -41,7 +41,7 @@ class Table {
     return this.columns[index];
   }
 
-  public findColumn(callback: Finder, getIndex: boolean = false): Column | number | void {
+  public findColumn(callback: Finder, getIndex = false): Column | number | void {
     if (getIndex) {
       return this.columns.findIndex(callback);
     }
@@ -68,7 +68,7 @@ class Table {
     }
   }
 
-  public find(callback: Finder, getIndex: boolean = false): Data | number | void {
+  public find(callback: Finder, getIndex = false): Data | number | void {
     if (getIndex) {
       return this.data.findIndex(callback);
     }
