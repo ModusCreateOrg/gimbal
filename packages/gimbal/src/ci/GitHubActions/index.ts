@@ -22,7 +22,7 @@ export default class GitHubActions {
   }
 
   public get owner(): string {
-    return env('GITHUB_ACTOR');
+    return env('GITHUB_REPOSITORY').split()[0];
   }
 
   public get pr(): number | void {
@@ -30,7 +30,7 @@ export default class GitHubActions {
   }
 
   public get repo(): string {
-    return env('GITHUB_REPOSITORY');
+    return env('GITHUB_REPOSITORY').split()[1];
   }
 
   public get sha(): string {
