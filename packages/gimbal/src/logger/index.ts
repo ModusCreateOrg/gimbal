@@ -1,6 +1,7 @@
 import { pad } from '@modus/gimbal-core/lib/utils/string';
 import colors from 'colors/safe';
 import Config from '@/config';
+import { Logger, LoggerArgs, LoggerFunction, LoggerGroupFunction } from '@/typings/logger';
 
 const colorsArray = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'gray'];
 let last: number;
@@ -8,28 +9,15 @@ let last: number;
 const $defaultLevels = ['verbose', 'log', 'error'];
 const [, $defaultLevel] = $defaultLevels;
 
-/* eslint-disable-next-line @typescript-eslint/no-empty-interface */
-interface DeepArray<T> extends Array<T | DeepArray<T>> {}
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-type LoggerArgs = DeepArray<any>;
+let $levels: string[]; // possible levels to log out
+let $allowedLevel: string; // one of the values from $levels or 'silent' for no logging
+let $indentLevel: number; // the number of spaces to indent by when grouping
 
-type LoggerFunction = (...val: LoggerArgs) => void;
-type LoggerGroupFunction = (...groups: LoggerArgs) => void;
-interface LoggerGroup {
-  [name: string]: LoggerGroupFunction;
-}
-
-interface Logger {
-  error: LoggerFunction;
-  group: LoggerGroup;
-  log: LoggerFunction;
-  verbose: LoggerFunction;
-  [name: string]: LoggerFunction | LoggerGroup;
-}
-
-const $levels: string[] = Config.get('configs.logger.levels', $defaultLevels); // possible levels to log out
-let $allowedLevel: string = Config.get('configs.logger.level', $defaultLevel); // one of the values from $levels or 'silent' for no logging
-const $indentLevel = Config.get('configs.logger.indent', 2); // the number of spaces to indent by when grouping
+export const setFromConfigs = (): void => {
+  $levels = Config.get('configs.logger.levels', $defaultLevels);
+  $allowedLevel = Config.get('configs.logger.level', $defaultLevel);
+  $indentLevel = Config.get('configs.logger.indent', 2);
+};
 
 /* eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars */
 const emptyLoggerFn: LoggerFunction = (..._val: LoggerArgs): void => {};
@@ -205,7 +193,9 @@ export const namedLogger = (name: string, timeStamp = true): Logger => {
   });
 };
 
-// The main logger object
-const Logger: Logger = createLogger();
+setFromConfigs();
 
-export default Logger;
+// The main logger object
+const DefaultLogger: Logger = createLogger();
+
+export default DefaultLogger;

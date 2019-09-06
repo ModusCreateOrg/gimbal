@@ -1,11 +1,10 @@
-import CircleCI from '@/ci/CircleCI';
-import TravisCI from '@/ci/TravisCI';
+import { CIs } from '@/ci';
 import GitHub from '@/vcs/GitHub';
 import { Report, ReportItem } from '@/typings/command';
 import { CommandOptions } from '@/typings/utils/command';
 
 export interface CommentBuildStartEvent {
-  ci: CircleCI | TravisCI;
+  ci: CIs;
   report: Report;
   vcs: GitHub;
 }
@@ -24,7 +23,7 @@ export interface CommentRenderTableEndEvent extends CommentRenderTableStartEvent
 }
 
 export interface CommentStartEvent {
-  ci: CircleCI | TravisCI;
+  ci: CIs;
   comment: string;
   report: Report;
   vcs: GitHub;

@@ -31,3 +31,22 @@ export interface SpinniesSuccess {
 }
 
 export type SpinniesFinish = SpinniesFailure | SpinniesSuccess;
+
+/* eslint-disable-next-line @typescript-eslint/no-empty-interface */
+interface DeepArray<T> extends Array<T | DeepArray<T>> {}
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+export type LoggerArgs = DeepArray<any>;
+
+export type LoggerFunction = (...val: LoggerArgs) => void;
+export type LoggerGroupFunction = (...groups: LoggerArgs) => void;
+export interface LoggerGroup {
+  [name: string]: LoggerGroupFunction;
+}
+
+export interface Logger {
+  error: LoggerFunction;
+  group: LoggerGroup;
+  log: LoggerFunction;
+  verbose: LoggerFunction;
+  [name: string]: LoggerFunction | LoggerGroup;
+}

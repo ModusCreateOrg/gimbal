@@ -1,6 +1,7 @@
 import whichCI from '@/ci';
 import Config from '@/config';
 import EventEmitter from '@/event';
+import { namedLogger } from '@/logger';
 import { outputTable } from '@/output/markdown';
 import { filterReportItemsFailures } from '@/output/filter';
 import { Report, ReportItem } from '@/typings/command';
@@ -15,6 +16,8 @@ import {
   CommentObject,
   Comment,
 } from '@/typings/vcs/comment';
+
+const logger = namedLogger('gimbal/vcs/comment');
 
 const noFailuresText = 'No Failures';
 
@@ -100,9 +103,13 @@ const vcsComment = async (report: Report, commandOptions: CommandOptions): Promi
       const ci = whichCI();
 
       if (ci) {
+        logger.verbose(`Found CI: ${ci.name}`);
+
         const { vcs } = ci;
 
         if (vcs) {
+          logger.verbose(`Found VCS: ${vcs.name}`);
+
           const commentBuildStartEvent: CommentBuildStartEvent = {
             ci,
             report,
@@ -145,6 +152,8 @@ const vcsComment = async (report: Report, commandOptions: CommandOptions): Promi
             };
 
             await EventEmitter.fire(`vcs/comment/start`, commentStartEvent);
+
+            logger.verbose('Commenting on VCS...');
 
             await vcs.comment(markdown);
 

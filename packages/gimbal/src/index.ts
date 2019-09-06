@@ -7,7 +7,7 @@ import Command, { preparseOptions } from '@/command';
 import Config from '@/config';
 import processAudits from '@/config/audits';
 import processJobs from '@/config/jobs';
-import Logger from '@/logger';
+import Logger, { setFromConfigs } from '@/logger';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 
 (async (): Promise<void> => {
@@ -46,6 +46,8 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 
   try {
     const config = await Config.load(options.cwd, options);
+
+    setFromConfigs();
 
     // Notify of new package
     updateNotifier({ pkg: packageJson }).notify();

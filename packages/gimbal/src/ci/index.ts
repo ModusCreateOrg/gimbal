@@ -1,12 +1,16 @@
 import Config from '@/config';
 import { Cls } from '@/typings/ci';
 import CircleCICls from './CircleCI';
+import GitHubActionsCls from './GitHubActions';
 import TravisCICls from './TravisCI';
 
 export const CircleCI = 'CircleCI';
+export const GitHubActions = 'GitHubActions';
 export const TravisCI = 'TravisCI';
 
-let ci: CircleCICls | TravisCICls | void;
+export type CIs = CircleCICls | GitHubActionsCls | TravisCICls;
+
+let ci: CIs | void;
 
 interface Tests {
   [label: string]: Cls;
@@ -18,6 +22,7 @@ interface CIConfig {
 
 const tests: Tests = {
   [CircleCI]: CircleCICls,
+  [GitHubActions]: GitHubActionsCls,
   [TravisCI]: TravisCICls,
 };
 
@@ -29,7 +34,7 @@ const normalizeConfiguredCI = (configuredCI?: string | CIConfig): CIConfig | voi
   return undefined;
 };
 
-const whichCI = (): CircleCICls | TravisCICls | void => {
+const whichCI = (): CIs | void => {
   if (ci) {
     return ci;
   }
@@ -40,6 +45,10 @@ const whichCI = (): CircleCICls | TravisCICls | void => {
   switch (CI) {
     case CircleCI:
       ci = new CircleCICls();
+
+      return ci;
+    case GitHubActions:
+      ci = new GitHubActionsCls();
 
       return ci;
     case TravisCI:
