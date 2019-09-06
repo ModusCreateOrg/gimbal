@@ -7,10 +7,7 @@ export default class GitHubActions {
   private $vcs?: VCSTypes;
 
   public static is(): boolean {
-    // this is in the action Dockerfile in this repo
-    // there wasn't any true/false envs to use to target
-    // actions specifically
-    return env('GITHUB_ACTIONS_CI', false) as boolean;
+    return env('GITHUB_ACTIONS', false) as boolean;
   }
 
   public get mode(): CIMode {
@@ -22,7 +19,7 @@ export default class GitHubActions {
   }
 
   public get owner(): string {
-    return env('GITHUB_REPOSITORY').split()[0];
+    return env('GITHUB_REPOSITORY').split('/')[0];
   }
 
   public get pr(): number | void {
@@ -30,7 +27,7 @@ export default class GitHubActions {
   }
 
   public get repo(): string {
-    return env('GITHUB_REPOSITORY').split()[1];
+    return env('GITHUB_REPOSITORY').split('/')[1];
   }
 
   public get sha(): string {
