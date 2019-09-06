@@ -9,4 +9,6 @@ LABEL "com.github.actions.description"="Runs Gimbal on the repo."
 LABEL "com.github.actions.icon"="package"
 LABEL "com.github.actions.color"="blue"
 
+ENV GITHUB_ACTIONS true
+
 ENTRYPOINT ["gimbal"]

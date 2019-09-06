@@ -103,12 +103,12 @@ const vcsComment = async (report: Report, commandOptions: CommandOptions): Promi
       const ci = whichCI();
 
       if (ci) {
-        logger.verbose(`Found CI: ${ci.name}`);
+        logger.verbose(`Detected CI: ${ci.name}`);
 
         const { vcs } = ci;
 
         if (vcs) {
-          logger.verbose(`Found VCS: ${vcs.name}`);
+          logger.verbose(`Detected VCS: ${vcs.name}`);
 
           const commentBuildStartEvent: CommentBuildStartEvent = {
             ci,
@@ -166,7 +166,11 @@ const vcsComment = async (report: Report, commandOptions: CommandOptions): Promi
 
             await EventEmitter.fire(`vcs/comment/end`, commentEndEvent);
           }
+        } else {
+          logger.verbose('No VCS detected');
         }
+      } else {
+        logger.verbose('No CI detected');
       }
     }
   }
