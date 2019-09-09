@@ -17,7 +17,7 @@
 <img align="left" width="75" height="75" src="https://res.cloudinary.com/modus-labs/image/upload/c_scale,dpr_auto,e_trim:10,f_auto,w_150/v1559132943/labs/gimbal.png">
 Gimbal uses industry-standard audits to analyze application performance. Continuously track performance to ensure your apps are within acceptable 🏎performance budgets.
 
-Gimbal ❤️ CIs like [Circle CI](https://github.com/ModusCreateOrg/gimbal/tree/422d758f9f238b1eb0c6c9ca420ca5651fe23f07/packages/gimbal/docs/ci/circleci),  [Travis CI](https://github.com/ModusCreateOrg/gimbal/tree/422d758f9f238b1eb0c6c9ca420ca5651fe23f07/packages/gimbal/docs/ci/travisci), Jenkins, and GitHub Actions.
+Gimbal ❤️ CIs like [Circle CI](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal/docs/ci/circleci),  [Travis CI](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal/docs/ci/travisci), Jenkins, and [GitHub Actions](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal/docs/ci/github).
 
 ## Getting Started
 
