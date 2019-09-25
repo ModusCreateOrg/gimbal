@@ -9,7 +9,7 @@
 
 
 [Installation](#installation-and-usage) |
-[Documentation](./docs) |
+[Documentation](./packages/gimbal/docs) |
 [Contributing](./.github/CONTRIBUTING.md) |
 [Code of Conduct](./CODE_OF_CONDUCT.md) |
 [Twitter](https://twitter.com/ModusCreate)
@@ -62,6 +62,128 @@ npm run audit
 # or with yarn
 yarn audit
 ```
+
+### Configuration
+
+You don't need to [Configure Gimbal](./packages/gimbal/docs/config), but we understand that defaults are _optimistic_, at least for existing projects that want to introduce performance budgeting. 
+
+Here's a **sample `.gimbalrc.yml` config** file:
+
+```yml
+configs:
+  # Specify audits to run. Also include any plugins (like axe)
+  audits:
+    - axe
+    - size
+    - lighthouse
+    - heap-snapshot
+    - unused-source
+
+  comment:
+    # Only show failures in GitHub PR comments.
+    # Useful to pinpoint why a build has failed
+    onlyFailures: true
+
+  # Heap snapshot settings
+  heap-snapshot:
+    threshold:
+      Documents: 11
+      Frames: 5
+      JSHeapTotalSize: 13356000
+      JSHeapUsedSize: 10068000
+      Nodes: 800
+      RecalcStyleCount: 15
+      LayoutCount: 15
+
+  # Lighthouse settings
+  lighthouse:
+    skipAudits:
+      - uses-http2
+      - redirects-http
+      - uses-long-cache-ttl
+      - uses-text-compression
+    outputHtml: artifacts/lighthouse.html
+    threshold:
+      accessibility: 90
+      "best-practices": 92
+      performance: 64
+      pwa: 52
+      seo: 100
+
+  # File and directory size settings
+  size:
+    - path: ./build/precache-*.js
+      maxSize: 10 KB
+    - path: ./build/static/js/[0-9]*.chunk.js
+      maxSize: 1 MB
+    - path: ./build/static/js/*.chunk.js
+      maxSize: 1 MB
+    - path: ./build/static/js/runtime*.js
+      maxSize: 10 KB
+    - path: ./build/index.html
+      maxSize: 10 KB
+    - path: ./build/favicon.ico
+      maxSize: 10 KB
+    - path: ./build/
+      maxSize: 18 MB
+
+  # Unused source settings
+  unused-source:
+    threshold:
+      - path: "**/*(private).*.chunk.css"
+        maxSize: 60%
+      - path: "**/!(private).*.chunk.css"
+        maxSize: 60%
+      - path: "**/*([0-9]).*.chunk.js"
+        maxSize: 90%
+      - path: "**/!([0-9]|main).*.chunk.js"
+        maxSize: 45%
+      - path: "**/(main).*.chunk.js"
+        maxSize: 50%
+
+# Locations of reports. Useful for storing artifacts in CI
+outputs:
+  # Only show failures in CLI
+  cli:
+    onlyFailures: true
+  html: artifacts/results.html
+  json: artifacts/results.json
+  markdown: artifacts/results.md
+
+# Plugins
+plugins:
+  # Compare metrics to last-saved values
+  - plugin: "@modus/gimbal-plugin-last-value"
+    saveOnlyOnSuccess: false
+
+  # Save reports to a database. Needed for gimbal-plugin-last-value
+  - plugin: "@modus/gimbal-plugin-sqlite"
+    lastValue: true
+
+  # Axe a11y audits
+  - plugin: "@modus/gimbal-plugin-axe"
+    thresholds:
+      aria-allowed-attr: critical
+      color-contrast: serious
+      landmark-one-main: moderate
+      landmark-complementary-is-top-level: moderate
+      meta-viewport: critical
+      region: moderate
+      page-has-heading-one: moderate
+      scrollable-region-focusable: moderate
+
+```
+
+### CI Integration
+
+Consult with our docs for sample CI configuration files:
+
+* [GitHub Actions](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal/docs/ci/github)
+* [Circle CI](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal/docs/ci/circleci)
+* [Travis CI](https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal/docs/ci/travisci)
+
+### Docker
+Docker images are available in Docker Hub as [moduscreate/gimbal](https://hub.docker.com/r/moduscreate/gimbal/tags).
 
 ## Packages
 
