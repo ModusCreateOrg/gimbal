@@ -45,6 +45,8 @@ npm install --save-dev @modus/gimbal
 yarn add --dev @modus/gimbal
 ```
 
+Your project should have been built in order to execute gimbal.
+
 You can execute it via a npm script: (`package.json`):
 
 ```json
@@ -65,20 +67,68 @@ yarn audit
 
 ### Configuration
 
-You don't need to [Configure Gimbal](./packages/gimbal/docs/config), but we understand that defaults are _optimistic_, at least for existing projects that want to introduce performance budgeting. 
+You don't need to [Configure Gimbal](./packages/gimbal/docs/config), but we understand that defaults are _optimistic_, at least for existing projects that want to introduce performance budgeting.
 
-Here's a **sample `.gimbalrc.yml` config** file:
+To ease you be ready to use, let's start with some **sample `.gimbalrc.yml` config** files:
+
+1. Minimal
+2. Minimal with all native audits
+3. Using other audit plugins and more sample configurations
+
+Please, make sure your project was build before executing gimbal.
+
+You may save them as your `.gimbalrc.yml` file and run `gimbal`.
+
+#### 1) Minimal sample `.gimbalrc.yml` config file:
 
 ```yml
+audits:
+  - size
+
 configs:
-  # Specify audits to run. Also include any plugins (like axe)
-  audits:
+  buildDir: build
+```
+
+#### 2) Minimal sample `.gimbalrc.yml` config file running all native audits:
+
+```yml
+audits:
+  - size
+  - lighthouse
+  - heap-snapshot
+  - unused-source
+
+configs:
+  buildDir: build
+```
+
+#### 3) Sample `.gimbalrc.yml` config file running audit plugins and more configurations:
+
+Before executing this config file you should install mentioned plugins. For instance:
+
+```sh
+# with npm
+npm install @modus/gimbal-plugin-axe @modus/gimbal-plugin-last-value @modus/gimbal-plugin-sqlite
+
+# or with yarn
+yarn add @modus/gimbal-plugin-axe @modus/gimbal-plugin-last-value @modus/gimbal-plugin-sqlite
+```
+
+In case you don't use `build` as your build directory and an exception raises with an error 
+concerning a nonexistent `build` directory, please create one and run gimbal again.
+
+Config file:
+
+```yml
+# Specify audits to run. Also include any plugins (like axe)
+audits:
     - axe
     - size
     - lighthouse
     - heap-snapshot
     - unused-source
 
+configs:
   comment:
     # Only show failures in GitHub PR comments.
     # Useful to pinpoint why a build has failed
