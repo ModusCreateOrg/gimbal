@@ -28,7 +28,7 @@ You can install Gimbal globally using `npm` or `yarn`:
 npm install --global @modus/gimbal
 
 # or with yarn
-yarn add global @modus/gimbal
+yarn global add @modus/gimbal
 
 gimbal --help
 ```
