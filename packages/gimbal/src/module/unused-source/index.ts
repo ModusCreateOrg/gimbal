@@ -109,7 +109,7 @@ const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[])
   const newDestinationArray = destinationArray.slice();
 
   sourceArray.forEach((sourceItem: SizeConfigs): void => {
-    const match = newDestinationArray.find((destItem: SizeConfigs): boolean => destItem.path === sourceItem.path);
+    const match = newDestinationArray.find((destItem: SizeConfigs): boolean => destItem.path === sourceItem.path &&  && destItem.type === sourceItem.type);
 
     if (match) {
       // apply config onto default
