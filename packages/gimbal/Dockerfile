@@ -1,4 +1,4 @@
-FROM centos:latest AS Gimbal
+FROM centos:7 AS Gimbal
 
 ARG GIMBAL_VERSION
 
