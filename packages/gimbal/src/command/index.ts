@@ -1,6 +1,4 @@
-import { readDir, stats } from '@modus/gimbal-core/lib/utils/fs';
 import program, { Command as CommandType } from 'commander';
-import path from 'path';
 import Config from '@/config';
 import EventEmitter from '@/event';
 import Logger from '@/logger';
@@ -13,8 +11,6 @@ import reconcileReports from './reconcile';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Action = (commandOptions: CommandOptions, args?: string[]) => Promise<any>;
-type ActionCreatorArg = string[] | CommandType;
-type ActionCreator = (...actionArgs: ActionCreatorArg[]) => Promise<void>;
 type DefaultValueFn = (options: CommandOptions) => CommandOptions;
 
 interface Option {
@@ -29,8 +25,6 @@ interface Option {
 interface Config {
   action: Action;
   command: string;
-  deprecated?: boolean;
-  options?: Option[];
 }
 
 class Command {
@@ -38,75 +32,14 @@ class Command {
 
   private command: string;
 
-  private deprecated?: boolean;
-
-  private options?: Option[];
-
-  public static async registerCommands(): Promise<void[]> {
-    const commands = await readDir(__dirname);
-
-    return Promise.all(
-      commands.map(
-        async (item: string): Promise<void> => {
-          const itemPath = path.join(__dirname, item);
-          const itemStats = await stats(itemPath);
-
-          return itemStats.isDirectory() ? import(`./${item}/program`) : undefined;
-        },
-      ),
-    );
-  }
-
   public constructor(config: Config) {
     this.action = config.action;
     this.command = config.command;
-    this.deprecated = config.deprecated;
-    this.options = config.options;
-
-    this.create();
   }
 
-  private create(): void {
-    const { options } = this;
-
-    const cmd = program.command(this.command);
-
-    if (options) {
-      options.forEach((option: Option): void => {
-        if (option.process) {
-          cmd.option(option.flag, option.description, option.process, option.defaultValue);
-        } else {
-          cmd.option(option.flag, option.description, option.defaultValue);
-        }
-      });
-    }
-
-    cmd.action(this.createAction());
-  }
-
-  private createAction(): ActionCreator {
-    return async (...actionArgs: ActionCreatorArg[]): Promise<void> => this.run(...actionArgs);
-  }
-
-  public async run(...actionArgs: ActionCreatorArg[]): Promise<void> {
-    let cmd: CommandType;
-    let args: string[] = [];
-
-    if (this.deprecated) {
-      Logger.log(
-        `The "${this.command}" command is deprecated and will be removed soon. Please use the "audit" config in a configuration file. See: https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal/docs/config`,
-      );
-    }
-
-    if (actionArgs.length === 1) {
-      cmd = actionArgs[0] as CommandType;
-    } else {
-      args = actionArgs[0] as string[];
-      cmd = actionArgs[1] as CommandType;
-    }
-
+  public async run(args: string[] = []): Promise<void> {
     try {
-      const commandOptions = getOptionsFromCommand(cmd, undefined, Config);
+      const commandOptions = getOptionsFromCommand(program, undefined, Config);
 
       const startEvent: StartEvent = {
         args,

@@ -3,7 +3,8 @@ import path from 'path';
 import program from 'commander';
 import readPkg from 'read-pkg';
 import updateNotifier from 'update-notifier';
-import Command, { preparseOptions } from '@/command';
+import { preparseOptions } from '@/command';
+import audit from '@/command/audit/program';
 import Config from '@/config';
 import processAudits from '@/config/audits';
 import processJobs from '@/config/jobs';
@@ -35,10 +36,36 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
     .option('--output-html [file]', 'The path to write the results as HTML to.')
     .option('--output-json [file]', 'The path to write the results as JSON to.')
     .option('--output-markdown [file]', 'The path to write the results as Markdown to.')
-    .option('--verbose', 'Turn on extra logging during command executions.');
+    .option('--verbose', 'Turn on extra logging during command executions.')
+    // audit options
+    .option(
+      '--build-dir <dir>',
+      'Directory storing the build artifacts relative to the --cwd (defaults to "build")',
+      'build',
+    )
+    .option('--no-size', 'Disable checking resource sizes')
+    .option('--no-calculate-unused-source', 'Disable calculating unused CSS and JavaScript')
+    .option('--no-heap-snapshot', 'Disable getting a heap snapshot')
+    .option('--no-lighthouse', 'Disable the lighthouse auditing')
+    .option('--lighthouse-output-html <file>', 'Location to output the lighthouse HTML report to.')
+    .option(
+      '--route <route>',
+      'Route to run tests on.',
+      (value: string, previous: string | string[]): string[] => {
+        // means previous is just the defaultValue
+        if (!Array.isArray(previous)) {
+          return [value];
+        }
 
-  // register commands with commander
-  await Command.registerCommands();
+        previous.push(value);
+
+        return previous;
+      },
+      '/',
+    );
+
+  // backwards compat so `gimbal audit` doesn't fail, we handle it below
+  program.command('audit');
 
   // need to parse the options before commander kicks off so the config file
   // is loaded. This way things like plugins will be ready
@@ -55,24 +82,20 @@ import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
     // kick off commander
     program.parse(process.argv);
 
-    if (!program.args.length) {
-      if (config) {
-        const { audits, jobs } = config;
+    if (config) {
+      const { audits, jobs } = config;
 
-        if (jobs && jobs.length) {
-          await processJobs(jobs, options);
-        } else if (audits && audits.length) {
-          await processAudits();
-        } else {
-          // no jobs so there is nothing to execute
-          // so let's show the help screen
-          program.help();
-        }
+      if (jobs && jobs.length) {
+        await processJobs(jobs, options);
+      } else if (audits && audits.length) {
+        await processAudits();
       } else {
-        // no config so there is nothing to execute
+        // no jobs so there is nothing to execute
         // so let's show the help screen
         program.help();
       }
+    } else {
+      await audit.run();
     }
 
     Logger.log('Finished successfully');
