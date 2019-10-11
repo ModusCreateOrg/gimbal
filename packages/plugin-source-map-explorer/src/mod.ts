@@ -2,7 +2,10 @@ import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import bytes from 'bytes';
 import globby from 'globby';
 import minimatch from 'minimatch';
-import explore, { ExploreBundleResult, ExploreResult } from 'source-map-explorer';
+// @ts-ignore
+import explore from 'source-map-explorer';
+// looks like their types are nested in the src dir of dist...
+import { ExploreBundleResult, ExploreResult } from 'source-map-explorer/dist/src';
 import { Report, ReportItem } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Options } from '@/typings/module/registry';
