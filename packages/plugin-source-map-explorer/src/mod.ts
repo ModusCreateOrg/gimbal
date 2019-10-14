@@ -66,10 +66,8 @@ export const parseBundle = (rawBundle: RawReport, bundleConfig: BundleType): Rep
   };
 };
 
-export const runModule = (pluginConfig: Config): RunModuleFn => async ({
-  commandOptions,
-}: Options): Promise<Report> => {
-  const globBase = resolvePath(commandOptions.cwd, commandOptions.buildDir as string);
+export const runModule = (pluginConfig: Config): RunModuleFn => async ({ args }: Options): Promise<Report> => {
+  const globBase = resolvePath(args.cwd, args.buildDir as string);
   const globs: string[] = pluginConfig.bundles.map((glob: BundleType): string => {
     const normalizedGlob: BundleObject = typeof glob === 'string' ? { path: glob, thresholds: {} } : glob;
     const { path } = normalizedGlob;

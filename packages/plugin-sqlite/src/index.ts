@@ -28,11 +28,11 @@ const defaultConfig: Config = {
 
 const willNeedDatabase = (config: Config): boolean => config.lastValue !== false;
 
-const sqlite = async ({ bus, commandOptions }: PluginOptions, config: Config): Promise<void> => {
+const sqlite = async ({ args, bus }: PluginOptions, config: Config): Promise<void> => {
   const sqliteConfig = deepmerge(defaultConfig, config);
 
-  if (commandOptions && sqliteConfig.file !== ':memory:') {
-    sqliteConfig.file = resolvePath(commandOptions.cwd, sqliteConfig.file);
+  if (args && sqliteConfig.file !== ':memory:') {
+    sqliteConfig.file = resolvePath(args.cwd, sqliteConfig.file);
   }
 
   if (willNeedDatabase(sqliteConfig)) {

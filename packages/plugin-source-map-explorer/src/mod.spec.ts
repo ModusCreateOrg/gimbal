@@ -280,7 +280,8 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
       });
 
       const ret = await fn({
-        commandOptions: {
+        args: {
+          _: [],
           buildDir: 'baz',
           comment: true,
           cwd: '/foo/bar',
@@ -437,7 +438,8 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
       });
 
       const ret = await fn({
-        commandOptions: {
+        args: {
+          _: [],
           buildDir: 'baz',
           comment: true,
           cwd: '/foo/bar',

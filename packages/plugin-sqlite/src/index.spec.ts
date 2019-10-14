@@ -78,12 +78,13 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
-          bus,
-          commandOptions: {
+          args: {
+            _: [],
             comment: true,
             cwd: 'cwd',
             verbose: false,
           },
+          bus,
           dir: 'foo',
         },
         {},
@@ -135,12 +136,13 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
-          bus,
-          commandOptions: {
+          args: {
+            _: [],
             comment: true,
             cwd: 'cwd',
             verbose: false,
           },
+          bus,
           dir: 'foo',
         },
         {
@@ -217,12 +219,13 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
-          bus,
-          commandOptions: {
+          args: {
+            _: [],
             comment: true,
             cwd: 'cwd',
             verbose: false,
           },
+          bus,
           dir: 'foo',
         },
         {

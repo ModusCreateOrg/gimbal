@@ -121,12 +121,13 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         });
 
         const ret = await cb({
-          chrome,
-          commandOptions: {
+          args: {
+            _: [],
             comment: true,
             cwd: __dirname,
             verbose: false,
           },
+          chrome,
           url: 'https://example.com',
         });
 
@@ -328,12 +329,13 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         });
 
         const ret = await cb({
-          chrome,
-          commandOptions: {
+          args: {
+            _: [],
             comment: true,
             cwd: __dirname,
             verbose: false,
           },
+          chrome,
           url: 'https://example.com',
         });
 
@@ -497,12 +499,13 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         });
 
         const check = cb({
-          chrome,
-          commandOptions: {
+          args: {
+            _: [],
             comment: true,
             cwd: __dirname,
             verbose: false,
           },
+          chrome,
           url: 'http://example.com',
         });
 

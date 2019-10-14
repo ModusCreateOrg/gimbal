@@ -65,21 +65,6 @@ class Config {
   }
 
   private async doLoad(dir: string, file: string, args: ParsedArgs, force: boolean): Promise<ConfigType> {
-    if (file && (await exists(file))) {
-      await this.loadFile(dir, file, args, force);
-    }
-
-    return this.mergeArgs(args);
-  }
-
-  private async loadFile(dir: string, file: string, args: ParsedArgs, force: boolean): Promise<ConfigType | void> {
-    const ext = extname(file).substr(1);
-    const loader = this.LOADERS[ext];
-
-    if (loader == null) {
-      throw new Error('No valid gimbal configuration file found!');
-    }
-
     this.loading = true;
 
     const loadStartEvent: LoadStartEvent = {
@@ -92,12 +77,19 @@ class Config {
 
     await EventEmitter.fire('config/load/start', loadStartEvent);
 
-    this.config = await loader(file);
+    if (file && (await exists(file))) {
+      await this.loadFile(file);
+    }
+
+    const config = this.mergeArgs(args);
+
+    this.loaded = true;
+    this.loading = false;
 
     const loadEndEvent: LoadEndEvent = {
       args,
       Config: this,
-      config: this.config,
+      config,
       dir,
       file,
       force,
@@ -105,8 +97,18 @@ class Config {
 
     await EventEmitter.fire('config/load/end', loadEndEvent);
 
-    this.loaded = true;
-    this.loading = false;
+    return config;
+  }
+
+  private async loadFile(file: string): Promise<ConfigType | void> {
+    const ext = extname(file).substr(1);
+    const loader = this.LOADERS[ext];
+
+    if (loader == null) {
+      throw new Error('No valid gimbal configuration file found!');
+    }
+
+    this.config = await loader(file);
 
     return this.config;
   }
