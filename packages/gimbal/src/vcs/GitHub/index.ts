@@ -1,3 +1,4 @@
+import Logger from '@modus/gimbal-core/lib/logger';
 import env from '@modus/gimbal-core/lib/utils/env';
 import Octokit, {
   IssuesCreateCommentParams,
@@ -8,7 +9,6 @@ import Octokit, {
 } from '@octokit/rest';
 import { URL } from 'url';
 import EventEmitter from '@/event';
-import Logger from '@/logger';
 import {
   CommitCommentStartEvent,
   CommitCommentEndEvent,

@@ -5,7 +5,7 @@ import findPort from '@modus/gimbal-core/lib/utils/port';
 import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import Config from '@/config';
 import Chrome from '@/module/chrome';
-import { get, getMeta } from '@/module/registry';
+import registry from '@/module/registry';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
 import { Modules } from '@/typings/module';
@@ -30,7 +30,7 @@ const doAudit = async (options: AuditOptions, audits: Modules[], args: ParsedArg
   await Promise.all(
     audits.map(
       async (audit: string): Promise<void> => {
-        const mod = get(audit);
+        const mod = registry.get(audit);
 
         if (!mod) {
           finishSpinner(audit, false, `"${mod}" was not found in the module registry`);
@@ -141,7 +141,7 @@ const audit = async (args: ParsedArgs): Promise<Report | Report[]> => {
 
     args.route.forEach((route: string, index: number): void => {
       const filteredAudits = audits.filter((name: string): boolean => {
-        const meta = getMeta(name);
+        const meta = registry.getMeta(name);
 
         if (meta && meta.maxNumRoutes && index >= meta.maxNumRoutes) {
           return false;

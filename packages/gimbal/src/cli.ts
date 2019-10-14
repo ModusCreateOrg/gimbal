@@ -1,10 +1,10 @@
+import logger, { setLevel } from '@modus/gimbal-core/lib/logger';
 import path from 'path';
 import readPkg from 'read-pkg';
 import updateNotifier from 'update-notifier';
 
 import Cli from './utils/Cli';
 import gimbal from './index';
-import logger, { setLevel } from './logger';
 
 Cli.add({
   'build-dir': {

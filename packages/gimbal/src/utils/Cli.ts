@@ -1,7 +1,6 @@
+import logger from '@modus/gimbal-core/lib/logger';
 import buildOptions, { Options } from 'minimist-options';
 import minimist, { ParsedArgs } from 'minimist';
-
-import logger from '../logger';
 
 interface ArgCache {
   args: ParsedArgs;

@@ -77,9 +77,9 @@ const parseEntry = (entry: Result, success: boolean, config: Config): ReportItem
 const Axe = async ({ bus }: PluginOptions, config: Config): Promise<void> => {
   const pluginConfig = deepmerge(defaultConfig, config);
 
-  const { register } = await bus('module/registry');
+  const registry = await bus('module/registry');
 
-  register(
+  registry.register(
     type,
     {
       thresholdLimit: 'upper',

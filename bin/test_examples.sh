@@ -18,5 +18,5 @@ EXAMPLES_DIR="$BASE_DIR/examples"
 for file in $EXAMPLES_DIR/*; do
   cd $file
 
-  yarn gimbal
+  yarn gimbal --verbose
 done

@@ -1,10 +1,10 @@
 import Lighthouse from '@/module/lighthouse';
-import { register } from '@/module/registry';
+import registry from '@/module/registry';
 import { Report } from '@/typings/command';
 import { Options } from '@/typings/module/registry';
 import meta from './meta';
 
-register(
+registry.register(
   'lighthouse',
   meta,
   ({ args, chrome, url }: Options): Promise<Report> =>

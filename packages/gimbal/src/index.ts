@@ -8,7 +8,6 @@ import audit from './command/audit';
 import reconcileReports from './command/reconcile';
 import Config from './config';
 import EventEmitter from './event';
-import logger, { setFromConfigs } from './logger';
 import output from './output';
 import { CHILD_GIMBAL_PROCESS } from './utils/constants';
 import comment from './vcs/comment';
@@ -22,8 +21,6 @@ const gimbal = async (args: ParsedArgs): Promise<void> => {
   }
 
   await Config.load(args.cwd, args);
-
-  setFromConfigs();
 
   const startEvent: StartEvent = {
     args,

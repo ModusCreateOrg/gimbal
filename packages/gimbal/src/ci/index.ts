@@ -1,63 +1,18 @@
-import Config from '@/config';
-import { Cls } from '@/typings/ci';
 import CircleCICls from './CircleCI';
 import GitHubActionsCls from './GitHubActions';
+import CIManager from './Manager';
 import TravisCICls from './TravisCI';
 
 export const CircleCI = 'CircleCI';
 export const GitHubActions = 'GitHubActions';
 export const TravisCI = 'TravisCI';
 
-export type CIs = CircleCICls | GitHubActionsCls | TravisCICls;
+const manager = new CIManager({
+  name: 'CI',
+});
 
-let ci: CIs | void;
+manager.add(CircleCI, CircleCICls);
+manager.add(GitHubActions, GitHubActionsCls);
+manager.add(TravisCI, TravisCICls);
 
-interface Tests {
-  [label: string]: Cls;
-}
-
-interface CIConfig {
-  provider: string;
-}
-
-const tests: Tests = {
-  [CircleCI]: CircleCICls,
-  [GitHubActions]: GitHubActionsCls,
-  [TravisCI]: TravisCICls,
-};
-
-const normalizeConfiguredCI = (configuredCI?: string | CIConfig): CIConfig | void => {
-  if (configuredCI) {
-    return typeof configuredCI === 'string' ? { provider: configuredCI } : configuredCI;
-  }
-
-  return undefined;
-};
-
-const whichCI = (): CIs | void => {
-  if (ci) {
-    return ci;
-  }
-
-  const configuredCI = normalizeConfiguredCI(Config.get('configs.ci'));
-  const CI = configuredCI ? configuredCI.provider : Object.keys(tests).find((key: string): boolean => tests[key].is());
-
-  switch (CI) {
-    case CircleCI:
-      ci = new CircleCICls();
-
-      return ci;
-    case GitHubActions:
-      ci = new GitHubActionsCls();
-
-      return ci;
-    case TravisCI:
-      ci = new TravisCICls();
-
-      return ci;
-    default:
-      return undefined;
-  }
-};
-
-export default whichCI;
+export default manager;

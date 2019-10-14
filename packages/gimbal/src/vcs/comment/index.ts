@@ -1,8 +1,8 @@
+import { namedLogger } from '@modus/gimbal-core/lib/logger';
 import { ParsedArgs } from 'minimist';
-import whichCI from '@/ci';
+import CIManager from '@/ci';
 import Config from '@/config';
 import EventEmitter from '@/event';
-import { namedLogger } from '@/logger';
 import { outputTable } from '@/output/markdown';
 import { filterReportItemsFailures } from '@/output/filter';
 import { Report, ReportItem } from '@/typings/command';
@@ -96,7 +96,7 @@ const vcsComment = async (report: Report, args: ParsedArgs): Promise<void> => {
     const comment = Config.get('configs.comment', args.comment);
 
     if (comment) {
-      const ci = whichCI();
+      const ci = CIManager.getActive();
 
       if (ci) {
         logger.verbose(`Detected CI: ${ci.name}`);

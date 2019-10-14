@@ -1,7 +1,7 @@
 import env from '@modus/gimbal-core/lib/utils/env';
 import { CIMode } from '@/typings/ci';
 import { VCS as VCSTypes } from '@/typings/vcs';
-import whichVCS from '@/vcs';
+import VCSManager from '@/vcs';
 
 export default class CircleCI {
   private $vcs?: VCSTypes;
@@ -58,7 +58,7 @@ export default class CircleCI {
     const repoUrl = env('CIRCLE_REPOSITORY_URL');
 
     if (repoUrl) {
-      this.$vcs = whichVCS(repoUrl) as VCSTypes;
+      this.$vcs = VCSManager.getActive(repoUrl) as VCSTypes;
 
       this.$vcs.ci = this;
 

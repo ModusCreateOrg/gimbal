@@ -1,7 +1,6 @@
-import { pad } from '@modus/gimbal-core/lib/utils/string';
 import colors from 'colors/safe';
-import Config from '@/config';
 import { Logger, LoggerArgs, LoggerFunction, LoggerGroupFunction } from '@/typings/logger';
+import { pad } from '../utils/string';
 
 const colorsArray = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'gray'];
 let last: number;
@@ -9,15 +8,9 @@ let last: number;
 const $defaultLevels = ['verbose', 'log', 'error'];
 const [, $defaultLevel] = $defaultLevels;
 
-let $levels: string[]; // possible levels to log out
-let $allowedLevel: string; // one of the values from $levels or 'silent' for no logging
-let $indentLevel: number; // the number of spaces to indent by when grouping
-
-export const setFromConfigs = (): void => {
-  $levels = Config.get('configs.logger.levels', $defaultLevels);
-  $allowedLevel = Config.get('configs.logger.level', $defaultLevel);
-  $indentLevel = Config.get('configs.logger.indent', 2);
-};
+const $levels: string[] = $defaultLevels; // possible levels to log out
+let $allowedLevel: string = $defaultLevel; // one of the values from $levels or 'silent' for no logging
+const $indentLevel = 2; // the number of spaces to indent by when grouping
 
 /* eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars */
 const emptyLoggerFn: LoggerFunction = (..._val: LoggerArgs): void => {};
@@ -201,8 +194,6 @@ export const namedLogger = (name: string, timeStamp = true): Logger => {
     logger.group[level] = createLoggerGroupFunction(level, fn);
   });
 };
-
-setFromConfigs();
 
 // The main logger object
 const DefaultLogger: Logger = createLogger();

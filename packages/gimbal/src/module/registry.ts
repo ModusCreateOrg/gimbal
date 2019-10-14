@@ -1,25 +1,30 @@
-import { ModuleInfo, Module } from '@/typings/module/registry';
+import Manager from '@modus/gimbal-core/lib/Manager';
+import { Module } from '@/typings/module/registry';
 import { Meta } from '@/typings/module';
 
-const registry = new Map<string, ModuleInfo>();
+class ModuleManager extends Manager {
+  get(name: string): Module | void {
+    const info = super.get(name);
 
-export const register = (name: string, meta: Meta, mod: Module): void => {
-  registry.set(name, {
-    fn: mod,
-    meta,
-  });
-};
+    return info && info.fn;
+  }
 
-export const unregister = (name: string): boolean => registry.delete(name);
+  getMeta(name: string): Meta | void {
+    const info = super.get(name);
 
-export const get = (name: string): Module | void => {
-  const info = registry.get(name);
+    return info && info.meta;
+  }
 
-  return info && info.fn;
-};
+  register(name: string, meta: Meta, mod: Module): void {
+    return this.add(name, {
+      fn: mod,
+      meta,
+    });
+  }
+}
 
-export const getMeta = (name: string): Meta | void => {
-  const info = registry.get(name);
+const registry = new ModuleManager({
+  name: 'module',
+});
 
-  return info && info.meta;
-};
+export default registry;

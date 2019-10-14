@@ -125,7 +125,7 @@ export const runModule = (pluginConfig: Config): RunModuleFn => async ({ args }:
 };
 
 export const registerModule = async ({ bus }: PluginOptions, pluginConfig: Config): Promise<void> => {
-  const { register } = await bus('module/registry');
+  const registry = await bus('module/registry');
 
-  register(type, meta, runModule(pluginConfig));
+  registry.register(type, meta, runModule(pluginConfig));
 };

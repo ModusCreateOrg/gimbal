@@ -10,7 +10,6 @@ Gimbal is split up into different chunks:
 - [command](./command): This is the entry point into running things within Gimbal.
 - [config](./config): Handles loading and parsing configuration files.
 - [event](./event): Gimbal fires events internally that allows other things to listen to and enact on.
-- [logger](./logger): Gimbal logs messages out and the logger is what handles this.
 - [module](./module): Modules are the actual things that run different audits.
 - [output](./output): As the name suggests, these will output to the cli and to files on disk.
 - [utils](./utils): A location of other utilities.

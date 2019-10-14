@@ -80,8 +80,8 @@ const checkSizeThreshold = (item: LastReportItem, config: Config, meta: Meta): I
 
 const getThresholdType = async (item: LastReportItem, pluginOptions: PluginOptions): Promise<Types | void> => {
   const { bus } = pluginOptions;
-  const { getMeta } = await bus('module/registry');
-  const meta = getMeta(item.type);
+  const registry = await bus('module/registry');
+  const meta = registry.getMeta(item.type);
 
   if (!meta) {
     return undefined;
@@ -123,9 +123,9 @@ export const doesItemFail = async (
   }
 
   const { bus } = pluginOptions;
-  const { getMeta } = await bus('module/registry');
+  const registry = await bus('module/registry');
 
-  const meta = getMeta(item.type);
+  const meta = registry.getMeta(item.type);
 
   if (!meta) {
     return false;

@@ -1,6 +1,7 @@
 import isCI from 'is-ci';
 import { finishSpinner as finishSpinnerCI, startSpinner as startSpinnerCI } from './ci';
 import { addSpinner as addSpinnerCLI, finishSpinner as finishSpinnerCLI, startSpinner as startSpinnerCLI } from './cli';
+import logger from './logger';
 
 import { SpinniesOptions } from '@/typings/logger';
 
@@ -37,3 +38,7 @@ export const finishSpinner = (name: string, success: boolean, text = ''): void =
     finishSpinnerCLI(name, success, output, text);
   }
 };
+
+export * from './logger';
+
+export default logger;

@@ -1,10 +1,10 @@
 import HeapSnapshot from '@/module/heap-snapshot';
-import { register } from '@/module/registry';
+import registry from '@/module/registry';
 import { Report } from '@/typings/command';
 import { Options } from '@/typings/module/registry';
 import meta from './meta';
 
-register(
+registry.register(
   'heap-snapshot',
   meta,
   async ({ args, chrome, url }: Options): Promise<Report> => {

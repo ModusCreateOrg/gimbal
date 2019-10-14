@@ -28,6 +28,7 @@
       "${workspaceFolder}/examples/${input:appInput}"
     ],
     "env": {
+      "CIRCLECI": "true",
       "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
     },
     "skipFiles": [

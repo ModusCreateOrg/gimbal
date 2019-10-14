@@ -1,9 +1,9 @@
+import Logger from '@modus/gimbal-core/lib/logger';
 import { mkdirp, resolvePath, writeFile } from '@modus/gimbal-core/lib/utils/fs';
 import { ParsedArgs } from 'minimist';
 import path from 'path';
 import Config from '@/config';
 import EventEmitter from '@/event';
-import Logger from '@/logger';
 import { Report } from '@/typings/command';
 import {
   FileWriteStartEvent,
