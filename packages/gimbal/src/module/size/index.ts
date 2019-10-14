@@ -5,6 +5,7 @@ import deepmerge from 'deepmerge';
 import globby from 'globby';
 import gzipSize from 'gzip-size';
 import minimatch from 'minimatch';
+import { ParsedArgs } from 'minimist';
 import Config from '@/config';
 import EventEmitter from '@/event';
 import { Report } from '@/typings/command';
@@ -17,7 +18,6 @@ import {
   ReportStartEvent,
   ReportEndEvent,
 } from '@/typings/module/size';
-import { CommandOptions } from '@/typings/utils/command';
 import defaultConfig from './default-config';
 import parseReport from './output';
 
@@ -44,21 +44,13 @@ const getFileSize = async (path: string, compression: CompressionMechanisms): Pr
 
 const getDirSize = async (path: string): Promise<number> => (await getDirectorySize(path)) as number;
 
-const findMatchingThreshold = (
-  filePath: string,
-  configObject: SizeConfig,
-  options: CommandOptions,
-): SizeConfigs | void =>
+const findMatchingThreshold = (filePath: string, configObject: SizeConfig, args: ParsedArgs): SizeConfigs | void =>
   configObject.threshold.find((threshold: SizeConfigs): boolean =>
-    minimatch(filePath, resolvePath(options.cwd, threshold.path)),
+    minimatch(filePath, resolvePath(args.cwd, threshold.path)),
   );
 
-const getResult = async (
-  filePath: string,
-  configObject: SizeConfig,
-  options: CommandOptions,
-): Promise<FileResult | void> => {
-  const threshold = findMatchingThreshold(filePath, configObject, options);
+const getResult = async (filePath: string, configObject: SizeConfig, args: ParsedArgs): Promise<FileResult | void> => {
+  const threshold = findMatchingThreshold(filePath, configObject, args);
 
   if (threshold) {
     const maxSizeBytes = bytes(threshold.maxSize);
@@ -75,7 +67,7 @@ const getResult = async (
       maxSize: threshold.maxSize,
       sizeBytes: size,
       size: bytes(size),
-      thresholdPath: resolvePath(options.cwd, threshold.path),
+      thresholdPath: resolvePath(args.cwd, threshold.path),
     };
   }
 
@@ -85,7 +77,7 @@ const getResult = async (
 const arrayMerge = (
   destinationArray: SizeConfigs[],
   sourceArray: SizeConfigs[],
-  { cwd }: CommandOptions,
+  { cwd }: ParsedArgs,
 ): SizeConfigs[] => {
   const newDestinationArray = destinationArray.slice();
 
@@ -111,19 +103,19 @@ const arrayMerge = (
 };
 
 const sizeModule = async (
-  options: CommandOptions,
+  args: ParsedArgs,
   config: SizeConfig | SizeConfigs[] = Config.get('configs.size', []),
 ): Promise<Report> => {
-  const { cwd } = options;
-  const configObject = deepmerge(defaultConfig(options), Array.isArray(config) ? { threshold: config } : config, {
+  const { cwd } = args;
+  const configObject = deepmerge(defaultConfig(args), Array.isArray(config) ? { threshold: config } : config, {
     arrayMerge(destinationArray: SizeConfigs[], sourceArray: SizeConfigs[]): SizeConfigs[] {
-      return arrayMerge(destinationArray, sourceArray, options);
+      return arrayMerge(destinationArray, sourceArray, args);
     },
   });
 
   const auditStartEvent: AuditStartEvent = {
     config: configObject,
-    options,
+    args,
   };
 
   await EventEmitter.fire(`module/size/audit/start`, auditStartEvent);
@@ -133,32 +125,32 @@ const sizeModule = async (
   );
   const paths = await globby(pathsGlobs, { expandDirectories: false, onlyFiles: false });
   const raw: (FileResult | void)[] = await Promise.all(
-    paths.map((filePath: string): Promise<FileResult | void> => getResult(filePath, configObject, options)),
+    paths.map((filePath: string): Promise<FileResult | void> => getResult(filePath, configObject, args)),
   );
   const audit: FileResult[] = raw.filter(Boolean) as FileResult[];
 
   const auditEndEvent: AuditEndEvent = {
+    args,
     audit,
     config: configObject,
-    options,
   };
 
   await EventEmitter.fire(`module/size/audit/end`, auditEndEvent);
 
   const reportStartEvent: ReportStartEvent = {
+    args,
     audit,
     config: configObject,
-    options,
   };
 
   await EventEmitter.fire(`module/size/report/start`, reportStartEvent);
 
-  const report = parseReport(audit, options);
+  const report = parseReport(audit, args);
 
   const reportEndEvent: ReportEndEvent = {
     audit,
+    args,
     config: configObject,
-    options,
     report,
   };
 

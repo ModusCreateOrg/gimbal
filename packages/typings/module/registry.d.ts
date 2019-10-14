@@ -1,9 +1,9 @@
+import { ParsedArgs } from 'minimist';
 import { Report } from '@/typings/command';
 import { Meta } from '@/typings/module';
-import { CommandOptions } from '@/typings/utils/command';
 
 export interface Options {
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   [name: string]: any; // any to allow anything else to be on this options object
 }

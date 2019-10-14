@@ -1,7 +1,7 @@
 import checkThreshold from '@modus/gimbal-core/lib/utils/threshold';
+import { ParsedArgs } from 'minimist';
 import { Report, ReportItem } from '@/typings/command';
 import { Config as HeapSnapshotConfig, HeapMetrics } from '@/typings/module/heap-snapshot';
-import { CommandOptions } from '@/typings/utils/command';
 
 const keysToCareAbout = [
   'Documents',
@@ -15,8 +15,8 @@ const keysToCareAbout = [
 
 const type = 'heap-snapshot';
 
-const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig, options: CommandOptions): Report => {
-  const { checkThresholds } = options;
+const parseReport = (raw: HeapMetrics, { threshold }: HeapSnapshotConfig, args: ParsedArgs): Report => {
+  const { checkThresholds } = args;
   let success = true;
 
   const data: ReportItem[] = keysToCareAbout.map(

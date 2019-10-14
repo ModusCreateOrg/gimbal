@@ -1,6 +1,6 @@
+import { ParsedArgs } from 'minimist';
 import { Metrics, Page } from 'puppeteer';
 import { Report } from '@/typings/command';
-import { CommandOptions } from '@/typings/utils/command';
 import { AdvancedThreshold } from '@/typings/utils/threshold';
 
 export interface Config {
@@ -12,47 +12,35 @@ export interface HeapMetrics extends Metrics {
 }
 
 export interface NavigationStartEvent {
+  args: ParsedArgs;
   config: Config;
   page: Page;
-  options: CommandOptions;
   url: string;
 }
 
-export interface NavigationEndEvent {
-  config: Config;
-  page: Page;
-  options: CommandOptions;
+export interface NavigationEndEvent extends NavigationStartEvent {
   url: string;
 }
 
 export interface AuditStartEvent {
+  args: ParsedArgs;
   config: Config;
   page: Page;
-  options: CommandOptions;
   url: string;
 }
 
-export interface AuditEndEvent {
+export interface AuditEndEvent extends AuditStartEvent {
   audit: Metrics;
-  config: Config;
-  page: Page;
-  options: CommandOptions;
-  url: string;
 }
 
 export interface ReportStartEvent {
+  args: ParsedArgs;
   audit: Metrics;
   config: Config;
   page: Page;
-  options: CommandOptions;
   url: string;
 }
 
-export interface ReportEndEvent {
-  audit: Metrics;
-  config: Config;
-  page: Page;
-  options: CommandOptions;
+export interface ReportEndEvent extends ReportStartEvent {
   report: Report;
-  url: string;
 }

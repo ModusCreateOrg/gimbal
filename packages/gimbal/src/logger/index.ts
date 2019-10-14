@@ -30,8 +30,17 @@ const isLevelAllowed = (level: string): boolean => {
   return requested > -1 && requested >= allowed;
 };
 
-/* eslint-disable-next-line no-console */
-const log = (...logs: LoggerArgs): void => console.log(...logs);
+const log = (...logs: LoggerArgs): void =>
+  /* eslint-disable-next-line no-console */
+  console.log(
+    ...logs.map((item: LoggerArgs): string | LoggerArgs => {
+      if (item instanceof Error && item.stack) {
+        return item.stack;
+      }
+
+      return item;
+    }),
+  );
 
 // logs out the passed string with indentation.  The indentation is calculated
 // by multiplying the passed indent value and $indentLevel

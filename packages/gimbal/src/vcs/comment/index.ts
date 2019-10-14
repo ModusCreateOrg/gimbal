@@ -1,3 +1,4 @@
+import { ParsedArgs } from 'minimist';
 import whichCI from '@/ci';
 import Config from '@/config';
 import EventEmitter from '@/event';
@@ -5,7 +6,6 @@ import { namedLogger } from '@/logger';
 import { outputTable } from '@/output/markdown';
 import { filterReportItemsFailures } from '@/output/filter';
 import { Report, ReportItem } from '@/typings/command';
-import { CommandOptions } from '@/typings/utils/command';
 import {
   CommentBuildStartEvent,
   CommentBuildEndEvent,
@@ -21,11 +21,7 @@ const logger = namedLogger('gimbal/vcs/comment');
 
 const noFailuresText = 'No Failures';
 
-const renderItem = async (
-  reportItem: ReportItem,
-  commandOptions: CommandOptions,
-  comment: Comment,
-): Promise<string> => {
+const renderItem = async (reportItem: ReportItem, args: ParsedArgs, comment: Comment): Promise<string> => {
   if (!reportItem.data) {
     return '';
   }
@@ -36,7 +32,7 @@ const renderItem = async (
   );
 
   const commentRenderTableStartEvent: CommentRenderTableStartEvent = {
-    commandOptions,
+    args,
     reportItem,
   };
 
@@ -55,7 +51,7 @@ const renderItem = async (
         reportItem.data.map(
           async (childItem: ReportItem): Promise<void> => {
             if (!onlyFailures || (onlyFailures && !childItem.success)) {
-              const rendered = await outputTable(childItem, commandOptions);
+              const rendered = await outputTable(childItem, args);
 
               buffered.push(`### ${childItem.label}`, rendered);
             }
@@ -70,7 +66,7 @@ const renderItem = async (
   } else {
     const rendered = await outputTable(
       onlyFailures && reportItem ? (filterReportItemsFailures(reportItem as ReportItem) as ReportItem) : reportItem,
-      commandOptions,
+      args,
     );
 
     output.push(`## ${reportItem.label}`, rendered);
@@ -79,7 +75,7 @@ const renderItem = async (
   const renderedTable = output.join('\n\n');
 
   const commentRenderTableEndEvent: CommentRenderTableEndEvent = {
-    commandOptions,
+    args,
     renderedTable,
     reportItem,
   };
@@ -95,9 +91,9 @@ ${renderedTable}
 </details>`;
 };
 
-const vcsComment = async (report: Report, commandOptions: CommandOptions): Promise<void> => {
+const vcsComment = async (report: Report, args: ParsedArgs): Promise<void> => {
   if (report.data) {
-    const comment = Config.get('configs.comment', commandOptions.comment);
+    const comment = Config.get('configs.comment', args.comment);
 
     if (comment) {
       const ci = whichCI();
@@ -119,9 +115,7 @@ const vcsComment = async (report: Report, commandOptions: CommandOptions): Promi
           await EventEmitter.fire(`vcs/comment/build/start`, commentBuildStartEvent);
 
           const renderedReport = report.data
-            ? await Promise.all(
-                report.data.map((item: ReportItem): Promise<string> => renderItem(item, commandOptions, comment)),
-              )
+            ? await Promise.all(report.data.map((item: ReportItem): Promise<string> => renderItem(item, args, comment)))
             : [];
 
           let markdown = renderedReport.join('\n\n').trim();

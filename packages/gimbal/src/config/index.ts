@@ -1,10 +1,10 @@
 import { exists, resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import deepmerge from 'deepmerge';
 import globby from 'globby';
+import { ParsedArgs } from 'minimist';
 import { extname } from 'path';
 import EventEmitter from '../event';
 import { Config as ConfigType, LoaderMap, LoadStartEvent, LoadEndEvent } from '@/typings/config';
-import { CommandOptions } from '@/typings/utils/command';
 import jsLoader from './loader/js';
 import yamlLoader from './loader/yaml';
 import './plugin';
@@ -47,37 +47,32 @@ class Config {
     return this.loading;
   }
 
-  public async load(dir: string, commandOptions: CommandOptions, force = false): Promise<ConfigType | void> {
+  public async load(dir: string, args: ParsedArgs, force = false): Promise<ConfigType> {
     if (this.loaded && !force) {
       throw new Error('Configuration is already loaded!');
     }
 
-    if (commandOptions.config) {
-      const file = resolvePath(commandOptions.cwd, commandOptions.config);
+    if (args.config) {
+      const file = resolvePath(args.cwd, args.config);
 
-      if (await exists(file)) {
-        return this.loadFile(dir, file, commandOptions, force);
-      }
-
-      return undefined;
+      return this.doLoad(dir, file, args, force);
     }
 
     const glob = resolvePath(dir, this.CONFIG_FILE_GLOB);
     const [file] = await globby(glob);
 
-    if (!file) {
-      return undefined;
-    }
-
-    return this.loadFile(dir, file, commandOptions, force);
+    return this.doLoad(dir, file, args, force);
   }
 
-  public async loadFile(
-    dir: string,
-    file: string,
-    commandOptions: CommandOptions,
-    force: boolean,
-  ): Promise<ConfigType | void> {
+  private async doLoad(dir: string, file: string, args: ParsedArgs, force: boolean): Promise<ConfigType> {
+    if (file && (await exists(file))) {
+      await this.loadFile(dir, file, args, force);
+    }
+
+    return this.mergeArgs(args);
+  }
+
+  private async loadFile(dir: string, file: string, args: ParsedArgs, force: boolean): Promise<ConfigType | void> {
     const ext = extname(file).substr(1);
     const loader = this.LOADERS[ext];
 
@@ -88,8 +83,8 @@ class Config {
     this.loading = true;
 
     const loadStartEvent: LoadStartEvent = {
+      args,
       Config: this,
-      commandOptions,
       dir,
       file,
       force,
@@ -100,8 +95,8 @@ class Config {
     this.config = await loader(file);
 
     const loadEndEvent: LoadEndEvent = {
+      args,
       Config: this,
-      commandOptions,
       config: this.config,
       dir,
       file,
@@ -159,6 +154,53 @@ class Config {
      * which could pose an issue.
      */
     return this.maybeMerge(defaultValue, obj);
+  }
+
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  public set(property: string, value: any): this {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    let obj: any = this.ensureConfig();
+
+    const parts = property
+      /**
+       * Splits the property for dot and bracket notations:
+       *
+       *  - foo.bar
+       *  - foo[1]
+       *  - foo[0].bar
+       *  - foo[0][1]
+       *  - foo[0][3].bar.1.baz
+       *  - foo['bar][1].baz
+       *  - foo.bar[0]["baz"]
+       *
+       * For brackets, it will split on the bracket so the
+       * part is whatever is between the brackets (number for
+       * array, even text for object).
+       */
+      .split(this.PROP_SPLIT_RE)
+      /**
+       * Removes any empty strings that can occur
+       * with bracket notation.
+       */
+      .filter(Boolean);
+
+    while (parts.length > 0) {
+      const prop = parts.shift() as string;
+
+      if (parts.length === 0) {
+        obj[prop] = value;
+
+        break;
+      }
+
+      if (obj[prop] == null) {
+        obj[prop] = {};
+      }
+
+      obj = obj[prop];
+    }
+
+    return this;
   }
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -221,6 +263,31 @@ class Config {
     }
 
     return defaultValue;
+  }
+
+  private ensureConfig(): ConfigType {
+    if (!this.config) {
+      this.config = {};
+    }
+
+    return this.config;
+  }
+
+  private mergeArgs(args: ParsedArgs): ConfigType {
+    const config = this.ensureConfig();
+
+    Object.keys(args)
+      .filter((arg: string): boolean => arg !== '_')
+      .forEach((arg: string): void => {
+        const property = `configs.${arg}`;
+
+        // only apply arg value if config is not set in config file
+        if (this.get(property) == null) {
+          this.set(property, args[arg]);
+        }
+      });
+
+    return config;
   }
 }
 

@@ -1,13 +1,13 @@
 import TableComp from '@modus/gimbal-core/lib/components/Table';
 import { sectionHeading, successOrFailure } from '@modus/gimbal-core/lib/utils/colors';
+import { ParsedArgs } from 'minimist';
 import { Report, ReportItem } from '@/typings/command';
 import { Config, Data, Table } from '@/typings/components/Table';
 import { CliOutputOptions } from '@/typings/output/cli';
-import { CommandOptions } from '@/typings/utils/command';
 
 const successColorizeRenderer = (value: Data, item: Data): string => successOrFailure(value, item.success);
 
-export const createTable = (commandOptions: CommandOptions, config?: Config): TableComp => {
+export const createTable = (args: ParsedArgs, config?: Config): TableComp => {
   const table = new TableComp({
     columns: [
       {
@@ -37,7 +37,7 @@ export const createTable = (commandOptions: CommandOptions, config?: Config): Ta
     ...config,
   });
 
-  if (commandOptions.checkThresholds) {
+  if (args.checkThresholds) {
     table.addColumn({
       header: 'Threshold',
       key: 'threshold',
@@ -66,8 +66,8 @@ export const createTable = (commandOptions: CommandOptions, config?: Config): Ta
   return table;
 };
 
-export const outputTable = (report: Report, commandOptions: CommandOptions, options?: CliOutputOptions): Table => {
-  const table = options && options.table ? options.table : createTable(commandOptions);
+export const outputTable = (report: Report, args: ParsedArgs, options?: CliOutputOptions): Table => {
+  const table = options && options.table ? options.table : createTable(args);
 
   if (report.data) {
     report.data.forEach((item: ReportItem): void => {

@@ -7,12 +7,12 @@ import meta from './meta';
 register(
   'lighthouse',
   meta,
-  ({ chrome, commandOptions, url }: Options): Promise<Report> =>
+  ({ args, chrome, url }: Options): Promise<Report> =>
     Lighthouse(
       url,
       {
         chromePort: chrome.port as string,
       },
-      commandOptions,
+      args,
     ),
 );

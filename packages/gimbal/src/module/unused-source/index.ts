@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge';
 import minimatch from 'minimatch';
+import { ParsedArgs } from 'minimist';
 import { CoverageEntry, Page } from 'puppeteer';
 import { URL } from 'url';
 import Config from '@/config';
@@ -19,7 +20,6 @@ import {
   ReportStartEvent,
   ReportEndEvent,
 } from '@/typings/module/unused-source';
-import { CommandOptions } from '@/typings/utils/command';
 import defaultConfig from './default-config';
 import parseReport from './output';
 
@@ -128,10 +128,10 @@ const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[])
 const UnusedCSS = async (
   page: Page,
   url: string,
-  options: CommandOptions,
+  args: ParsedArgs,
   config: UnusedSourceConfig = Config.get('configs.unused-source', {}),
 ): Promise<Report> => {
-  const { checkThresholds } = options;
+  const { checkThresholds } = args;
   const sourceConfig = deepmerge(defaultConfig, config, {
     arrayMerge,
   });
@@ -141,8 +141,8 @@ const UnusedCSS = async (
     : sourceConfig.threshold;
 
   const auditStartEvent: AuditStartEvent = {
+    args,
     config: sourceConfig,
-    options,
     page,
     url,
   };
@@ -152,8 +152,8 @@ const UnusedCSS = async (
   await Promise.all([page.coverage.startCSSCoverage(), page.coverage.startJSCoverage()]);
 
   const navigateStartEvent: NavigateStartEvent = {
+    args,
     config: sourceConfig,
-    options,
     page,
     url,
   };
@@ -163,8 +163,8 @@ const UnusedCSS = async (
   await page.goto(url);
 
   const navigateEndEvent: NavigateEndEvent = {
+    args,
     config: sourceConfig,
-    options,
     page,
     url,
   };
@@ -177,10 +177,10 @@ const UnusedCSS = async (
   ]);
 
   const auditEndEvent: AuditEndEvent = {
+    args,
     config: sourceConfig,
     css,
     js,
-    options,
     page,
     url,
   };
@@ -216,10 +216,10 @@ const UnusedCSS = async (
   };
 
   const auditParseStartEvent: AuditParseStartEvent = {
+    args,
     config: sourceConfig,
     css,
     js,
-    options,
     page,
     url,
   };
@@ -243,10 +243,10 @@ const UnusedCSS = async (
   };
 
   const auditParseEndEvent: AuditParseEndEvent = {
+    args,
     config: sourceConfig,
     css,
     js,
-    options,
     pageTotal,
     page,
     parsedCss,
@@ -259,20 +259,20 @@ const UnusedCSS = async (
   const audit: Entry[] = [pageTotal, ...parsedCss, ...parsedJs];
 
   const reportStartEvent: ReportStartEvent = {
+    args,
     audit,
     config,
-    options,
     url,
   };
 
   await EventEmitter.fire(`module/unused-source/report/start`, reportStartEvent);
 
-  const report = parseReport(audit, options);
+  const report = parseReport(audit, args);
 
   const reportEndEvent: ReportEndEvent = {
+    args,
     audit,
     config,
-    options,
     report,
     url,
   };

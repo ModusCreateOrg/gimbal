@@ -1,6 +1,7 @@
 import deepmerge from 'deepmerge';
 // @ts-ignore
 import lighthouse from 'lighthouse';
+import { ParsedArgs } from 'minimist';
 import Config from '@/config';
 import EventEmitter from '@/event';
 import { Report } from '@/typings/command';
@@ -13,7 +14,6 @@ import {
   ReportStartEvent,
   ReportEndEvent,
 } from '@/typings/module/lighthouse';
-import { CommandOptions } from '@/typings/utils/command';
 import defaultConfig from './default-config';
 import parseReport from './output';
 
@@ -25,7 +25,7 @@ const defaults = {
 const lighthouseRunner = async (
   url: string,
   userOptions: Options,
-  commandOptions: CommandOptions,
+  args: ParsedArgs,
   config: LighthouseConfig = Config.get('configs.lighthouse', defaultConfig),
 ): Promise<Report> => {
   // Build options but let users change the defaults if needed
@@ -48,12 +48,12 @@ const lighthouseRunner = async (
     ),
   };
 
-  if ((config.outputHtml || commandOptions.lighthouseOutputHtml) && options.output.indexOf('html') === -1) {
+  if ((config.outputHtml || args.lighthouseOutputHtml) && options.output.indexOf('html') === -1) {
     options.output.push('html');
 
     if (!config.outputHtml) {
       /* eslint-disable-next-line no-param-reassign  */
-      config.outputHtml = commandOptions.lighthouseOutputHtml as string;
+      config.outputHtml = args.lighthouseOutputHtml as string;
     }
   }
 
@@ -92,7 +92,7 @@ const lighthouseRunner = async (
 
   await EventEmitter.fire(`module/lighthouse/report/start`, reportStartEvent);
 
-  const report = await parseReport(audit, config, commandOptions);
+  const report = await parseReport(audit, config, args);
 
   const reportEndEvent: ReportEndEvent = {
     audit,

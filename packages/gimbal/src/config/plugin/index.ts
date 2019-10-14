@@ -1,17 +1,12 @@
-import program from 'commander';
 import deepmerge from 'deepmerge';
+import { ParsedArgs } from 'minimist';
 import resolver from '@/config/resolver';
 import EventEmitter from '@/event';
 import { PluginConfig, Plugin, PluginOptions } from '@/typings/config/plugin';
-import { CommandOptions } from '@/typings/utils/command';
 import { LoadEndEvent } from '@/typings/config';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 const bus = async (name: string): Promise<any> => {
-  if (name === 'commander') {
-    return program;
-  }
-
   const imported = await import(`${__dirname}/../../${name}`);
 
   if (imported.default) {
@@ -36,7 +31,7 @@ const map: Map = {};
 const parsePlugins = async (
   plugins: (string | PluginConfig)[],
   dir: string,
-  commandOptions: CommandOptions,
+  args: ParsedArgs,
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 ): Promise<any[]> => {
   const pluginConfigs = await Promise.all(
@@ -73,7 +68,7 @@ const parsePlugins = async (
         // it that could cause issues.
         // Also return it in case it's a promise, we can
         // wait for it.
-        return func({ ...options, commandOptions: { ...commandOptions }, dir }, deepmerge(pluginConfig, {}));
+        return func({ ...options, args: { ...args }, dir }, deepmerge(pluginConfig, {}));
       },
     ),
   );
@@ -82,8 +77,8 @@ const parsePlugins = async (
 EventEmitter.on(
   'config/load/end',
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  async (_eventName: string, { commandOptions, config: { plugins }, dir }: LoadEndEvent): Promise<void | any[]> =>
-    plugins && plugins.length ? parsePlugins(plugins, dir, commandOptions) : undefined,
+  async (_eventName: string, { args, config: { plugins }, dir }: LoadEndEvent): Promise<void | any[]> =>
+    plugins && plugins.length ? parsePlugins(plugins, dir, args) : undefined,
 );
 
 export default parsePlugins;

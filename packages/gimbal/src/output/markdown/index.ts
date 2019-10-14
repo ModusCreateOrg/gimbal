@@ -1,11 +1,11 @@
 import { TableInstanceOptions } from 'cli-table3';
+import { ParsedArgs } from 'minimist';
 import { createTable } from '../cli';
 import EventEmitter from '@/event';
 import { Report, ReportItem } from '@/typings/command';
 import { Config } from '@/typings/components/Table';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { MarkdownRenderTableEndEvent, MarkdownRenderTableStartEvent } from '@/typings/output/markdown';
-import { CommandOptions } from '@/typings/utils/command';
 
 const markdownTableOptions = {
   chars: {
@@ -31,13 +31,9 @@ export const tableConfig: Config = {
   options: markdownTableOptions as TableInstanceOptions,
 };
 
-export const outputTable = async (
-  report: Report,
-  commandOptions: CommandOptions,
-  options?: CliOutputOptions,
-): Promise<string> => {
+export const outputTable = async (report: Report, args: ParsedArgs, options?: CliOutputOptions): Promise<string> => {
   const hasTable = options && options.table;
-  const table = hasTable ? (options as CliOutputOptions).table : createTable(commandOptions, tableConfig);
+  const table = hasTable ? (options as CliOutputOptions).table : createTable(args, tableConfig);
 
   if (!table) {
     return '';
@@ -45,7 +41,7 @@ export const outputTable = async (
 
   if (!hasTable) {
     const commentRenderTableStartEvent: MarkdownRenderTableStartEvent = {
-      commandOptions,
+      args,
       options,
       report,
       table,
@@ -66,7 +62,7 @@ export const outputTable = async (
 
   if (!hasTable) {
     const commentRenderTableStartEvent: MarkdownRenderTableEndEvent = {
-      commandOptions,
+      args,
       markdown,
       options,
       report,
@@ -79,7 +75,7 @@ export const outputTable = async (
   return markdown;
 };
 
-const MarkdownOutput = async (report: Report, commandOptions: CommandOptions): Promise<string> => {
+const MarkdownOutput = async (report: Report, args: ParsedArgs): Promise<string> => {
   if (!report.data) {
     return '';
   }
@@ -97,7 +93,7 @@ const MarkdownOutput = async (report: Report, commandOptions: CommandOptions): P
           await Promise.all(
             item.data.map(
               async (childItem: ReportItem): Promise<void> => {
-                const rendered = await outputTable(childItem, commandOptions);
+                const rendered = await outputTable(childItem, args);
 
                 buffered.push(`### ${childItem.label}`, rendered);
               },
@@ -106,7 +102,7 @@ const MarkdownOutput = async (report: Report, commandOptions: CommandOptions): P
 
           output.push(...buffered);
         } else {
-          const rendered = await outputTable(item, commandOptions);
+          const rendered = await outputTable(item, args);
 
           output.push(`## ${item.label}`, rendered);
         }

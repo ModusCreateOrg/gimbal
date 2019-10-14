@@ -1,8 +1,8 @@
+import { ParsedArgs } from 'minimist';
 // eslint-disable-next-line
 import { CoverageEntry, Page } from 'puppeteer';
 import { Report } from '@/typings/command';
 import { SizeConfigs } from '@/typings/module/size';
-import { CommandOptions } from '@/typings/utils/command';
 
 export interface CoverageRange {
   end: number;
@@ -37,67 +37,50 @@ export interface UnusedSourceConfig {
 }
 
 export interface NavigateStartEvent {
+  args: ParsedArgs;
   config: UnusedSourceConfig;
-  options: CommandOptions;
   page: Page;
   url: string;
 }
 
-export interface NavigateEndEvent {
-  config: UnusedSourceConfig;
-  options: CommandOptions;
-  page: Page;
+export interface NavigateEndEvent extends NavigateStartEvent {
   url: string;
 }
 
 export interface AuditStartEvent {
+  args: ParsedArgs;
   config: UnusedSourceConfig;
-  options: CommandOptions;
   page: Page;
   url: string;
 }
 
-export interface AuditEndEvent {
-  config: UnusedSourceConfig;
+export interface AuditEndEvent extends AuditStartEvent {
   css: CoverageEntry[];
   js: CoverageEntry[];
-  options: CommandOptions;
-  page: Page;
-  url: string;
 }
 
 export interface AuditParseStartEvent {
+  args: ParsedArgs;
   config: UnusedSourceConfig;
   css: CoverageEntry[];
   js: CoverageEntry[];
-  options: CommandOptions;
   page: Page;
   url: string;
 }
 
-export interface AuditParseEndEvent {
-  config: UnusedSourceConfig;
-  css: CoverageEntry[];
-  js: CoverageEntry[];
-  options: CommandOptions;
+export interface AuditParseEndEvent extends AuditParseStartEvent {
   pageTotal: Entry;
-  page: Page;
   parsedCss: Entry[];
   parsedJs: Entry[];
-  url: string;
 }
 
 export interface ReportStartEvent {
+  args: ParsedArgs;
   audit: Entry[];
   config: UnusedSourceConfig;
-  options: CommandOptions;
   url: string;
 }
 
-export interface ReportEndEvent {
-  audit: Entry[];
-  config: UnusedSourceConfig;
-  options: CommandOptions;
+export interface ReportEndEvent extends ReportStartEvent {
   report: Report;
-  url: string;
 }

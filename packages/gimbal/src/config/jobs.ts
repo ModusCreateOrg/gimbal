@@ -1,15 +1,15 @@
 import spawn from '@modus/gimbal-core/lib/utils/spawn';
 import { splitOnWhitespace } from '@modus/gimbal-core/lib/utils/string';
+import { ParsedArgs } from 'minimist';
 import EventEmitter from '@/event';
 import Logger from '@/logger';
 import { ArrayJob, Job, JobRet, JobStartEvent, JobEndEvent, JobsStartEvent, JobsEndEvent } from '@/typings/config/jobs';
-import { CommandOptions } from '@/typings/utils/command';
 import { CmdSpawnRet } from '@/typings/utils/spawn';
 import { CHILD_GIMBAL_PROCESS } from '@/utils/constants';
 
 const prependDashes = (option: string): string => `--${option.replace(/^-+/, '')}`;
 
-const processStringForm = async (job: string, commandOptions: CommandOptions): Promise<JobRet> => {
+const processStringForm = async (job: string, args: ParsedArgs): Promise<JobRet> => {
   const rest = splitOnWhitespace(job);
 
   // should never happen but an empty string was passed
@@ -27,20 +27,20 @@ const processStringForm = async (job: string, commandOptions: CommandOptions): P
     ? []
     : ['-r', 'ts-node/register', '-r', 'tsconfig-paths/register'];
 
-  const args = [node, ...runtimeArgs, script, ...rest];
+  const jobArgs = [node, ...runtimeArgs, script, ...rest];
 
   const jobStartEvent: JobStartEvent = {
     args,
-    commandOptions,
+    jobArgs,
   };
 
   await EventEmitter.fire('config/job/start', jobStartEvent);
 
   try {
     const ret = await spawn(
-      args,
+      jobArgs,
       {
-        cwd: commandOptions.cwd,
+        cwd: args.cwd,
         env: {
           ...process.env,
           [CHILD_GIMBAL_PROCESS]: 'true',
@@ -54,7 +54,7 @@ const processStringForm = async (job: string, commandOptions: CommandOptions): P
 
     const jobEndEvent: JobEndEvent = {
       args,
-      commandOptions,
+      jobArgs,
       ret,
     };
 
@@ -64,7 +64,7 @@ const processStringForm = async (job: string, commandOptions: CommandOptions): P
   } catch (error) {
     const jobEndEvent: JobEndEvent = {
       args,
-      commandOptions,
+      jobArgs,
       error,
     };
 
@@ -75,7 +75,7 @@ const processStringForm = async (job: string, commandOptions: CommandOptions): P
   }
 };
 
-const processArrayForm = (job: ArrayJob, commandOptions: CommandOptions): Promise<JobRet> => {
+const processArrayForm = (job: ArrayJob, args: ParsedArgs): Promise<JobRet> => {
   const splitCommand = splitOnWhitespace(job[0]);
   const [command] = splitCommand;
 
@@ -89,7 +89,7 @@ const processArrayForm = (job: ArrayJob, commandOptions: CommandOptions): Promis
         command,
       );
 
-      return processStringForm(commandString, commandOptions);
+      return processStringForm(commandString, args);
     }
   }
 
@@ -122,9 +122,9 @@ const handleResults = (ret: JobRet[]): JobRet[] => {
   return ret;
 };
 
-const processJobs = async (jobs: Job[], commandOptions: CommandOptions): Promise<JobRet[]> => {
+const processJobs = async (jobs: Job[], args: ParsedArgs): Promise<JobRet[]> => {
   const startEvent: JobsStartEvent = {
-    commandOptions,
+    args,
     jobs,
   };
 
@@ -133,12 +133,12 @@ const processJobs = async (jobs: Job[], commandOptions: CommandOptions): Promise
   const ret: JobRet[] = await Promise.all(
     jobs.map(
       async (job: Job): Promise<CmdSpawnRet | void> =>
-        Array.isArray(job) ? processArrayForm(job, commandOptions) : processStringForm(job, commandOptions),
+        Array.isArray(job) ? processArrayForm(job, args) : processStringForm(job, args),
     ),
   ).then(handleResults);
 
   const endEvent: JobsEndEvent = {
-    commandOptions,
+    args,
     jobs,
     ret,
   };

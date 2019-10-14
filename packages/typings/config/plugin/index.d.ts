@@ -1,9 +1,9 @@
-import { CommandOptions } from '@/typings/utils/command';
+import { ParsedArgs } from 'minimist';
 
 export interface PluginOptions {
+  args?: ParsedArgs;
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   bus: (path: string) => any;
-  commandOptions?: CommandOptions;
   dir: string;
 }
 

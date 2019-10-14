@@ -1,4 +1,4 @@
-import { CommandOptions } from '@/typings/utils/command';
+import { ParsedArgs } from 'minimist';
 import { CmdSpawnRet } from '@/typings/utils/spawn';
 
 export interface Options {
@@ -14,31 +14,29 @@ export type Job = string | ArrayJob;
 export type JobRet = CmdSpawnRet | void;
 
 export interface JobStartEvent {
-  args: string[];
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
+  jobArgs: string[];
 }
 
 export interface JobEndSuccessEvent {
-  args: string[];
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
+  jobArgs: string[];
   ret: CmdSpawnRet;
 }
 
 export interface JobEndFailureEvent {
-  args: string[];
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
+  jobArgs: string[];
   error: Error;
 }
 
 export type JobEndEvent = JobEndSuccessEvent | JobEndFailureEvent;
 
 export interface JobsStartEvent {
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
   jobs: Job[];
 }
 
-export interface JobsEndEvent {
-  commandOptions: CommandOptions;
-  jobs: Job[];
+export interface JobsEndEvent extends JobsStartEvent {
   ret: JobRet[];
 }

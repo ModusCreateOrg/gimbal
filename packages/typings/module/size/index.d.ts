@@ -1,5 +1,5 @@
+import { ParsedArgs } from 'minimist';
 import { Report } from '@/typings/command';
-import { CommandOptions } from '@/typings/utils/command';
 
 export interface SizeConfigs {
   maxSize: string;
@@ -23,25 +23,18 @@ export interface FileResult {
 }
 
 export interface AuditStartEvent {
+  args: ParsedArgs;
   config: SizeConfig;
-  options: CommandOptions;
 }
 
-export interface AuditEndEvent {
+export interface AuditEndEvent extends AuditStartEvent {
   audit: FileResult[];
-  config: SizeConfig;
-  options: CommandOptions;
 }
 
-export interface ReportStartEvent {
+export interface ReportStartEvent extends AuditEndEvent {
   audit: FileResult[];
-  config: SizeConfig;
-  options: CommandOptions;
 }
 
-export interface ReportEndEvent {
-  audit: FileResult[];
-  config: SizeConfig;
-  options: CommandOptions;
+export interface ReportEndEvent extends ReportStartEvent {
   report: Report;
 }

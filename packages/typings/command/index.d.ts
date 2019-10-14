@@ -1,4 +1,4 @@
-import { CommandOptions } from '@/typings/utils/command';
+import { ParsedArgs } from 'minimist';
 
 export type ReportThresholdLimit = 'lower' | 'upper';
 
@@ -34,31 +34,19 @@ export interface Report {
 }
 
 export interface StartEvent {
-  args: string[];
-  commandOptions: CommandOptions;
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  command: any; // would cause circular dependency if imported the command class
+  args: ParsedArgs;
+  command: string;
 }
 
-export interface EndEvent {
-  args: string[];
-  commandOptions: CommandOptions;
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  command: any; // would cause circular dependency if imported the command class
+export interface EndEvent extends StartEvent {
   report: Report;
 }
 
 export interface ActionStartEvent {
-  args: string[];
-  commandOptions: CommandOptions;
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  command: any; // would cause circular dependency if imported the command class
+  args: ParsedArgs;
+  command: string;
 }
 
-export interface ActionEndEvent {
-  args: string[];
-  commandOptions: CommandOptions;
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  command: any; // would cause circular dependency if imported the command class
+export interface ActionEndEvent extends ActionStartEvent {
   report: Report;
 }

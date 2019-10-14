@@ -1,19 +1,21 @@
 // @ts-ignore
 import lighthouse from 'lighthouse';
+import { ParsedArgs } from 'minimist';
 import { Plugin } from '@/typings/config/plugin';
 import { Modules } from '@/typings/module';
 import { Config as HeapSnapshotConfig } from '@/typings/module/heap-snapshot';
 import { SizeConfigs } from '@/typings/module/size';
 import { UnusedSourceConfig } from '@/typings/module/unused-source';
-import { CommandOptions } from '@/typings/utils/command';
 
 export type PluginType = string | Plugin;
 
 export interface Configs {
-  'heap-snapshot': HeapSnapshotConfig;
-  lighthouse: lighthouse.Config.Json;
-  size: SizeConfigs[];
-  'unused-source': UnusedSourceConfig;
+  'heap-snapshot'?: HeapSnapshotConfig;
+  lighthouse?: lighthouse.Config.Json;
+  size?: SizeConfigs[];
+  'unused-source'?: UnusedSourceConfig;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  [name: string]: any;
 }
 
 export interface Outputs {
@@ -42,9 +44,9 @@ export interface LoaderMap {
 }
 
 export interface LoadStartEvent {
+  args: ParsedArgs;
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   Config: any; // would cause circular dependency if imported the command class
-  commandOptions: CommandOptions;
   dir: string;
   file: string;
   force: boolean;

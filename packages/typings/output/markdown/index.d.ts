@@ -1,10 +1,10 @@
+import { ParsedArgs } from 'minimist';
 import { Report } from '@/typings/command';
 import { Table } from '@/typings/components/Table';
 import { CliOutputOptions } from '@/typings/output/cli';
-import { CommandOptions } from '@/typings/utils/command';
 
 export interface MarkdownRenderTableStartEvent {
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
   options?: CliOutputOptions;
   report: Report;
   table: Table;

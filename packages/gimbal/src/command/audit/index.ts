@@ -1,5 +1,6 @@
+import { ParsedArgs } from 'minimist';
 import { addSpinner, finishSpinner, startSpinner } from '@modus/gimbal-core/lib/logger';
-import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
+import { exists, resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import findPort from '@modus/gimbal-core/lib/utils/port';
 import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import Config from '@/config';
@@ -8,7 +9,6 @@ import { get, getMeta } from '@/module/registry';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
 import { Modules } from '@/typings/module';
-import { CommandOptions } from '@/typings/utils/command';
 
 // register built-in modules
 import '@/module/heap-snapshot/register';
@@ -23,7 +23,7 @@ interface AuditOptions {
 
 const didAuditPass = (report?: Report): boolean => !report || report.success;
 
-const doAudit = async (options: AuditOptions, audits: Modules[], commandOptions: CommandOptions): Promise<Report> => {
+const doAudit = async (options: AuditOptions, audits: Modules[], args: ParsedArgs): Promise<Report> => {
   const rets: ReportItem[] = [];
   let success = true;
 
@@ -41,7 +41,7 @@ const doAudit = async (options: AuditOptions, audits: Modules[], commandOptions:
         startSpinner(audit);
 
         const report = await mod({
-          commandOptions,
+          args,
           ...options,
         });
 
@@ -68,7 +68,24 @@ const doAudit = async (options: AuditOptions, audits: Modules[], commandOptions:
   };
 };
 
-const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
+const buildDirs = ['build', 'dist'];
+
+const findBuildDir = async (args: ParsedArgs, dirArr = buildDirs): Promise<string | void> => {
+  const arr = dirArr.slice();
+
+  if (arr.length !== 0) {
+    const dir = arr.shift();
+    const fullPath = resolvePath(args.cwd, dir as string);
+
+    if (await exists(fullPath)) {
+      return fullPath;
+    }
+  }
+
+  return findBuildDir(args, arr);
+};
+
+const audit = async (args: ParsedArgs): Promise<Report | Report[]> => {
   let audits: Modules[] = Config.get('audits');
 
   if (!audits || !audits.length) {
@@ -79,25 +96,33 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
      */
     audits = audits ? [...audits] : [];
 
-    if (options.calculateUnusedSource) {
+    if (args.calculateUnusedSource) {
       audits.push('unused-source');
     }
 
-    if (options.heapSnapshot) {
+    if (args.heapSnapshot) {
       audits.push('heap-snapshot');
     }
 
-    if (options.lighthouse) {
+    if (args.lighthouse) {
       audits.push('lighthouse');
     }
 
-    if (options.size) {
+    if (args.size) {
       audits.push('size');
     }
   }
 
   const servePort = await findPort();
-  const buildDir = resolvePath(options.cwd, options.buildDir as string);
+  const buildDir = await findBuildDir(args);
+
+  if (!buildDir) {
+    throw Error('Could not find a build directory');
+  }
+
+  /* eslint-disable-next-line no-param-reassign */
+  args.buildDir = buildDir;
+
   const serve = new Serve({ port: servePort, public: buildDir });
   const chrome = new Chrome();
 
@@ -111,10 +136,10 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
     await chrome.launch();
   }
 
-  if (Array.isArray(options.route)) {
+  if (args.route.length > 1) {
     const queue = new Queue();
 
-    options.route.forEach((route: string, index: number): void => {
+    args.route.forEach((route: string, index: number): void => {
       const filteredAudits = audits.filter((name: string): boolean => {
         const meta = getMeta(name);
 
@@ -139,7 +164,7 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
               },
               filteredAudits,
               {
-                ...options,
+                ...args,
                 route,
               },
             ),
@@ -154,10 +179,10 @@ const audit = async (options: CommandOptions): Promise<Report | Report[]> => {
     report = await doAudit(
       {
         chrome,
-        url: `http://localhost:${servePort}${options.route}`,
+        url: `http://localhost:${servePort}${args.route[0]}`,
       },
       audits,
-      options,
+      args,
     );
   }
 

@@ -23,7 +23,7 @@
       "tsconfig-paths/register"
     ],
     "args": [
-      "${workspaceFolder}/packages/gimbal/src/index.ts",
+      "${workspaceFolder}/packages/gimbal/src/cli.ts",
       "--cwd",
       "${workspaceFolder}/examples/${input:appInput}"
     ],
@@ -36,7 +36,7 @@
   }, {
     "type": "node",
     "request": "launch",
-    "name": "gimbal audit",
+    "name": "gimbal --help",
     "runtimeArgs": [
       "-r",
       "ts-node/register",
@@ -44,10 +44,28 @@
       "tsconfig-paths/register"
     ],
     "args": [
-      "${workspaceFolder}/packages/gimbal/src/index.ts",
-      "audit",
-      "--cwd",
-      "${workspaceFolder}/examples/${input:appInput}"
+      "${workspaceFolder}/packages/gimbal/src/cli.ts",
+      "--help"
+    ],
+    "env": {
+      "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
+    },
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "gimbal --version",
+    "runtimeArgs": [
+      "-r",
+      "ts-node/register",
+      "-r",
+      "tsconfig-paths/register"
+    ],
+    "args": [
+      "${workspaceFolder}/packages/gimbal/src/cli.ts",
+      "--version"
     ],
     "env": {
       "TS_NODE_PROJECT": "${workspaceFolder}/packages/gimbal/tsconfig.json"
@@ -66,7 +84,7 @@
       "tsconfig-paths/register"
     ],
     "args": [
-      "${workspaceFolder}/packages/gimbal/src/index.ts",
+      "${workspaceFolder}/packages/gimbal/src/cli.ts",
       "--cwd",
       "${workspaceFolder}/../modir"
     ],

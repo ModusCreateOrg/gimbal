@@ -1,7 +1,7 @@
 import { Table } from '@/typings/components/Table';
 import { Report } from '@/typings/command';
 import { CliOutputOptions } from '@/typings/output/cli';
-import { CommandOptions } from '@/typings/utils/command';
+import { ParsedArgs } from 'minimist';
 
 export interface FileWriteStartEvent {
   contents: string;
@@ -16,67 +16,55 @@ export interface FileWriteEndEvent {
 }
 
 export interface CliReportStartEvent {
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
   cliOptions: CliOutputOptions;
   report: Report;
 }
 
 export interface CliReportEndEvent {
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
   report: Report;
   table: Table | void;
 }
 
 export interface CliWriteStartEvent {
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
   report: Report;
   table: Table | void;
 }
 
-export interface CliWriteEndEvent {
-  commandOptions: CommandOptions;
+export interface CliWriteEndEvent extends CliWriteStartEvent {
   contents: string;
-  report: Report;
-  table: Table | void;
 }
 
 export interface HtmlReportStartEvent {
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
   file: string;
   report: Report;
 }
 
-export interface HtmlReportEndEvent {
-  commandOptions: CommandOptions;
+export interface HtmlReportEndEvent extends HtmlReportStartEvent {
   contents: string;
-  file: string;
-  report: Report;
 }
 
 export interface JsonReportStartEvent {
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
   file: string;
   report: Report;
 }
 
-export interface JsonReportEndEvent {
-  commandOptions: CommandOptions;
+export interface JsonReportEndEvent extends JsonReportStartEvent {
   contents: string;
-  file: string;
-  report: Report;
 }
 
 export interface MarkdownReportStartEvent {
-  commandOptions: CommandOptions;
+  args: ParsedArgs;
   file: string;
   report: Report;
 }
 
-export interface MarkdownReportEndEvent {
-  commandOptions: CommandOptions;
+export interface MarkdownReportEndEvent extends MarkdownReportStartEvent {
   contents: string;
-  file: string;
-  report: Report;
 }
 
 export interface OutputItemObject {
@@ -86,4 +74,4 @@ export interface OutputItemObject {
 
 export type OutputItem = string | OutputItemObject;
 
-export type OutputFn = (report: Report, commandOptions: CommandOptions, location: string) => Promise<void>;
+export type OutputFn = (report: Report, args: ParsedArgs, location: string) => Promise<void>;
