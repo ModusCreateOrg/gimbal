@@ -21,50 +21,45 @@ const gimbal = async (args: ParsedArgs): Promise<void> => {
     console.log(gimbalArt);
   }
 
-  const config = await Config.load(args.cwd, args);
+  await Config.load(args.cwd, args);
 
   setFromConfigs();
 
-  if (config.jobs) {
-    // TODO bring back this support
-    logger.log('execute jobs');
-  } else {
-    const startEvent: StartEvent = {
-      args,
-      command: 'audit',
-    };
+  const startEvent: StartEvent = {
+    args,
+    command: 'audit',
+  };
 
-    await EventEmitter.fire(`command/audit/start`, startEvent);
+  await EventEmitter.fire(`command/audit/start`, startEvent);
 
-    const actionStartEvent: ActionStartEvent = {
-      args,
-      command: 'audit',
-    };
+  const actionStartEvent: ActionStartEvent = {
+    args,
+    command: 'audit',
+  };
 
-    await EventEmitter.fire(`command/audit/action/start`, actionStartEvent);
+  await EventEmitter.fire(`command/audit/action/start`, actionStartEvent);
 
-    const reports: Report | Report[] = await audit(args);
-    const report: Report = reconcileReports(reports);
+  const reports: Report | Report[] = await audit(args);
+  const report: Report = reconcileReports(reports);
 
-    const actionEndEvent: ActionEndEvent = {
-      args,
-      command: 'audit',
-      report,
-    };
+  const actionEndEvent: ActionEndEvent = {
+    args,
+    command: 'audit',
+    report,
+  };
 
-    await EventEmitter.fire(`command/audit/action/end`, actionEndEvent);
+  await EventEmitter.fire(`command/audit/action/end`, actionEndEvent);
 
-    await output(report, args);
-    await comment(report, args);
+  await output(report, args);
+  await comment(report, args);
 
-    const endEvent: EndEvent = {
-      args,
-      command: 'audit',
-      report,
-    };
+  const endEvent: EndEvent = {
+    args,
+    command: 'audit',
+    report,
+  };
 
-    await EventEmitter.fire(`command/audit/end`, endEvent);
-  }
+  await EventEmitter.fire(`command/audit/end`, endEvent);
 };
 
 export default gimbal;

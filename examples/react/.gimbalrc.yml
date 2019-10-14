@@ -16,21 +16,21 @@ outputs:
   markdown: artifacts/gimbal.md
 
 plugins:
-  - plugin: '@modus/gimbal-plugin-axe'
+  - plugin: "@modus/gimbal-plugin-axe"
     thresholds:
       bypass: serious
       landmark-one-main: moderate
       page-has-heading-one: moderate
-  - plugin: '@modus/gimbal-plugin-source-map-explorer'
+  - plugin: "@modus/gimbal-plugin-source-map-explorer"
     bundles:
-      - path: '**/main.*.js'
+      - path: "**/main.*.js"
         thresholds:
           App.js: 450 B
           index.js: 100 B
           logo.svg: 250 B
           serviceWorker.js: 300 B
           <unmapped>: 150 B
-      - path: '**/2.*.js'
+      - path: "**/2.*.js"
         thresholds:
           react/index.js: 50 B
           object-assign/index.js: 1 KB
@@ -39,13 +39,13 @@ plugins:
           react-dom/cjs/react-dom.production.min.js: 110 KB
           scheduler/index.js: 50 B
           scheduler/cjs/scheduler.production.min.js: 5 KB
-          webpack/buildin/global.js: 150 B
+          webpack/builtin/global.js: 150 B
           <unmapped>: 150 B
-      - '!precache-manifest*'
-      - '!service-worker.js'
-      - '!**/runtime*.js'
-  - '@modus/gimbal-plugin-last-value'
-  - plugin: '@modus/gimbal-plugin-mysql'
+      - "!precache-manifest*"
+      - "!service-worker.js"
+      - "!**/runtime*.js"
+  - "@modus/gimbal-plugin-last-value"
+  - plugin: "@modus/gimbal-plugin-mysql"
     enabled: ${env:CI, true, false}
     commandPrefix:
       - react-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
@@ -56,10 +56,10 @@ plugins:
     host: ${env:GIMBAL_MYSQL_HOST}
     password: ${env:GIMBAL_MYSQL_PASSWORD}
     user: ${env:GIMBAL_MYSQL_USERNAME}
-  # - plugin: '@modus/gimbal-plugin-sqlite'
-  #   enabled: ${env:CI, true, false}
-  #   commandPrefix:
-  #     - react-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
-  #     - react-example-${env:CIRCLE_BRANCH}
-  #     - react-example
-  #   lastValue: true
+# - plugin: '@modus/gimbal-plugin-sqlite'
+#   enabled: ${env:CI, true, false}
+#   commandPrefix:
+#     - react-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
+#     - react-example-${env:CIRCLE_BRANCH}
+#     - react-example
+#   lastValue: true
