@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@modus/gimbal-core": "1.2.6",
-    "deepmerge": "4.0.0",
+    "deepmerge": "4.1.1",
     "mysql": "2.17.1"
   },
   "devDependencies": {

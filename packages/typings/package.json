@@ -13,7 +13,6 @@
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
-    "cli-table3": "0.5.1",
-    "commander": "3.0.1"
+    "cli-table3": "0.5.1"
   }
 }

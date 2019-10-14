@@ -32,8 +32,7 @@
   "dependencies": {
     "cli-table3": "0.5.1",
     "colors": "1.4.0",
-    "commander": "3.0.1",
-    "deepmerge": "4.0.0",
+    "deepmerge": "4.1.1",
     "get-folder-size": "2.0.1",
     "get-port": "5.0.0",
     "globby": "10.0.1",

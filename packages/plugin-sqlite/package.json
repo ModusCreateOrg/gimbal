@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@modus/gimbal-core": "1.2.6",
-    "deepmerge": "4.0.0",
+    "deepmerge": "4.1.1",
     "mkdirp": "0.5.1",
     "sqlite3": "4.1.0"
   },
