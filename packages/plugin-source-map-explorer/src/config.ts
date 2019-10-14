@@ -21,6 +21,9 @@ export const defaultConfig: Config = {
 };
 
 export const meta: Meta = {
+  capabilities: {
+    remote: false,
+  },
   maxNumRoutes: 1,
   thresholdLimit: 'upper',
   thresholdType: 'size',

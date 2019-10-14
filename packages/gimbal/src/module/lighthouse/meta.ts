@@ -1,6 +1,9 @@
 import { Meta } from '@/typings/module';
 
 const meta: Meta = {
+  capabilities: {
+    remote: true,
+  },
   thresholdLimit: 'lower',
   thresholdTypes: {
     Accessibility: 'number',

@@ -5,6 +5,7 @@ import deepmerge from 'deepmerge';
 import { Report, ReportItem } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Options } from '@/typings/module/registry';
+import { meta, type } from './config';
 
 type ThresholdValueString = ImpactValue | 'none';
 
@@ -39,8 +40,6 @@ const impactMap: ImpactMap = {
   serious: 3,
   critical: 4,
 };
-
-const type = 'axe';
 
 const getThreshold = (entry: Result, { thresholds }: Config): ThresholdValueString => {
   const threshold = thresholds[entry.id] || thresholds.impact;
@@ -81,10 +80,7 @@ const Axe = async ({ bus }: PluginOptions, config: Config): Promise<void> => {
 
   registry.register(
     type,
-    {
-      thresholdLimit: 'upper',
-      thresholdType: 'number',
-    },
+    meta,
     async ({ chrome, url }: Options): Promise<Report> => {
       const page = await chrome.newPage();
 

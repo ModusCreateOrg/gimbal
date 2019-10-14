@@ -8,8 +8,13 @@ interface TypesMap {
   [label: string]: Types;
 }
 
+interface Capabilities {
+  remote: boolean;
+}
+
 /* eslint-disable-next-line import/prefer-default-export */
 export interface Meta {
+  capabilities?: Capabilities;
   maxNumRoutes?: number;
   thresholdLimit: ReportThresholdLimit;
   thresholdType?: Types;
