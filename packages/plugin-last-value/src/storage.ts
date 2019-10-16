@@ -68,8 +68,8 @@ export const getLastReport = async (
   pluginOptions: PluginOptions,
   config: Config,
   report: Report,
-  context: Context,
 ): Promise<void> => {
+  const { context } = pluginOptions;
   const [, command] = eventName.split('/');
   const getEvent: GetEvent = {
     command,

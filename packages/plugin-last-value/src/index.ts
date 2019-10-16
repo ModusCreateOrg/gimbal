@@ -52,7 +52,7 @@ const LastValue = async (pluginOptions: PluginOptions, config: Config): Promise<
   context.event.on(
     'command/*/action/end',
     (name: string, { report }: ActionEndEvent): EventRet =>
-      inspectArgs(context, (): Promise<void> => getLastReport(name, pluginOptions, pluginConfig, report, context)),
+      inspectArgs(context, (): Promise<void> => getLastReport(name, pluginOptions, pluginConfig, report)),
   );
 
   context.event.on(

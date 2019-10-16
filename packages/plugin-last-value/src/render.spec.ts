@@ -1,8 +1,12 @@
 import { Table } from '@/typings/components/Table';
 import { PluginOptions } from '@/typings/config/plugin';
+import { Context } from '@/typings/context';
+
+const contextMock: unknown = {};
+const context = contextMock as Context;
 
 const pluginOptions: PluginOptions = {
-  bus(): void {},
+  context,
   dir: 'foo',
 };
 
@@ -197,13 +201,17 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
   describe('createRenderer', (): void => {
     it('should render values', async (): Promise<void> => {
-      const bus = jest.fn().mockResolvedValue({
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        getMeta: (): any => ({
-          thresholdLimit: 'upper',
-          thresholdType: 'number',
-        }),
+      const getMeta = jest.fn().mockReturnValue({
+        thresholdLimit: 'upper',
+        thresholdType: 'number',
       });
+
+      const contextMock: unknown = {
+        module: {
+          getMeta,
+        },
+      };
+      const context = contextMock as Context;
 
       const config = {
         failOnBreach: false,
@@ -215,7 +223,6 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
           size: 1,
         },
       };
-
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -236,7 +243,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
       const renderer = createRenderer(
         {
           ...pluginOptions,
-          bus,
+          context,
         },
         config,
       );
@@ -245,17 +252,21 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       expect(ret).toBe('10\n  +8 B');
 
-      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry']]);
+      expect(getMeta).toHaveBeenCalledWith('foo');
     });
 
     it('should render diff values', async (): Promise<void> => {
-      const bus = jest.fn().mockResolvedValue({
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        getMeta: (): any => ({
-          thresholdLimit: 'upper',
-          thresholdType: 'number',
-        }),
+      const getMeta = jest.fn().mockReturnValue({
+        thresholdLimit: 'upper',
+        thresholdType: 'number',
       });
+
+      const contextMock: unknown = {
+        module: {
+          getMeta,
+        },
+      };
+      const context = contextMock as Context;
 
       const config = {
         failOnBreach: false,
@@ -267,7 +278,6 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
           size: 1,
         },
       };
-
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -288,7 +298,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
       const renderer = createRenderer(
         {
           ...pluginOptions,
-          bus,
+          context,
         },
         config,
       );
@@ -297,17 +307,21 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       expect(ret).toBe('20\n  +80%');
 
-      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry']]);
+      expect(getMeta).toHaveBeenCalledWith('foo');
     });
 
     it('should render last value', async (): Promise<void> => {
-      const bus = jest.fn().mockResolvedValue({
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        getMeta: (): any => ({
-          thresholdLimit: 'upper',
-          thresholdType: 'number',
-        }),
+      const getMeta = jest.fn().mockReturnValue({
+        thresholdLimit: 'upper',
+        thresholdType: 'number',
       });
+
+      const contextMock: unknown = {
+        module: {
+          getMeta,
+        },
+      };
+      const context = contextMock as Context;
 
       const config = {
         failOnBreach: false,
@@ -319,7 +333,6 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
           size: 1,
         },
       };
-
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -340,7 +353,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
       const renderer = createRenderer(
         {
           ...pluginOptions,
-          bus,
+          context,
         },
         config,
       );
@@ -349,17 +362,21 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       expect(ret).toBe('20');
 
-      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry']]);
+      expect(getMeta).toHaveBeenCalledWith('foo');
     });
 
     it('should render empty string if no last value', async (): Promise<void> => {
-      const bus = jest.fn().mockResolvedValue({
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        getMeta: (): any => ({
-          thresholdLimit: 'upper',
-          thresholdType: 'number',
-        }),
+      const getMeta = jest.fn().mockReturnValue({
+        thresholdLimit: 'upper',
+        thresholdType: 'number',
       });
+
+      const contextMock: unknown = {
+        module: {
+          getMeta,
+        },
+      };
+      const context = contextMock as Context;
 
       const config = {
         failOnBreach: false,
@@ -371,7 +388,6 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
           size: 1,
         },
       };
-
       const item = {
         command: 'foo',
         label: 'Foo',
@@ -392,7 +408,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
       const renderer = createRenderer(
         {
           ...pluginOptions,
-          bus,
+          context,
         },
         config,
       );
@@ -401,7 +417,7 @@ describe('@modus/gimbal-plugin-last-value/render', (): void => {
 
       expect(ret).toBe('');
 
-      expect(bus.mock.calls).toEqual([['module/registry'], ['module/registry']]);
+      expect(getMeta).toHaveBeenCalledWith('foo');
     });
   });
 

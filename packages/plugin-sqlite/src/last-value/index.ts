@@ -1,5 +1,6 @@
 import { Database } from 'sqlite3';
 import { Report } from '@/typings/command';
+import { Context } from '@/typings/context';
 
 interface Config {
   commandPrefix?: string | string[];
@@ -30,15 +31,14 @@ const parseCommand = (command: string, config: Config): string => {
   return prefix ? `${prefix}-${command}` : command;
 };
 
-export const init = async (config: Config): Promise<void> =>
+export const init = async (config: Config, context: Context): Promise<void> =>
   new Promise((resolve, reject): void => {
     if (!config.db) {
       reject(new Error('no database connected'));
       return;
     }
 
-    /* eslint-disable-next-line no-console */
-    console.log('[@modus/gimbal-plugin-sqlite]', 'Creating table...');
+    context.logger.verbose('[@modus/gimbal-plugin-sqlite]', 'Creating table...');
 
     const stmt = config.db.prepare(
       `CREATE TABLE IF NOT EXISTS ${config.table} (command TEXT, date INTEGER, report BLOB);`,
@@ -47,14 +47,13 @@ export const init = async (config: Config): Promise<void> =>
     stmt.run();
 
     stmt.finalize((): void => {
-      /* eslint-disable-next-line no-console */
-      console.log('[@modus/gimbal-plugin-sqlite]', 'Table created!');
+      context.logger.verbose('[@modus/gimbal-plugin-sqlite]', 'Table created!');
 
       resolve();
     });
   });
 
-export const getLastReport = async (command: string, config: Config): Promise<void> =>
+export const getLastReport = async (command: string, config: Config, context: Context): Promise<void> =>
   new Promise((resolve, reject): void => {
     if (!config.db) {
       reject(new Error('no database connected'));
@@ -63,8 +62,7 @@ export const getLastReport = async (command: string, config: Config): Promise<vo
 
     const parsedCommand = parseCommand(command, config);
 
-    /* eslint-disable-next-line no-console */
-    console.log('[@modus/gimbal-plugin-sqlite]', `Getting last report for "${parsedCommand}" command...`);
+    context.logger.verbose('[@modus/gimbal-plugin-sqlite]', `Getting last report for "${parsedCommand}" command...`);
 
     const stmt = config.db.prepare(
       `SELECT command, date, report FROM ${config.table} WHERE command = ? ORDER BY date DESC;`,
@@ -78,16 +76,14 @@ export const getLastReport = async (command: string, config: Config): Promise<vo
           reject(error);
         } else {
           if (row) {
-            /* eslint-disable-next-line no-console */
-            console.log('[@modus/gimbal-plugin-sqlite]', 'Got last report!');
+            context.logger.verbose('[@modus/gimbal-plugin-sqlite]', 'Got last report!');
 
             if (config.commandPrefix) {
               /* eslint-disable-next-line no-param-reassign */
               row.command = row.command.replace(parsedCommand, command);
             }
           } else {
-            /* eslint-disable-next-line no-console */
-            console.log('[@modus/gimbal-plugin-sqlite]', 'Did not find a last report.');
+            context.logger.verbose('[@modus/gimbal-plugin-sqlite]', 'Did not find a last report.');
           }
 
           resolve(row);
@@ -98,7 +94,12 @@ export const getLastReport = async (command: string, config: Config): Promise<vo
     stmt.finalize();
   });
 
-export const saveLastReport = async (command: string, report: Report, config: Config): Promise<void> =>
+export const saveLastReport = async (
+  command: string,
+  report: Report,
+  config: Config,
+  context: Context,
+): Promise<void> =>
   new Promise((resolve, reject): void => {
     if (!config.db) {
       reject(new Error('no database connected'));
@@ -107,8 +108,7 @@ export const saveLastReport = async (command: string, report: Report, config: Co
 
     const parsedCommand = parseCommand(command, config);
 
-    /* eslint-disable-next-line no-console */
-    console.log('[@modus/gimbal-plugin-mysql]', `Saving new report for "${parsedCommand}" command...`);
+    context.logger.verbose('[@modus/gimbal-plugin-sqlite]', `Saving new report for "${parsedCommand}" command...`);
 
     const now = new Date();
     const stmt = config.db.prepare(`INSERT INTO ${config.table} VALUES (?, ?, ?);`);
@@ -116,8 +116,7 @@ export const saveLastReport = async (command: string, report: Report, config: Co
     stmt.run(parsedCommand, now.getTime(), JSON.stringify(report));
 
     stmt.finalize((): void => {
-      /* eslint-disable-next-line no-console */
-      console.log('[@modus/gimbal-plugin-mysql]', 'Saved new report!');
+      context.logger.verbose('[@modus/gimbal-plugin-sqlite]', 'Saved new report!');
 
       resolve();
     });

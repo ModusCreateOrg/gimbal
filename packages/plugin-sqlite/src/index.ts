@@ -57,17 +57,17 @@ const sqlite = async ({ context }: PluginOptions, config: Config): Promise<void>
         db,
       };
 
-      await init(pluginConfig);
+      await init(pluginConfig, context);
 
       context.event.on(
         'plugin/last-value/report/get',
-        (_eventName: string, { command }: GetEvent): Promise<void> => getLastReport(command, pluginConfig),
+        (_eventName: string, { command }: GetEvent): Promise<void> => getLastReport(command, pluginConfig, context),
       );
 
       context.event.on(
         'plugin/last-value/report/save',
         (_eventName: string, { command, report }: SaveEvent): Promise<void> =>
-          saveLastReport(command, report, pluginConfig),
+          saveLastReport(command, report, pluginConfig, context),
       );
     }
   }

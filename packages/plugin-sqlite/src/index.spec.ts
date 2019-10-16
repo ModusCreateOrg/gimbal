@@ -1,5 +1,15 @@
 import realdeepmerge from 'deepmerge';
 import sqlite3 from 'sqlite3';
+import { PluginOptions } from '@/typings/config/plugin';
+import { Context } from '@/typings/context';
+
+const contextMock: unknown = {};
+const context = contextMock as Context;
+
+const pluginOptions: PluginOptions = {
+  context,
+  dir: 'foo',
+};
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Deepmerge = (x: any, y: any) => any;
@@ -14,8 +24,6 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
   describe('no database stuff', (): void => {
     it('should initialize core', async (): Promise<void> => {
       const deepmergeMock = jest.fn();
-      const bus = jest.fn();
-
       jest.doMock(
         'deepmerge',
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -30,8 +38,8 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
-          bus,
-          dir: 'foo',
+          ...pluginOptions,
+          context,
         },
         {
           file: ':memory:',
@@ -47,14 +55,20 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
           file: ':memory:',
         },
       );
-
-      expect(bus).not.toHaveBeenCalled();
     });
 
     it('should resolve path to file', async (): Promise<void> => {
+      const get = jest.fn().mockReturnValue('/cwd');
+
+      const contextMock: unknown = {
+        config: {
+          get,
+        },
+      };
+      const context = contextMock as Context;
+
       const deepmergeMock = jest.fn();
       const resolvePath = jest.fn().mockReturnValue('foo/bar');
-      const bus = jest.fn();
 
       jest.doMock(
         '@modus/gimbal-core/lib/utils/fs',
@@ -78,14 +92,8 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
-          args: {
-            _: [],
-            comment: true,
-            cwd: 'cwd',
-            verbose: false,
-          },
-          bus,
-          dir: 'foo',
+          ...pluginOptions,
+          context,
         },
         {},
       );
@@ -98,9 +106,9 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
         {},
       );
 
-      expect(resolvePath).toHaveBeenCalledWith('cwd', 'gimbal.db');
+      expect(resolvePath).toHaveBeenCalledWith('/cwd', 'gimbal.db');
 
-      expect(bus).not.toHaveBeenCalled();
+      expect(get).toHaveBeenCalledWith('configs.cwd');
     });
   });
 
@@ -111,9 +119,13 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
       const mkdirpMock = jest.fn().mockResolvedValue('good');
       const init = jest.fn().mockResolvedValue('good');
       const on = jest.fn();
-      const bus = jest.fn().mockResolvedValue({
-        on,
-      });
+
+      const contextMock: unknown = {
+        event: {
+          on,
+        },
+      };
+      const context = contextMock as Context;
 
       jest.doMock(
         'deepmerge',
@@ -136,14 +148,8 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
-          args: {
-            _: [],
-            comment: true,
-            cwd: 'cwd',
-            verbose: false,
-          },
-          bus,
-          dir: 'foo',
+          ...pluginOptions,
+          context,
         },
         {
           file: ':memory:',
@@ -165,19 +171,19 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
       expect(resolvePath).not.toHaveBeenCalled();
       expect(mkdirpMock).not.toHaveBeenCalled();
 
-      expect(init).toHaveBeenCalledWith({
-        db: new sqlite3.Database(':memory:'),
-        file: ':memory:',
-        lastValue: true,
-        table: 'gimbal_archive',
-      });
+      expect(init).toHaveBeenCalledWith(
+        {
+          db: new sqlite3.Database(':memory:'),
+          file: ':memory:',
+          lastValue: true,
+          table: 'gimbal_archive',
+        },
+        context,
+      );
 
-      expect(on.mock.calls).toEqual([
-        ['plugin/last-value/report/get', expect.any(Function)],
-        ['plugin/last-value/report/save', expect.any(Function)],
-      ]);
-
-      expect(bus).toHaveBeenCalledWith('event');
+      expect(on).toHaveBeenCalledTimes(2);
+      expect(on).toHaveBeenNthCalledWith(1, 'plugin/last-value/report/get', expect.any(Function));
+      expect(on).toHaveBeenNthCalledWith(2, 'plugin/last-value/report/save', expect.any(Function));
     });
 
     it('should trigger event listeners', async (): Promise<void> => {
@@ -192,9 +198,13 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
         .fn()
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         .mockImplementation((eventName, cb): any => cb(eventName, { command: 'foo', report: 'bar' }));
-      const bus = jest.fn().mockResolvedValue({
-        on,
-      });
+
+      const contextMock: unknown = {
+        event: {
+          on,
+        },
+      };
+      const context = contextMock as Context;
 
       jest.doMock(
         'deepmerge',
@@ -219,14 +229,8 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
 
       await sqlite(
         {
-          args: {
-            _: [],
-            comment: true,
-            cwd: 'cwd',
-            verbose: false,
-          },
-          bus,
-          dir: 'foo',
+          ...pluginOptions,
+          context,
         },
         {
           file: ':memory:',
@@ -252,39 +256,48 @@ describe('@modus/gimbal-plugin-sqlite', (): void => {
       expect(resolvePath).not.toHaveBeenCalled();
       expect(mkdirpMock).not.toHaveBeenCalled();
 
-      expect(init).toHaveBeenCalledWith({
-        db: new sqlite3.Database(':memory:'),
-        file: ':memory:',
-        lastValue: {
+      expect(init).toHaveBeenCalledWith(
+        {
+          db: new sqlite3.Database(':memory:'),
+          file: ':memory:',
+          lastValue: {
+            table: 'hello_there',
+          },
           table: 'hello_there',
         },
-        table: 'hello_there',
-      });
+        context,
+      );
 
-      expect(getLastReport).toHaveBeenCalledWith('foo', {
-        db: new sqlite3.Database(':memory:'),
-        file: ':memory:',
-        lastValue: {
+      expect(getLastReport).toHaveBeenCalledWith(
+        'foo',
+        {
+          db: new sqlite3.Database(':memory:'),
+          file: ':memory:',
+          lastValue: {
+            table: 'hello_there',
+          },
           table: 'hello_there',
         },
-        table: 'hello_there',
-      });
+        context,
+      );
 
-      expect(saveLastReport).toHaveBeenCalledWith('foo', 'bar', {
-        db: new sqlite3.Database(':memory:'),
-        file: ':memory:',
-        lastValue: {
+      expect(saveLastReport).toHaveBeenCalledWith(
+        'foo',
+        'bar',
+        {
+          db: new sqlite3.Database(':memory:'),
+          file: ':memory:',
+          lastValue: {
+            table: 'hello_there',
+          },
           table: 'hello_there',
         },
-        table: 'hello_there',
-      });
+        context,
+      );
 
-      expect(on.mock.calls).toEqual([
-        ['plugin/last-value/report/get', expect.any(Function)],
-        ['plugin/last-value/report/save', expect.any(Function)],
-      ]);
-
-      expect(bus).toHaveBeenCalledWith('event');
+      expect(on).toHaveBeenCalledTimes(2);
+      expect(on).toHaveBeenNthCalledWith(1, 'plugin/last-value/report/get', expect.any(Function));
+      expect(on).toHaveBeenNthCalledWith(2, 'plugin/last-value/report/save', expect.any(Function));
     });
   });
 });

@@ -1,5 +1,6 @@
 import { Connection, MysqlError } from 'mysql';
 import { Report } from '@/typings/command';
+import { Context } from '@/typings/context';
 
 interface Config {
   commandPrefix?: string | string[];
@@ -53,9 +54,8 @@ const query = (connection: Connection | void, sql: string, params?: any): Promis
     }
   });
 
-export const init = async (connection: Connection | void, config: Config): Promise<void> => {
-  /* eslint-disable-next-line no-console */
-  console.log('[@modus/gimbal-plugin-mysql]', 'Creating table...');
+export const init = async (connection: Connection | void, config: Config, context: Context): Promise<void> => {
+  context.logger.verbose('[@modus/gimbal-plugin-mysql]', 'Creating table...');
 
   return query(
     connection,
@@ -68,18 +68,21 @@ export const init = async (connection: Connection | void, config: Config): Promi
       UNIQUE INDEX id_UNIQUE (id ASC)) ENGINE=INNODB;`,
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   ).then((ret: any): any => {
-    /* eslint-disable-next-line no-console */
-    console.log('[@modus/gimbal-plugin-mysql]', 'Table created!');
+    context.logger.verbose('[@modus/gimbal-plugin-mysql]', 'Table created!');
 
     return ret;
   });
 };
 
-export const getLastReport = async (command: string, connection: Connection | void, config: Config): Promise<void> => {
+export const getLastReport = async (
+  command: string,
+  connection: Connection | void,
+  config: Config,
+  context: Context,
+): Promise<void> => {
   const parsedCommand = parseCommand(command, config);
 
-  /* eslint-disable-next-line no-console */
-  console.log('[@modus/gimbal-plugin-mysql]', `Getting last report for "${parsedCommand}" command...`);
+  context.logger.verbose('[@modus/gimbal-plugin-mysql]', `Getting last report for "${parsedCommand}" command...`);
 
   return query(
     connection,
@@ -88,16 +91,14 @@ export const getLastReport = async (command: string, connection: Connection | vo
   ).then(
     ([row]: Row[] = []): Row => {
       if (row) {
-        /* eslint-disable-next-line no-console */
-        console.log('[@modus/gimbal-plugin-mysql]', 'Got last report!');
+        context.logger.verbose('[@modus/gimbal-plugin-mysql]', 'Got last report!');
 
         if (config.commandPrefix) {
           /* eslint-disable-next-line no-param-reassign */
           row.command = row.command.replace(parsedCommand, command);
         }
       } else {
-        /* eslint-disable-next-line no-console */
-        console.log('[@modus/gimbal-plugin-mysql]', 'Did not find a last report.');
+        context.logger.verbose('[@modus/gimbal-plugin-mysql]', 'Did not find a last report.');
       }
 
       return row;
@@ -110,19 +111,18 @@ export const saveLastReport = async (
   report: Report,
   connection: Connection | void,
   config: Config,
+  context: Context,
 ): Promise<void> => {
   const parsedCommand = parseCommand(command, config);
 
-  /* eslint-disable-next-line no-console */
-  console.log('[@modus/gimbal-plugin-mysql]', `Saving new report for "${parsedCommand}" command...`);
+  context.logger.verbose('[@modus/gimbal-plugin-mysql]', `Saving new report for "${parsedCommand}" command...`);
 
   return query(connection, `INSERT INTO ${config.table} (command, date, report) VALUES (?, NOW(), ?);`, [
     parsedCommand,
     JSON.stringify(report),
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   ]).then((ret: any): any => {
-    /* eslint-disable-next-line no-console */
-    console.log('[@modus/gimbal-plugin-mysql]', 'Saved new report!');
+    context.logger.verbose('[@modus/gimbal-plugin-mysql]', 'Saved new report!');
 
     return ret;
   });

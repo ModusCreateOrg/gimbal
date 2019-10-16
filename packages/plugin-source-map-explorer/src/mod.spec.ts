@@ -1,7 +1,7 @@
 import { PluginOptions } from '@/typings/config/plugin';
+import { Context } from '@/typings/context';
 
-const pluginOptions: PluginOptions = {
-  bus: (): string => '',
+const pluginOptions: Pick<PluginOptions, 'dir'> = {
   dir: 'foo',
 };
 
@@ -197,27 +197,34 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
   describe('registerModule', (): void => {
     it('should register module', async (): Promise<void> => {
       const register = jest.fn();
-      const bus = jest.fn().mockResolvedValue({
-        register,
-      });
+
+      const contextMock: unknown = {
+        module: {
+          register,
+        },
+      };
+      const context = contextMock as Context;
 
       const { registerModule } = await import('./mod');
 
       await registerModule(
         {
           ...pluginOptions,
-          bus,
+          context,
         },
         {
           bundles: [],
         },
       );
 
-      expect(bus).toHaveBeenCalledWith('module/registry');
-
       expect(register).toHaveBeenCalledWith(
         'source-map-explorer',
-        { maxNumRoutes: 1, thresholdLimit: 'upper', thresholdType: 'size' },
+        {
+          capabilities: { remote: false },
+          maxNumRoutes: 1,
+          thresholdLimit: 'upper',
+          thresholdType: 'size',
+        },
         expect.any(Function),
       );
     });
@@ -225,6 +232,19 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
 
   describe('runModule', (): void => {
     it('should run the module', async (): Promise<void> => {
+      const get = jest
+        .fn()
+        // buildDir
+        .mockReturnValueOnce('baz')
+        // cwd
+        .mockReturnValueOnce('/foo/bar');
+      const contextMock: unknown = {
+        config: {
+          get,
+        },
+      };
+      const context = contextMock as Context;
+
       const globby = jest
         .fn()
         .mockResolvedValue(['/foo/bar/baz/some-bundle.js', '/foo/bar/baz/js/just-another-bundle.js']);
@@ -280,13 +300,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
       });
 
       const ret = await fn({
-        args: {
-          _: [],
-          buildDir: 'baz',
-          comment: true,
-          cwd: '/foo/bar',
-          verbose: false,
-        },
+        context,
       });
 
       expect(ret).toEqual({
@@ -371,10 +385,29 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
 
       expect(globby).toHaveBeenCalledWith(['/foo/bar/baz/**/*.js']);
 
-      expect(explore.mock.calls).toEqual([['/foo/bar/baz/some-bundle.js'], ['/foo/bar/baz/js/just-another-bundle.js']]);
+      expect(explore).toHaveBeenCalledTimes(2);
+      expect(explore).toHaveBeenNthCalledWith(1, '/foo/bar/baz/some-bundle.js');
+      expect(explore).toHaveBeenNthCalledWith(2, '/foo/bar/baz/js/just-another-bundle.js');
+
+      expect(get).toHaveBeenCalledTimes(2);
+      expect(get).toHaveBeenNthCalledWith(1, 'configs.buildDir');
+      expect(get).toHaveBeenNthCalledWith(2, 'configs.cwd');
     });
 
     it('should run the module with a failure', async (): Promise<void> => {
+      const get = jest
+        .fn()
+        // buildDir
+        .mockReturnValueOnce('baz')
+        // cwd
+        .mockReturnValueOnce('/foo/bar');
+      const contextMock: unknown = {
+        config: {
+          get,
+        },
+      };
+      const context = contextMock as Context;
+
       const globby = jest
         .fn()
         .mockResolvedValue([
@@ -438,13 +471,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
       });
 
       const ret = await fn({
-        args: {
-          _: [],
-          buildDir: 'baz',
-          comment: true,
-          cwd: '/foo/bar',
-          verbose: false,
-        },
+        context,
       });
 
       expect(ret).toEqual({
@@ -539,17 +566,21 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
         success: false,
       });
 
-      expect(globby).toHaveBeenCalledWith([
+      expect(globby).toHaveBeenCalledTimes(1);
+      expect(globby).toHaveBeenNthCalledWith(1, [
         '/foo/bar/baz/foo-bundle.js',
         '/foo/bar/baz/**/*.js',
         '!/foo/bar/baz/not-this.js',
       ]);
 
-      expect(explore.mock.calls).toEqual([
-        ['/foo/bar/baz/foo-bundle.js'],
-        ['/foo/bar/baz/some-bundle.js'],
-        ['/foo/bar/baz/js/just-another-bundle.js'],
-      ]);
+      expect(explore).toHaveBeenCalledTimes(3);
+      expect(explore).toHaveBeenNthCalledWith(1, '/foo/bar/baz/foo-bundle.js');
+      expect(explore).toHaveBeenNthCalledWith(2, '/foo/bar/baz/some-bundle.js');
+      expect(explore).toHaveBeenNthCalledWith(3, '/foo/bar/baz/js/just-another-bundle.js');
+
+      expect(get).toHaveBeenCalledTimes(2);
+      expect(get).toHaveBeenNthCalledWith(1, 'configs.buildDir');
+      expect(get).toHaveBeenNthCalledWith(2, 'configs.cwd');
     });
   });
 });

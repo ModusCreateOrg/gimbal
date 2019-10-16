@@ -1,11 +1,15 @@
 import realdeepmerge from 'deepmerge';
 import { PluginOptions } from '@/typings/config/plugin';
+import { Context } from '@/typings/context';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type Deepmerge = (x: any, y: any, opts?: any) => any;
 
+const contextMock: unknown = {};
+const context = contextMock as Context;
+
 const pluginOptions: PluginOptions = {
-  bus: (): string => '',
+  context,
   dir: 'foo',
 };
 
@@ -53,7 +57,7 @@ describe('@modus/gimbal-plugin-source-map-explorer', (): void => {
 
     expect(registerModule).toHaveBeenCalledWith(
       {
-        bus: expect.any(Function),
+        context,
         dir: 'foo',
       },
       {
@@ -157,7 +161,7 @@ describe('@modus/gimbal-plugin-source-map-explorer', (): void => {
 
     expect(registerModule).toHaveBeenCalledWith(
       {
-        bus: expect.any(Function),
+        context,
         dir: 'foo',
       },
       {
@@ -302,7 +306,7 @@ describe('@modus/gimbal-plugin-source-map-explorer', (): void => {
 
     expect(registerModule).toHaveBeenCalledWith(
       {
-        bus: expect.any(Function),
+        context,
         dir: 'foo',
       },
       {

@@ -1,4 +1,5 @@
 import realdeepmerge from 'deepmerge';
+import { Context } from '@/typings/context';
 import { Meta } from '@/typings/module';
 import { Module } from '@/typings/module/registry';
 
@@ -13,12 +14,13 @@ describe('@modus/gimbal-plugin-axe', (): void => {
   it('should register module', async (): Promise<void> => {
     const deepmergeMock = jest.fn();
     const register = jest.fn();
-    const bus = jest.fn().mockResolvedValue({
-      event: {
-        on(): void {},
+
+    const contextMock: unknown = {
+      module: {
+        register,
       },
-      register,
-    });
+    };
+    const context = contextMock as Context;
 
     jest.doMock(
       'deepmerge',
@@ -34,7 +36,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
     await Axe(
       {
-        bus,
+        context,
         dir: 'foo',
       },
       {
@@ -60,11 +62,13 @@ describe('@modus/gimbal-plugin-axe', (): void => {
       },
     );
 
-    expect(bus).toHaveBeenCalledWith('module/registry');
-
     expect(register).toHaveBeenCalledWith(
       'axe',
-      { thresholdLimit: 'upper', thresholdType: 'number' },
+      {
+        capabilities: { remote: true },
+        thresholdLimit: 'upper',
+        thresholdType: 'number',
+      },
       expect.any(Function),
     );
   });
@@ -114,20 +118,19 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
     const register = jest.fn().mockImplementationOnce(
       async (type: string, meta: Meta, cb: Module): Promise<void> => {
+        const contextMock: unknown = {};
+        const context = contextMock as Context;
+
         expect(type).toBe('axe');
         expect(meta).toEqual({
+          capabilities: { remote: true },
           thresholdLimit: 'upper',
           thresholdType: 'number',
         });
 
         const ret = await cb({
-          args: {
-            _: [],
-            comment: true,
-            cwd: __dirname,
-            verbose: false,
-          },
           chrome,
+          context,
           url: 'https://example.com',
         });
 
@@ -204,12 +207,16 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         expect(withTags).not.toHaveBeenCalled();
       },
     );
-    const bus = jest.fn().mockResolvedValue({
+
+    const contextMock: unknown = {
       event: {
         on(): void {},
       },
-      register,
-    });
+      module: {
+        register,
+      },
+    };
+    const context = contextMock as Context;
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     function AxePuppeteer(): any {}
@@ -242,7 +249,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
     await Axe(
       {
-        bus,
+        context,
         dir: 'foo',
       },
       {
@@ -268,11 +275,13 @@ describe('@modus/gimbal-plugin-axe', (): void => {
       },
     );
 
-    expect(bus).toHaveBeenCalledWith('module/registry');
-
     expect(register).toHaveBeenCalledWith(
       'axe',
-      { thresholdLimit: 'upper', thresholdType: 'number' },
+      {
+        capabilities: { remote: true },
+        thresholdLimit: 'upper',
+        thresholdType: 'number',
+      },
       expect.any(Function),
     );
   });
@@ -322,20 +331,19 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
     const register = jest.fn().mockImplementationOnce(
       async (type: string, meta: Meta, cb: Module): Promise<void> => {
+        const contextMock: unknown = {};
+        const context = contextMock as Context;
+
         expect(type).toBe('axe');
         expect(meta).toEqual({
+          capabilities: { remote: true },
           thresholdLimit: 'upper',
           thresholdType: 'number',
         });
 
         const ret = await cb({
-          args: {
-            _: [],
-            comment: true,
-            cwd: __dirname,
-            verbose: false,
-          },
           chrome,
+          context,
           url: 'https://example.com',
         });
 
@@ -401,12 +409,16 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         expect(withTags).toHaveBeenCalledWith(['blah']);
       },
     );
-    const bus = jest.fn().mockResolvedValue({
+
+    const contextMock: unknown = {
       event: {
         on(): void {},
       },
-      register,
-    });
+      module: {
+        register,
+      },
+    };
+    const context = contextMock as Context;
 
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     function AxePuppeteer(): any {}
@@ -439,7 +451,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
     await Axe(
       {
-        bus,
+        context,
         dir: 'foo',
       },
       {
@@ -475,11 +487,13 @@ describe('@modus/gimbal-plugin-axe', (): void => {
       },
     );
 
-    expect(bus).toHaveBeenCalledWith('module/registry');
-
     expect(register).toHaveBeenCalledWith(
       'axe',
-      { thresholdLimit: 'upper', thresholdType: 'number' },
+      {
+        capabilities: { remote: true },
+        thresholdLimit: 'upper',
+        thresholdType: 'number',
+      },
       expect.any(Function),
     );
   });
@@ -491,21 +505,20 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
     const register = jest.fn().mockImplementationOnce(
       async (type: string, meta: Meta, cb: Module): Promise<void> => {
+        const contextMock: unknown = {};
+        const context = contextMock as Context;
+
         expect(type).toBe('axe');
 
         expect(meta).toEqual({
+          capabilities: { remote: true },
           thresholdLimit: 'upper',
           thresholdType: 'number',
         });
 
         const check = cb({
-          args: {
-            _: [],
-            comment: true,
-            cwd: __dirname,
-            verbose: false,
-          },
           chrome,
+          context,
           url: 'http://example.com',
         });
 
@@ -514,12 +527,16 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         expect(newPage).toHaveBeenCalledWith();
       },
     );
-    const bus = jest.fn().mockResolvedValue({
+
+    const contextMock: unknown = {
       event: {
         on(): void {},
       },
-      register,
-    });
+      module: {
+        register,
+      },
+    };
+    const context = contextMock as Context;
 
     jest.doMock(
       'deepmerge',
@@ -535,7 +552,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
     await Axe(
       {
-        bus,
+        context,
         dir: 'foo',
       },
       {
@@ -561,11 +578,13 @@ describe('@modus/gimbal-plugin-axe', (): void => {
       },
     );
 
-    expect(bus).toHaveBeenCalledWith('module/registry');
-
     expect(register).toHaveBeenCalledWith(
       'axe',
-      { thresholdLimit: 'upper', thresholdType: 'number' },
+      {
+        capabilities: { remote: true },
+        thresholdLimit: 'upper',
+        thresholdType: 'number',
+      },
       expect.any(Function),
     );
   });

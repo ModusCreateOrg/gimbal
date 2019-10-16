@@ -69,17 +69,18 @@ const mysql = async ({ context }: PluginOptions, config: Config): Promise<void> 
 
     const connection = await createConnection(itemConfig, envOrDefault);
 
-    await init(connection, itemConfig);
+    await init(connection, itemConfig, context);
 
     context.event.on(
       'plugin/last-value/report/get',
-      (_eventName: string, { command }: GetEvent): Promise<void> => getLastReport(command, connection, itemConfig),
+      (_eventName: string, { command }: GetEvent): Promise<void> =>
+        getLastReport(command, connection, itemConfig, context),
     );
 
     context.event.on(
       'plugin/last-value/report/save',
       (_eventName: string, { command, report }: SaveEvent): Promise<void> =>
-        saveLastReport(command, report, connection, itemConfig),
+        saveLastReport(command, report, connection, itemConfig, context),
     );
   }
 };

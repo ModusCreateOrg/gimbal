@@ -1,8 +1,8 @@
 import { PluginOptions } from '@/typings/config/plugin';
+import { Context } from '@/typings/context';
 import { doesItemFail, getItemDiff } from './util';
 
-const pluginOptions: PluginOptions = {
-  bus(): void {},
+const pluginOptions: Pick<PluginOptions, 'dir'> = {
   dir: 'foo',
 };
 
@@ -13,9 +13,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
         const getMeta = jest.fn().mockReturnValue({
           thresholdLimit: 'upper',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await getItemDiff(
           {
@@ -36,13 +40,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBeUndefined();
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
     });
@@ -53,9 +56,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'number',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await getItemDiff(
           {
@@ -76,7 +83,7 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
@@ -85,7 +92,6 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           diff: 1,
         });
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
     });
@@ -96,9 +102,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'percentage',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await getItemDiff(
           {
@@ -119,7 +129,7 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
@@ -128,7 +138,6 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           diff: 0.03 - 0.02,
         });
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
     });
@@ -139,9 +148,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'size',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await getItemDiff(
           {
@@ -162,7 +175,7 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
@@ -171,7 +184,6 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           diff: 1,
         });
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
     });
@@ -183,9 +195,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
         const getMeta = jest.fn().mockReturnValue({
           thresholdLimit: 'upper',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -216,13 +232,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe(false);
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
 
@@ -230,9 +245,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
         const getMeta = jest.fn().mockReturnValue({
           thresholdLimit: 'upper',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const item = {
           command: 'foo-command',
@@ -267,13 +286,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe(false);
 
-        expect(bus).not.toHaveBeenCalled();
         expect(getMeta).not.toHaveBeenCalled();
       });
 
@@ -281,9 +299,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
         const getMeta = jest.fn().mockReturnValue({
           thresholdLimit: 'upper',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const item = {
           command: 'foo-command',
@@ -318,13 +340,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe(false);
 
-        expect(bus).not.toHaveBeenCalled();
         expect(getMeta).not.toHaveBeenCalled();
       });
     });
@@ -335,9 +356,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'number',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -368,13 +393,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe(false);
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
 
@@ -383,9 +407,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'number',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -416,13 +444,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe('number');
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
 
@@ -433,9 +460,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
             Foo: 'number',
           },
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -466,13 +497,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe('numberDiffPercentage');
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
     });
@@ -483,9 +513,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'percentage',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -516,13 +550,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe(false);
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
 
@@ -531,9 +564,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'percentage',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -564,13 +601,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe(false);
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
 
@@ -579,9 +615,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'percentage',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -612,13 +652,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe('percentage');
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
 
@@ -629,9 +668,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
             Foo: 'percentage',
           },
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -662,13 +705,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe('percentageDiffPercentage');
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
     });
@@ -679,9 +721,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'size',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -712,13 +758,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe(false);
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
 
@@ -727,9 +772,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           thresholdLimit: 'upper',
           thresholdType: 'size',
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -760,13 +809,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe('size');
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
 
@@ -777,9 +825,13 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
             Foo: 'size',
           },
         });
-        const bus = jest.fn().mockResolvedValue({
-          getMeta,
-        });
+
+        const contextMock: unknown = {
+          module: {
+            getMeta,
+          },
+        };
+        const context = contextMock as Context;
 
         const ret = await doesItemFail(
           {
@@ -810,13 +862,12 @@ describe('@modus/gimbal-plugin-last-value/util', (): void => {
           },
           {
             ...pluginOptions,
-            bus,
+            context,
           },
         );
 
         expect(ret).toBe('sizeDiffPercentage');
 
-        expect(bus).toHaveBeenCalledWith('module/registry');
         expect(getMeta).toHaveBeenCalledWith('foo');
       });
     });

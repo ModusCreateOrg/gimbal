@@ -1,4 +1,14 @@
 import realdeepmerge from 'deepmerge';
+import { PluginOptions } from '@/typings/config/plugin';
+import { Context } from '@/typings/context';
+
+const contextMock: unknown = {};
+const context = contextMock as Context;
+
+const pluginOptions: PluginOptions = {
+  context,
+  dir: 'foo',
+};
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 jest.mock('mysql', (): any => ({
@@ -30,15 +40,9 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       const { default: plugin } = await import('./index');
 
-      await plugin(
-        {
-          bus: (): string => 'null',
-          dir: 'foo',
-        },
-        {
-          lastValue: false,
-        },
-      );
+      await plugin(pluginOptions, {
+        lastValue: false,
+      });
 
       expect(deepmergeMock).toHaveBeenCalledWith({ lastValue: false, strict: true }, { lastValue: false });
     });
@@ -75,15 +79,9 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       const { default: plugin } = await import('./index');
 
-      const check = plugin(
-        {
-          bus: (): string => 'null',
-          dir: 'foo',
-        },
-        {
-          lastValue: true,
-        },
-      );
+      const check = plugin(pluginOptions, {
+        lastValue: true,
+      });
 
       await expect(check).rejects.toThrow(new Error('foobar'));
 
@@ -102,10 +100,12 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
       const connect = jest.fn().mockImplementation((callback: any): any => callback(new Error('foobar')));
       const on = jest.fn();
 
-      const bus = jest.fn().mockResolvedValue({
-        fire(): void {},
-        on,
-      });
+      const contextMock: unknown = {
+        event: {
+          on,
+        },
+      };
+      const context = contextMock as Context;
 
       jest.doMock(
         'deepmerge',
@@ -133,8 +133,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       await plugin(
         {
-          bus,
-          dir: 'foo',
+          ...pluginOptions,
+          context,
         },
         {
           lastValue: true,
@@ -154,14 +154,20 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         ['plugin/last-value/report/save', expect.any(Function)],
       ]);
 
-      expect(bus).toHaveBeenCalledWith('event');
+      expect(init).toHaveBeenCalledWith(
+        undefined,
+        {
+          lastValue: true,
+          database: 'gimbal',
+          strict: false,
+          table: 'gimbal_archive',
+        },
+        context,
+      );
 
-      expect(init).toHaveBeenCalledWith(undefined, {
-        lastValue: true,
-        database: 'gimbal',
-        strict: false,
-        table: 'gimbal_archive',
-      });
+      expect(on).toHaveBeenCalledTimes(2);
+      expect(on).toHaveBeenNthCalledWith(1, 'plugin/last-value/report/get', expect.any(Function));
+      expect(on).toHaveBeenNthCalledWith(2, 'plugin/last-value/report/save', expect.any(Function));
     });
 
     it('should init last value', async (): Promise<void> => {
@@ -171,10 +177,12 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
       const connect = jest.fn().mockImplementation((callback: any): any => callback(null));
       const on = jest.fn();
 
-      const bus = jest.fn().mockResolvedValue({
-        fire(): void {},
-        on,
-      });
+      const contextMock: unknown = {
+        event: {
+          on,
+        },
+      };
+      const context = contextMock as Context;
 
       jest.doMock(
         'deepmerge',
@@ -202,8 +210,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       await plugin(
         {
-          bus,
-          dir: 'foo',
+          ...pluginOptions,
+          context,
         },
         {
           lastValue: true,
@@ -215,14 +223,20 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         [{ lastValue: true, database: 'gimbal', strict: true, table: 'gimbal_archive' }, {}],
       ]);
       expect(connect).toHaveBeenCalledWith(expect.any(Function));
-      expect(init).toHaveBeenCalledWith(expect.any(Object), {
-        lastValue: true,
-        database: 'gimbal',
-        strict: true,
-        table: 'gimbal_archive',
-      });
+      expect(init).toHaveBeenCalledWith(
+        expect.any(Object),
+        {
+          lastValue: true,
+          database: 'gimbal',
+          strict: true,
+          table: 'gimbal_archive',
+        },
+        context,
+      );
 
-      expect(bus).toHaveBeenCalledWith('event');
+      expect(on).toHaveBeenCalledTimes(2);
+      expect(on).toHaveBeenNthCalledWith(1, 'plugin/last-value/report/get', expect.any(Function));
+      expect(on).toHaveBeenNthCalledWith(2, 'plugin/last-value/report/save', expect.any(Function));
     });
 
     it('should add event listeners', async (): Promise<void> => {
@@ -232,10 +246,12 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
       const connect = jest.fn().mockImplementation((callback: any): any => callback(null));
       const on = jest.fn();
 
-      const bus = jest.fn().mockResolvedValue({
-        fire(): void {},
-        on,
-      });
+      const contextMock: unknown = {
+        event: {
+          on,
+        },
+      };
+      const context = contextMock as Context;
 
       jest.doMock(
         'deepmerge',
@@ -263,8 +279,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       await plugin(
         {
-          bus,
-          dir: 'foo',
+          ...pluginOptions,
+          context,
         },
         {
           lastValue: true,
@@ -276,19 +292,20 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         [{ lastValue: true, database: 'gimbal', strict: true, table: 'gimbal_archive' }, {}],
       ]);
       expect(connect).toHaveBeenCalledWith(expect.any(Function));
-      expect(init).toHaveBeenCalledWith(expect.any(Object), {
-        lastValue: true,
-        database: 'gimbal',
-        strict: true,
-        table: 'gimbal_archive',
-      });
+      expect(init).toHaveBeenCalledWith(
+        expect.any(Object),
+        {
+          lastValue: true,
+          database: 'gimbal',
+          strict: true,
+          table: 'gimbal_archive',
+        },
+        context,
+      );
 
-      expect(on.mock.calls).toEqual([
-        ['plugin/last-value/report/get', expect.any(Function)],
-        ['plugin/last-value/report/save', expect.any(Function)],
-      ]);
-
-      expect(bus).toHaveBeenCalledWith('event');
+      expect(on).toHaveBeenCalledTimes(2);
+      expect(on).toHaveBeenNthCalledWith(1, 'plugin/last-value/report/get', expect.any(Function));
+      expect(on).toHaveBeenNthCalledWith(2, 'plugin/last-value/report/save', expect.any(Function));
     });
 
     it('should trigger event listeners', async (): Promise<void> => {
@@ -304,10 +321,12 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         .mockImplementation((eventName, cb): any => cb(eventName, { command: 'foo', report: 'bar' }));
 
-      const bus = jest.fn().mockResolvedValue({
-        fire(): void {},
-        on,
-      });
+      const contextMock: unknown = {
+        event: {
+          on,
+        },
+      };
+      const context = contextMock as Context;
 
       jest.doMock(
         'deepmerge',
@@ -337,8 +356,8 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
 
       await plugin(
         {
-          bus,
-          dir: 'foo',
+          ...pluginOptions,
+          context,
         },
         {
           lastValue: {
@@ -375,37 +394,54 @@ describe('@modus/gimbal-plugin-mysql', (): void => {
         ],
       ]);
 
-      expect(init).toHaveBeenCalledWith(expect.any(Object), {
-        lastValue: {
+      expect(on).toHaveBeenCalledTimes(2);
+      expect(on).toHaveBeenNthCalledWith(1, 'plugin/last-value/report/get', expect.any(Function));
+      expect(on).toHaveBeenNthCalledWith(2, 'plugin/last-value/report/save', expect.any(Function));
+
+      expect(init).toHaveBeenCalledWith(
+        expect.any(Object),
+        {
+          lastValue: {
+            database: 'foo-db',
+            table: 'foo-table',
+          },
           database: 'foo-db',
+          strict: true,
           table: 'foo-table',
         },
-        database: 'foo-db',
-        strict: true,
-        table: 'foo-table',
-      });
+        context,
+      );
 
-      expect(getLastReport).toHaveBeenCalledWith('foo', expect.any(Object), {
-        lastValue: {
+      expect(getLastReport).toHaveBeenCalledWith(
+        'foo',
+        expect.any(Object),
+        {
+          lastValue: {
+            database: 'foo-db',
+            table: 'foo-table',
+          },
           database: 'foo-db',
+          strict: true,
           table: 'foo-table',
         },
-        database: 'foo-db',
-        strict: true,
-        table: 'foo-table',
-      });
+        context,
+      );
 
-      expect(saveLastReport).toHaveBeenCalledWith('foo', 'bar', expect.any(Object), {
-        lastValue: {
+      expect(saveLastReport).toHaveBeenCalledWith(
+        'foo',
+        'bar',
+        expect.any(Object),
+        {
+          lastValue: {
+            database: 'foo-db',
+            table: 'foo-table',
+          },
           database: 'foo-db',
+          strict: true,
           table: 'foo-table',
         },
-        database: 'foo-db',
-        strict: true,
-        table: 'foo-table',
-      });
-
-      expect(bus).toHaveBeenCalledWith('event');
+        context,
+      );
     });
   });
 });
