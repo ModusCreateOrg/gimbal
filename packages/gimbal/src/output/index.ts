@@ -1,10 +1,9 @@
 import Logger from '@modus/gimbal-core/lib/logger';
 import { mkdirp, resolvePath, writeFile } from '@modus/gimbal-core/lib/utils/fs';
-import { ParsedArgs } from 'minimist';
 import path from 'path';
-import Config from '@/config';
 import EventEmitter from '@/event';
 import { Report } from '@/typings/command';
+import { Context } from '@/typings/context';
 import {
   FileWriteStartEvent,
   FileWriteEndEvent,
@@ -29,10 +28,11 @@ import jsonOutput from './json';
 import markdownOutput from './markdown';
 import { returnReportFailures } from './filter';
 
-const writeReport = async (file: string, type: string, contents: string): Promise<boolean> => {
+const writeReport = async (file: string, type: string, contents: string, context: Context): Promise<boolean> => {
   try {
     const fileWriteStartEvent: FileWriteStartEvent = {
       contents,
+      context,
       file,
       type,
     };
@@ -43,6 +43,7 @@ const writeReport = async (file: string, type: string, contents: string): Promis
 
     const fileWriteEndEvent: FileWriteEndEvent = {
       contents,
+      context,
       file,
       type,
     };
@@ -59,21 +60,21 @@ const writeReport = async (file: string, type: string, contents: string): Promis
   }
 };
 
-const doCliOutput = async (report: Report, args: ParsedArgs): Promise<void> => {
+const doCliOutput = async (report: Report, context: Context): Promise<void> => {
   const cliOptions: CliOutputOptions = {};
 
   const cliReportStartEvent: CliReportStartEvent = {
-    args,
     cliOptions,
+    context,
     report,
   };
 
   await EventEmitter.fire('output/cli/report/start', cliReportStartEvent);
 
-  const table = outputTable(report, args, cliOptions);
+  const table = outputTable(report, context, cliOptions);
 
   const cliReportEndEvent: CliReportEndEvent = {
-    args,
+    context,
     report,
     table,
   };
@@ -81,7 +82,7 @@ const doCliOutput = async (report: Report, args: ParsedArgs): Promise<void> => {
   await EventEmitter.fire('output/cli/report/end', cliReportEndEvent);
 
   const cliWriteStartEvent: CliWriteStartEvent = {
-    args,
+    context,
     report,
     table,
   };
@@ -93,8 +94,8 @@ const doCliOutput = async (report: Report, args: ParsedArgs): Promise<void> => {
   Logger.log(cliContents);
 
   const cliWriteEndEvent: CliWriteEndEvent = {
-    args,
     contents: cliContents,
+    context,
     report,
     table,
   };
@@ -102,43 +103,43 @@ const doCliOutput = async (report: Report, args: ParsedArgs): Promise<void> => {
   await EventEmitter.fire('output/cli/write/end', cliWriteEndEvent);
 };
 
-const doHtmlOutput: OutputFn = async (report: Report, args: ParsedArgs, html: string): Promise<void> => {
-  const file = html ? resolvePath(args.cwd, html) : args.outputHtml;
+const doHtmlOutput: OutputFn = async (report: Report, context: Context, html: string): Promise<void> => {
+  const file = html ? resolvePath(context.config.get('configs.cwd'), html) : context.config.get('configs.outputHtml');
 
   if (file) {
     await mkdirp(path.dirname(file));
 
     const htmlReportStartEvent: HtmlReportStartEvent = {
-      args,
+      context,
       file,
       report,
     };
 
     await EventEmitter.fire('output/html/report/start', htmlReportStartEvent);
 
-    const contents = await htmlOutput(report, args);
+    const contents = await htmlOutput(report, context);
 
     const htmlReportEndEvent: HtmlReportEndEvent = {
-      args,
       contents,
+      context,
       file,
       report,
     };
 
     await EventEmitter.fire('output/html/report/end', htmlReportEndEvent);
 
-    await writeReport(file, 'HTML', contents);
+    await writeReport(file, 'HTML', contents, context);
   }
 };
 
-const doJsonOutput: OutputFn = async (report: Report, args: ParsedArgs, json: string): Promise<void> => {
-  const file = json ? resolvePath(args.cwd, json) : args.outputJson;
+const doJsonOutput: OutputFn = async (report: Report, context: Context, json: string): Promise<void> => {
+  const file = json ? resolvePath(context.config.get('configs.cwd'), json) : context.config.get('configs.outputJson');
 
   if (file) {
     await mkdirp(path.dirname(file));
 
     const jsonReportStartEvent: JsonReportStartEvent = {
-      args,
+      context,
       file,
       report,
     };
@@ -148,86 +149,88 @@ const doJsonOutput: OutputFn = async (report: Report, args: ParsedArgs, json: st
     const contents = jsonOutput(report);
 
     const jsonReportEndEvent: JsonReportEndEvent = {
-      args,
       contents,
+      context,
       file,
       report,
     };
 
     await EventEmitter.fire('output/json/report/end', jsonReportEndEvent);
 
-    await writeReport(file, 'JSON', contents);
+    await writeReport(file, 'JSON', contents, context);
   }
 };
 
-const doMarkdownOutput: OutputFn = async (report: Report, args: ParsedArgs, markdown: string): Promise<void> => {
-  const file = markdown ? resolvePath(args.cwd, markdown) : args.outputMarkdown;
+const doMarkdownOutput: OutputFn = async (report: Report, context: Context, markdown: string): Promise<void> => {
+  const file = markdown
+    ? resolvePath(context.config.get('configs.cwd'), markdown)
+    : context.config.get('configs.outputMarkdown');
 
   if (file) {
     await mkdirp(path.dirname(file));
 
     const markdownReportStartEvent: MarkdownReportStartEvent = {
-      args,
+      context,
       file,
       report,
     };
 
     await EventEmitter.fire('output/markdown/report/start', markdownReportStartEvent);
 
-    const contents = await markdownOutput(report, args);
+    const contents = await markdownOutput(report, context);
 
     const markdownReportEndEvent: MarkdownReportEndEvent = {
-      args,
       contents,
+      context,
       file,
       report,
     };
 
     await EventEmitter.fire('output/markdown/report/end', markdownReportEndEvent);
 
-    await writeReport(file, 'Markdown', contents);
+    await writeReport(file, 'Markdown', contents, context);
   }
 };
 
-const doOutput = async (report: Report, args: ParsedArgs, outputItem: OutputItem, fn: OutputFn): Promise<void> => {
+const doOutput = async (report: Report, context: Context, outputItem: OutputItem, fn: OutputFn): Promise<void> => {
   const location = typeof outputItem === 'string' ? outputItem : outputItem.path;
 
   if (outputItem && (outputItem as OutputItemObject).onlyFailures) {
     if (!report.success) {
       const filteredReport = returnReportFailures(report);
 
-      await fn(filteredReport, args, location);
+      await fn(filteredReport, context, location);
     }
   } else {
-    await fn(report, args, location);
+    await fn(report, context, location);
   }
 };
 
-const output = async (report: Report, args: ParsedArgs): Promise<void> => {
-  const { cli, html, json, markdown } = Config.get('outputs', {});
+const output = async (report: Report, context: Context): Promise<void> => {
+  const { cli, html, json, markdown } = context.config.get('outputs', {});
 
   if (cli !== false) {
     if (cli && cli.onlyFailures) {
       if (!report.success) {
         const filteredReport = returnReportFailures(report);
 
-        await doCliOutput(filteredReport, args);
+        await doCliOutput(filteredReport, context);
       }
     } else {
-      await doCliOutput(report, args);
+      await doCliOutput(report, context);
     }
   }
 
-  if (html || args.outputHtml) {
-    await doOutput(report, args, html, doHtmlOutput);
+  if (html || context.config.get('configs.outputHtml')) {
+    await doOutput(report, context, html, doHtmlOutput);
   }
 
-  if (json || args.outputJson) {
-    await doOutput(report, args, json, doJsonOutput);
+  if (json || context.config.get('configs.outputJson')) {
+    await doOutput(report, context, json, doJsonOutput);
   }
 
-  if (markdown || args.outputMarkdown) {
-    await doOutput(report, args, markdown, doMarkdownOutput);
+  if (markdown || context.config.get('configs.outputMarkdown')) {
+    await doOutput(report, context, markdown, doMarkdownOutput);
   }
 };
 

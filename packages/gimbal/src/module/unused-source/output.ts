@@ -1,11 +1,11 @@
-import { ParsedArgs } from 'minimist';
 import { Report, ReportItem } from '@/typings/command';
+import { Context } from '@/typings/context';
 import { Entry } from '@/typings/module/unused-source';
 
 const type = 'unused-source';
 
-const parseReport = (raw: Entry[], args: ParsedArgs): Report => {
-  const { checkThresholds } = args;
+const parseReport = (raw: Entry[], context: Context): Report => {
+  const checkThresholds = context.config.get('configs.checkThresholds');
   const success: boolean = !checkThresholds || raw.every((entry: Entry): boolean => entry.success);
   const data: ReportItem[] = raw.map(
     (entry: Entry): ReportItem => ({

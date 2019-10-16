@@ -4,4 +4,4 @@ import { Report } from '@/typings/command';
 import { Options } from '@/typings/module/registry';
 import meta from './meta';
 
-registry.register('size', meta, ({ args }: Options): Promise<Report> => Size(args));
+registry.register('size', meta, ({ context }: Options): Promise<Report> => Size(context));

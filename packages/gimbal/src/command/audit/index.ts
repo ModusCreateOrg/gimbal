@@ -1,11 +1,9 @@
-import { ParsedArgs } from 'minimist';
 import { addSpinner, finishSpinner, startSpinner } from '@modus/gimbal-core/lib/logger';
 import { exists, resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import findPort from '@modus/gimbal-core/lib/utils/port';
 import Queue from '@modus/gimbal-core/lib/utils/Queue';
-import Config from '@/config';
+import Context from '../../context';
 import Chrome from '@/module/chrome';
-import registry from '@/module/registry';
 import Serve from '@/module/serve';
 import { Report, ReportItem } from '@/typings/command';
 import { Modules } from '@/typings/module';
@@ -23,14 +21,14 @@ interface AuditOptions {
 
 const didAuditPass = (report?: Report): boolean => !report || report.success;
 
-const doAudit = async (options: AuditOptions, audits: Modules[], args: ParsedArgs): Promise<Report> => {
+const doAudit = async (options: AuditOptions, audits: Modules[], context: Context): Promise<Report> => {
   const rets: ReportItem[] = [];
   let success = true;
 
   await Promise.all(
     audits.map(
       async (audit: string): Promise<void> => {
-        const mod = registry.get(audit);
+        const mod = context.module.get(audit);
 
         if (!mod) {
           finishSpinner(audit, false, `"${mod}" was not found in the module registry`);
@@ -41,8 +39,8 @@ const doAudit = async (options: AuditOptions, audits: Modules[], args: ParsedArg
         startSpinner(audit);
 
         const report = await mod({
-          args,
           ...options,
+          context,
         });
 
         if (report) {
@@ -70,58 +68,50 @@ const doAudit = async (options: AuditOptions, audits: Modules[], args: ParsedArg
 
 const buildDirs = ['build', 'dist'];
 
-const findBuildDir = async (args: ParsedArgs, dirArr = buildDirs): Promise<string | void> => {
+const findBuildDir = async (context: Context, dirArr = buildDirs): Promise<string | void> => {
   const arr = dirArr.slice();
 
   if (arr.length !== 0) {
     const dir = arr.shift();
-    const fullPath = resolvePath(args.cwd, dir as string);
+    const cwd = context.config.get('configs.cwd');
+    const fullPath = resolvePath(cwd, dir as string);
 
     if (await exists(fullPath)) {
       return fullPath;
     }
   }
 
-  return findBuildDir(args, arr);
+  return findBuildDir(context, arr);
 };
 
-const audit = async (args: ParsedArgs): Promise<Report | Report[]> => {
-  let audits: Modules[] = Config.get('audits');
+const audit = async (context: Context): Promise<Report | Report[]> => {
+  // don't pass default array as 2nd arg of config.get as it will merge
+  const audits: Modules[] = context.config.get('audits') || ['heap-snapshot', 'lighthouse', 'size', 'unused-source'];
 
-  if (!audits || !audits.length) {
-    /**
-     * This block is more for backwards compatibility. If the `gimbal audit`
-     * command was executed and there isn't the `audits` config, we can fall
-     * back on the old way using the cli options that opts out.
-     */
-    audits = audits ? [...audits] : [];
+  if (context.config.get('configs.calculateUnusedSource') === false) {
+    audits.splice(audits.indexOf('unused-source'), 1);
+  }
 
-    if (args.calculateUnusedSource) {
-      audits.push('unused-source');
-    }
+  if (context.config.get('configs.heapSnapshot') === false) {
+    audits.splice(audits.indexOf('heap-snapshot'), 1);
+  }
 
-    if (args.heapSnapshot) {
-      audits.push('heap-snapshot');
-    }
+  if (context.config.get('configs.lighthouse') === false) {
+    audits.splice(audits.indexOf('lighthouse'), 1);
+  }
 
-    if (args.lighthouse) {
-      audits.push('lighthouse');
-    }
-
-    if (args.size) {
-      audits.push('size');
-    }
+  if (context.config.get('configs.size') === false) {
+    audits.splice(audits.indexOf('size'), 1);
   }
 
   const servePort = await findPort();
-  const buildDir = await findBuildDir(args);
+  const buildDir = await findBuildDir(context);
 
   if (!buildDir) {
     throw Error('Could not find a build directory');
   }
 
-  /* eslint-disable-next-line no-param-reassign */
-  args.buildDir = buildDir;
+  context.config.set('configs.buildDir', buildDir);
 
   const serve = new Serve({ port: servePort, public: buildDir });
   const chrome = new Chrome();
@@ -136,12 +126,14 @@ const audit = async (args: ParsedArgs): Promise<Report | Report[]> => {
     await chrome.launch();
   }
 
-  if (args.route.length > 1) {
+  const routes = context.config.get('configs.route');
+
+  if (routes.length > 1) {
     const queue = new Queue();
 
-    args.route.forEach((route: string, index: number): void => {
+    routes.forEach((route: string, index: number): void => {
       const filteredAudits = audits.filter((name: string): boolean => {
-        const meta = registry.getMeta(name);
+        const meta = context.module.getMeta(name);
 
         if (meta && meta.maxNumRoutes && index >= meta.maxNumRoutes) {
           return false;
@@ -163,10 +155,7 @@ const audit = async (args: ParsedArgs): Promise<Report | Report[]> => {
                 url: `http://localhost:${servePort}${route}`,
               },
               filteredAudits,
-              {
-                ...args,
-                route,
-              },
+              context,
             ),
         );
       }
@@ -179,10 +168,10 @@ const audit = async (args: ParsedArgs): Promise<Report | Report[]> => {
     report = await doAudit(
       {
         chrome,
-        url: `http://localhost:${servePort}${args.route[0]}`,
+        url: `http://localhost:${servePort}${routes[0]}`,
       },
       audits,
-      args,
+      context,
     );
   }
 

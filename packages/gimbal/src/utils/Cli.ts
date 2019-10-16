@@ -44,6 +44,8 @@ class Cli {
 
     this.options = mergedOptions;
 
+    this.getArgs(true);
+
     return this;
   }
 
@@ -76,10 +78,15 @@ class Cli {
   }
 
   public getArgs(force = false): ParsedArgs {
-    if (!force && this.argCache) {
-      logger.verbose('Returning cli args from argCache');
+    if (this.argCache) {
+      if (force) {
+        // clear the cache so it builds new args cache
+        this.argCache = undefined;
+      } else {
+        logger.verbose('Returning cli args from argCache');
 
-      return this.argCache.args;
+        return this.argCache.args;
+      }
     }
 
     return this.args;

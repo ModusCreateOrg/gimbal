@@ -2,7 +2,7 @@ import Queue from '@modus/gimbal-core/lib/utils/Queue';
 import { doesItemFail, getItemDiff } from './util';
 import { Report, ReportItem } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
-import { Emitter } from '@/typings/event';
+import { Context } from '@/typings/context';
 import { Config, LastReportItem, GetEvent, SaveEvent } from '@/typings/plugin/last-value';
 
 const applyRow = async (
@@ -68,7 +68,7 @@ export const getLastReport = async (
   pluginOptions: PluginOptions,
   config: Config,
   report: Report,
-  EventEmitter: Emitter,
+  context: Context,
 ): Promise<void> => {
   const [, command] = eventName.split('/');
   const getEvent: GetEvent = {
@@ -77,7 +77,7 @@ export const getLastReport = async (
 
   const {
     rets: [row],
-  } = await EventEmitter.fire('plugin/last-value/report/get', getEvent);
+  } = await context.event.fire('plugin/last-value/report/get', getEvent);
 
   if (row) {
     const archived = typeof row.report === 'string' ? JSON.parse(row.report) : row.report;
@@ -100,7 +100,7 @@ export const saveReport = async (
   eventName: string,
   config: Config,
   report: Report,
-  EventEmitter: Emitter,
+  context: Context,
 ): Promise<void> => {
   if (!config.saveOnlyOnSuccess || report.success) {
     const [, command] = eventName.split('/');
@@ -109,6 +109,6 @@ export const saveReport = async (
       report,
     };
 
-    await EventEmitter.fire('plugin/last-value/report/save', saveEvent);
+    await context.event.fire('plugin/last-value/report/save', saveEvent);
   }
 };

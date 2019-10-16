@@ -66,8 +66,10 @@ export const parseBundle = (rawBundle: RawReport, bundleConfig: BundleType): Rep
   };
 };
 
-export const runModule = (pluginConfig: Config): RunModuleFn => async ({ args }: Options): Promise<Report> => {
-  const globBase = resolvePath(args.cwd, args.buildDir as string);
+export const runModule = (pluginConfig: Config): RunModuleFn => async ({ context }: Options): Promise<Report> => {
+  const buildDir = context.config.get('configs.buildDir');
+  const cwd = context.config.get('configs.cwd');
+  const globBase = resolvePath(cwd, buildDir as string);
   const globs: string[] = pluginConfig.bundles.map((glob: BundleType): string => {
     const normalizedGlob: BundleObject = typeof glob === 'string' ? { path: glob, thresholds: {} } : glob;
     const { path } = normalizedGlob;
@@ -124,8 +126,6 @@ export const runModule = (pluginConfig: Config): RunModuleFn => async ({ args }:
   };
 };
 
-export const registerModule = async ({ bus }: PluginOptions, pluginConfig: Config): Promise<void> => {
-  const registry = await bus('module/registry');
-
-  registry.register(type, meta, runModule(pluginConfig));
+export const registerModule = async ({ context }: PluginOptions, pluginConfig: Config): Promise<void> => {
+  context.module.register(type, meta, runModule(pluginConfig));
 };

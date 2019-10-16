@@ -1,34 +1,32 @@
 import { Table } from '@/typings/components/Table';
 import { Report } from '@/typings/command';
+import { Context } from '@/typings/context';
 import { CliOutputOptions } from '@/typings/output/cli';
-import { ParsedArgs } from 'minimist';
 
 export interface FileWriteStartEvent {
   contents: string;
+  context: Context;
   file: string;
   type: string;
 }
 
-export interface FileWriteEndEvent {
-  contents: string;
-  file: string;
-  type: string;
-}
+/* eslint-disable-next-line @typescript-eslint/no-empty-interface */
+export interface FileWriteEndEvent extends FileWriteStartEvent {}
 
 export interface CliReportStartEvent {
-  args: ParsedArgs;
+  context: Context;
   cliOptions: CliOutputOptions;
   report: Report;
 }
 
 export interface CliReportEndEvent {
-  args: ParsedArgs;
+  context: Context;
   report: Report;
   table: Table | void;
 }
 
 export interface CliWriteStartEvent {
-  args: ParsedArgs;
+  context: Context;
   report: Report;
   table: Table | void;
 }
@@ -38,7 +36,7 @@ export interface CliWriteEndEvent extends CliWriteStartEvent {
 }
 
 export interface HtmlReportStartEvent {
-  args: ParsedArgs;
+  context: Context;
   file: string;
   report: Report;
 }
@@ -48,7 +46,7 @@ export interface HtmlReportEndEvent extends HtmlReportStartEvent {
 }
 
 export interface JsonReportStartEvent {
-  args: ParsedArgs;
+  context: Context;
   file: string;
   report: Report;
 }
@@ -58,7 +56,7 @@ export interface JsonReportEndEvent extends JsonReportStartEvent {
 }
 
 export interface MarkdownReportStartEvent {
-  args: ParsedArgs;
+  context: Context;
   file: string;
   report: Report;
 }
@@ -74,4 +72,4 @@ export interface OutputItemObject {
 
 export type OutputItem = string | OutputItemObject;
 
-export type OutputFn = (report: Report, args: ParsedArgs, location: string) => Promise<void>;
+export type OutputFn = (report: Report, context: Context, location: string) => Promise<void>;

@@ -1,11 +1,11 @@
 import deepmerge from 'deepmerge';
 import minimatch from 'minimatch';
-import { ParsedArgs } from 'minimist';
 import { CoverageEntry, Page } from 'puppeteer';
 import { URL } from 'url';
 import Config from '@/config';
 import EventEmitter from '@/event';
 import { Report } from '@/typings/command';
+import { Context } from '@/typings/context';
 import { SizeConfigs } from '@/typings/module/size';
 import {
   CoverageRange,
@@ -128,10 +128,10 @@ const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[])
 const UnusedCSS = async (
   page: Page,
   url: string,
-  args: ParsedArgs,
+  context: Context,
   config: UnusedSourceConfig = Config.get('configs.unused-source', {}),
 ): Promise<Report> => {
-  const { checkThresholds } = args;
+  const checkThresholds = context.config.get('configs.checkThresholds');
   const sourceConfig = deepmerge(defaultConfig, config, {
     arrayMerge,
   });
@@ -141,8 +141,8 @@ const UnusedCSS = async (
     : sourceConfig.threshold;
 
   const auditStartEvent: AuditStartEvent = {
-    args,
     config: sourceConfig,
+    context,
     page,
     url,
   };
@@ -152,8 +152,8 @@ const UnusedCSS = async (
   await Promise.all([page.coverage.startCSSCoverage(), page.coverage.startJSCoverage()]);
 
   const navigateStartEvent: NavigateStartEvent = {
-    args,
     config: sourceConfig,
+    context,
     page,
     url,
   };
@@ -163,8 +163,8 @@ const UnusedCSS = async (
   await page.goto(url);
 
   const navigateEndEvent: NavigateEndEvent = {
-    args,
     config: sourceConfig,
+    context,
     page,
     url,
   };
@@ -177,8 +177,8 @@ const UnusedCSS = async (
   ]);
 
   const auditEndEvent: AuditEndEvent = {
-    args,
     config: sourceConfig,
+    context,
     css,
     js,
     page,
@@ -216,8 +216,8 @@ const UnusedCSS = async (
   };
 
   const auditParseStartEvent: AuditParseStartEvent = {
-    args,
     config: sourceConfig,
+    context,
     css,
     js,
     page,
@@ -243,8 +243,8 @@ const UnusedCSS = async (
   };
 
   const auditParseEndEvent: AuditParseEndEvent = {
-    args,
     config: sourceConfig,
+    context,
     css,
     js,
     pageTotal,
@@ -259,20 +259,20 @@ const UnusedCSS = async (
   const audit: Entry[] = [pageTotal, ...parsedCss, ...parsedJs];
 
   const reportStartEvent: ReportStartEvent = {
-    args,
     audit,
     config,
+    context,
     url,
   };
 
   await EventEmitter.fire(`module/unused-source/report/start`, reportStartEvent);
 
-  const report = parseReport(audit, args);
+  const report = parseReport(audit, context);
 
   const reportEndEvent: ReportEndEvent = {
-    args,
     audit,
     config,
+    context,
     report,
     url,
   };

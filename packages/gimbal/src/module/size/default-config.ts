@@ -1,8 +1,10 @@
 import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
-import { ParsedArgs } from 'minimist';
+import { Context } from '@/typings/context';
 import { SizeConfig } from '@/typings/module/size';
 
-const defaultConfig = ({ cwd, buildDir }: ParsedArgs): SizeConfig => {
+const defaultConfig = (context: Context): SizeConfig => {
+  const buildDir = context.config.get('configs.buildDir');
+  const cwd = context.config.get('configs.cwd');
   const resolvedBuildDir = resolvePath(cwd, buildDir as string);
 
   return {

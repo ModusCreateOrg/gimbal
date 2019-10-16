@@ -73,12 +73,10 @@ const parseEntry = (entry: Result, success: boolean, config: Config): ReportItem
   };
 };
 
-const Axe = async ({ bus }: PluginOptions, config: Config): Promise<void> => {
+const Axe = async ({ context }: PluginOptions, config: Config): Promise<void> => {
   const pluginConfig = deepmerge(defaultConfig, config);
 
-  const registry = await bus('module/registry');
-
-  registry.register(
+  context.module.register(
     type,
     meta,
     async ({ chrome, url }: Options): Promise<Report> => {

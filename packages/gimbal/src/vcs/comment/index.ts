@@ -1,11 +1,11 @@
 import { namedLogger } from '@modus/gimbal-core/lib/logger';
-import { ParsedArgs } from 'minimist';
 import CIManager from '@/ci';
 import Config from '@/config';
 import EventEmitter from '@/event';
 import { outputTable } from '@/output/markdown';
 import { filterReportItemsFailures } from '@/output/filter';
 import { Report, ReportItem } from '@/typings/command';
+import { Context } from '@/typings/context';
 import {
   CommentBuildStartEvent,
   CommentBuildEndEvent,
@@ -21,7 +21,7 @@ const logger = namedLogger('gimbal/vcs/comment');
 
 const noFailuresText = 'No Failures';
 
-const renderItem = async (reportItem: ReportItem, args: ParsedArgs, comment: Comment): Promise<string> => {
+const renderItem = async (reportItem: ReportItem, context: Context, comment: Comment): Promise<string> => {
   if (!reportItem.data) {
     return '';
   }
@@ -32,7 +32,7 @@ const renderItem = async (reportItem: ReportItem, args: ParsedArgs, comment: Com
   );
 
   const commentRenderTableStartEvent: CommentRenderTableStartEvent = {
-    args,
+    context,
     reportItem,
   };
 
@@ -51,7 +51,7 @@ const renderItem = async (reportItem: ReportItem, args: ParsedArgs, comment: Com
         reportItem.data.map(
           async (childItem: ReportItem): Promise<void> => {
             if (!onlyFailures || (onlyFailures && !childItem.success)) {
-              const rendered = await outputTable(childItem, args);
+              const rendered = await outputTable(childItem, context);
 
               buffered.push(`### ${childItem.label}`, rendered);
             }
@@ -66,7 +66,7 @@ const renderItem = async (reportItem: ReportItem, args: ParsedArgs, comment: Com
   } else {
     const rendered = await outputTable(
       onlyFailures && reportItem ? (filterReportItemsFailures(reportItem as ReportItem) as ReportItem) : reportItem,
-      args,
+      context,
     );
 
     output.push(`## ${reportItem.label}`, rendered);
@@ -75,7 +75,7 @@ const renderItem = async (reportItem: ReportItem, args: ParsedArgs, comment: Com
   const renderedTable = output.join('\n\n');
 
   const commentRenderTableEndEvent: CommentRenderTableEndEvent = {
-    args,
+    context,
     renderedTable,
     reportItem,
   };
@@ -91,9 +91,9 @@ ${renderedTable}
 </details>`;
 };
 
-const vcsComment = async (report: Report, args: ParsedArgs): Promise<void> => {
+const vcsComment = async (report: Report, context: Context): Promise<void> => {
   if (report.data) {
-    const comment = Config.get('configs.comment', args.comment);
+    const comment = Config.get('configs.comment', true);
 
     if (comment) {
       const ci = CIManager.getActive();
@@ -108,6 +108,7 @@ const vcsComment = async (report: Report, args: ParsedArgs): Promise<void> => {
 
           const commentBuildStartEvent: CommentBuildStartEvent = {
             ci,
+            context,
             report,
             vcs,
           };
@@ -115,13 +116,16 @@ const vcsComment = async (report: Report, args: ParsedArgs): Promise<void> => {
           await EventEmitter.fire(`vcs/comment/build/start`, commentBuildStartEvent);
 
           const renderedReport = report.data
-            ? await Promise.all(report.data.map((item: ReportItem): Promise<string> => renderItem(item, args, comment)))
+            ? await Promise.all(
+                report.data.map((item: ReportItem): Promise<string> => renderItem(item, context, comment)),
+              )
             : [];
 
           let markdown = renderedReport.join('\n\n').trim();
 
           const commentBuildEndEvent: CommentBuildEndEvent = {
             ci,
+            context,
             markdown,
             report,
             vcs,
@@ -141,6 +145,7 @@ const vcsComment = async (report: Report, args: ParsedArgs): Promise<void> => {
             const commentStartEvent: CommentStartEvent = {
               ci,
               comment: markdown,
+              context,
               report,
               vcs,
             };
@@ -154,6 +159,7 @@ const vcsComment = async (report: Report, args: ParsedArgs): Promise<void> => {
             const commentEndEvent: CommentEndEvent = {
               ci,
               comment: markdown,
+              context,
               report,
               vcs,
             };

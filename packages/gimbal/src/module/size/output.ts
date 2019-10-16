@@ -1,8 +1,8 @@
 import checkThreshold from '@modus/gimbal-core/lib/utils/threshold';
 import bytes from 'bytes';
-import { ParsedArgs } from 'minimist';
 import { relative } from 'path';
 import { Report, ReportItem } from '@/typings/command';
+import { Context } from '@/typings/context';
 import { FileResult } from '@/typings/module/size';
 
 const bytesConfig = { unitSeparator: ' ' };
@@ -13,8 +13,9 @@ interface ParseOptions {
   success: boolean;
 }
 
-const parseReport = (raw: FileResult[], options: ParsedArgs): Report => {
-  const { checkThresholds, cwd } = options;
+const parseReport = (raw: FileResult[], context: Context): Report => {
+  const checkThresholds = context.config.get('configs.checkThresholds');
+  const cwd = context.config.get('configs.cwd');
   let success = true;
 
   const data = raw.map(

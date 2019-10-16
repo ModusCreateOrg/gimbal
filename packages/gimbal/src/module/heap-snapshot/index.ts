@@ -1,8 +1,8 @@
-import { ParsedArgs } from 'minimist';
 import { Metrics, Page } from 'puppeteer';
 import Config from '@/config';
 import EventEmitter from '@/event';
 import { Report } from '@/typings/command';
+import { Context } from '@/typings/context';
 import {
   Config as HeapSnapshotConfig,
   HeapMetrics,
@@ -19,12 +19,12 @@ import parseReport from './output';
 const heapSnapshot = async (
   page: Page,
   url: string,
-  args: ParsedArgs,
+  context: Context,
   config: HeapSnapshotConfig = Config.get('configs.heap-snapshot', defaultConfig),
 ): Promise<Report> => {
   const navigationStartEvent: NavigationStartEvent = {
-    args,
     config,
+    context,
     page,
     url,
   };
@@ -34,8 +34,8 @@ const heapSnapshot = async (
   await page.goto(url);
 
   const navigationEndEvent: NavigationEndEvent = {
-    args,
     config,
+    context,
     page,
     url,
   };
@@ -43,8 +43,8 @@ const heapSnapshot = async (
   await EventEmitter.fire(`module/heap-snapsnot/navigation/end`, navigationEndEvent);
 
   const auditStartEvent: AuditStartEvent = {
-    args,
     config,
+    context,
     page,
     url,
   };
@@ -54,9 +54,9 @@ const heapSnapshot = async (
   const audit: Metrics = await page.metrics();
 
   const auditEndEvent: AuditEndEvent = {
-    args,
     audit,
     config,
+    context,
     page,
     url,
   };
@@ -64,21 +64,21 @@ const heapSnapshot = async (
   await EventEmitter.fire(`module/heap-snapsnot/audit/end`, auditEndEvent);
 
   const reportStartEvent: ReportStartEvent = {
-    args,
     audit,
     config,
+    context,
     page,
     url,
   };
 
   await EventEmitter.fire(`module/heap-snapsnot/report/start`, reportStartEvent);
 
-  const report = parseReport(audit as HeapMetrics, config, args);
+  const report = parseReport(audit as HeapMetrics, config, context);
 
   const reportEndEvent: ReportEndEvent = {
-    args,
     audit,
     config,
+    context,
     page,
     report,
     url,

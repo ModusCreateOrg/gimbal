@@ -1,9 +1,9 @@
 import deepmerge from 'deepmerge';
-import { ParsedArgs } from 'minimist';
 import { addColumn } from './render';
 import { getLastReport, saveReport } from './storage';
 import { ActionEndEvent, EndEvent } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
+import { Context } from '@/typings/context';
 import { Config, InspectCallback } from '@/typings/plugin/last-value';
 import { CliReportEndEvent } from '@/typings/output';
 
@@ -20,8 +20,8 @@ const defaultConfig: Config = {
 
 type EventRet = void | Promise<void>;
 
-const inspectArgs = (args: ParsedArgs, callback: InspectCallback): void | Promise<void> => {
-  if (args.checkLastValues) {
+const inspectArgs = (context: Context, callback: InspectCallback): void | Promise<void> => {
+  if (context.config.get('configs.checkLastValues')) {
     return callback();
   }
 
@@ -29,35 +29,36 @@ const inspectArgs = (args: ParsedArgs, callback: InspectCallback): void | Promis
 };
 
 const LastValue = async (pluginOptions: PluginOptions, config: Config): Promise<void> => {
-  const { bus } = pluginOptions;
+  const { context } = pluginOptions;
   const pluginConfig = deepmerge(defaultConfig, config);
-  const event = await bus('event');
 
-  // TODO hmmm
-  // program.option('--no-check-last-values', 'Set to disable checking last values vs current values.', true);
+  context.args.add({
+    'check-last-values': {
+      default: true,
+      type: 'boolean',
+    },
+  });
 
-  event.on(
-    'output/cli/report/end',
-    (name: string, { args, table }: CliReportEndEvent): EventRet =>
-      inspectArgs(args, (): void => addColumn(table, pluginOptions, pluginConfig)),
+  context.event.on('output/cli/report/end', (name: string, { table }: CliReportEndEvent) =>
+    inspectArgs(context, (): void => addColumn(table, pluginOptions, pluginConfig)),
   );
 
-  event.on(
+  context.event.on(
     'output/markdown/render/table/start',
-    (name: string, { args, table }: CliReportEndEvent): EventRet =>
-      inspectArgs(args, (): void => addColumn(table, pluginOptions, pluginConfig)),
+    (name: string, { table }: CliReportEndEvent): EventRet =>
+      inspectArgs(context, (): void => addColumn(table, pluginOptions, pluginConfig)),
   );
 
-  event.on(
+  context.event.on(
     'command/*/action/end',
-    (name: string, { args, report }: ActionEndEvent): EventRet =>
-      inspectArgs(args, (): Promise<void> => getLastReport(name, pluginOptions, pluginConfig, report, event)),
+    (name: string, { report }: ActionEndEvent): EventRet =>
+      inspectArgs(context, (): Promise<void> => getLastReport(name, pluginOptions, pluginConfig, report, context)),
   );
 
-  event.on(
+  context.event.on(
     'command/*/end',
-    (name: string, { args, report }: EndEvent): EventRet =>
-      inspectArgs(args, (): Promise<void> => saveReport(name, pluginConfig, report, event)),
+    (name: string, { report }: EndEvent): EventRet =>
+      inspectArgs(context, (): Promise<void> => saveReport(name, pluginConfig, report, context)),
   );
 };
 

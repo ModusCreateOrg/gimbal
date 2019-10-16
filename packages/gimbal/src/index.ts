@@ -7,12 +7,13 @@ import { StartEvent, EndEvent, ActionStartEvent, ActionEndEvent, Report } from '
 import audit from './command/audit';
 import reconcileReports from './command/reconcile';
 import Config from './config';
+import Context from './context';
 import EventEmitter from './event';
 import output from './output';
 import { CHILD_GIMBAL_PROCESS } from './utils/constants';
 import comment from './vcs/comment';
 
-const gimbal = async (args: ParsedArgs): Promise<void> => {
+const gimbal = async (args?: ParsedArgs): Promise<void> => {
   if (!process.env[CHILD_GIMBAL_PROCESS]) {
     const gimbalArt = fs.readFileSync(path.join(__dirname, 'ascii_art/gimbal.txt'), 'utf8');
 
@@ -20,39 +21,45 @@ const gimbal = async (args: ParsedArgs): Promise<void> => {
     console.log(gimbalArt);
   }
 
-  await Config.load(args.cwd, args);
+  const context = new Context();
+
+  await Config.load(context);
+
+  if (args) {
+    Config.mergeArgs(args);
+  }
 
   const startEvent: StartEvent = {
-    args,
     command: 'audit',
+    context,
   };
 
   await EventEmitter.fire(`command/audit/start`, startEvent);
 
   const actionStartEvent: ActionStartEvent = {
-    args,
     command: 'audit',
+    context,
   };
 
   await EventEmitter.fire(`command/audit/action/start`, actionStartEvent);
 
-  const reports: Report | Report[] = await audit(args);
+  const reports: Report | Report[] = await audit(context);
   const report: Report = reconcileReports(reports);
 
   const actionEndEvent: ActionEndEvent = {
-    args,
     command: 'audit',
+    context,
     report,
   };
 
   await EventEmitter.fire(`command/audit/action/end`, actionEndEvent);
 
-  await output(report, args);
-  await comment(report, args);
+  await output(report, context);
+  await comment(report, context);
 
   const endEvent: EndEvent = {
-    args,
     command: 'audit',
+    context,
     report,
   };
 

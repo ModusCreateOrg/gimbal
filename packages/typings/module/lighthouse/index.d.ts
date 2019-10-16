@@ -1,4 +1,5 @@
 import { Report } from '@/typings/command';
+import { Context } from '@/typings/context';
 import { Threshold } from '@/typings/utils/threshold';
 
 export interface AuditRef {
@@ -59,31 +60,25 @@ export interface Audit {
 
 export interface AuditStartEvent {
   config: Config;
+  context: Context;
   options: Options;
   url: string;
 }
 
-export interface AuditEndEvent {
+export interface AuditEndEvent extends AuditStartEvent {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   audit: any; // lighthouse doesn't have types yet
-  config: Config;
-  options: Options;
-  url: string;
 }
 
 export interface ReportStartEvent {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   audit: any; // lighthouse doesn't have types yet
   config: Config;
+  context: Context;
   options: Options;
   url: string;
 }
 
-export interface ReportEndEvent {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  audit: any; // lighthouse doesn't have types yet
-  config: Config;
-  options: Options;
+export interface ReportEndEvent extends ReportStartEvent {
   report: Report;
-  url: string;
 }

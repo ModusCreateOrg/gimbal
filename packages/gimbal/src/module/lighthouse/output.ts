@@ -1,16 +1,16 @@
 import { mkdirp, resolvePath, writeFile } from '@modus/gimbal-core/lib/utils/fs';
 import checkThreshold from '@modus/gimbal-core/lib/utils/threshold';
-import { ParsedArgs } from 'minimist';
 import { dirname } from 'path';
 import { Report, ReportItem } from '@/typings/command';
+import { Context } from '@/typings/context';
 import { Audit, Config } from '@/typings/module/lighthouse';
 import { AdvancedThreshold } from '@/typings/utils/threshold';
 
 const type = 'lighthouse';
 
-const parseReport = async (raw: Audit, { outputHtml, threshold }: Config, args: ParsedArgs): Promise<Report> => {
+const parseReport = async (raw: Audit, { outputHtml, threshold }: Config, context: Context): Promise<Report> => {
   const { lhr, report } = raw;
-  const { checkThresholds } = args;
+  const checkThresholds = context.config.get('configs.checkThresholds');
   const isComplexThreshold = typeof threshold === 'object';
   let success = true;
 
@@ -43,7 +43,8 @@ const parseReport = async (raw: Audit, { outputHtml, threshold }: Config, args: 
 
   if (outputHtml && report) {
     const [, html] = report;
-    const path = resolvePath(args.cwd, outputHtml);
+    const cwd = context.config.get('configs.cwd');
+    const path = resolvePath(cwd, outputHtml);
 
     await mkdirp(dirname(path));
 

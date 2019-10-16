@@ -1,9 +1,9 @@
-import { ParsedArgs } from 'minimist';
 import { Report } from '@/typings/command';
+import { Context } from '@/typings/context';
 import { Meta } from '@/typings/module';
 
 export interface Options {
-  args: ParsedArgs;
+  context: Context;
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   [name: string]: any; // any to allow anything else to be on this options object
 }
@@ -16,5 +16,7 @@ export interface ModuleInfo {
 }
 
 export type Get = (name: string) => Module | void;
+
+export type GetMeta = (name: string) => Meta | void;
 
 export type Register = (name: string, meta: Meta, fn: Module) => void;

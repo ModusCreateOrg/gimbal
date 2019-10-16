@@ -1,7 +1,7 @@
-import { ParsedArgs } from 'minimist';
 // eslint-disable-next-line
 import { CoverageEntry, Page } from 'puppeteer';
 import { Report } from '@/typings/command';
+import { Context } from '@/typings/context';
 import { SizeConfigs } from '@/typings/module/size';
 
 export interface CoverageRange {
@@ -37,8 +37,8 @@ export interface UnusedSourceConfig {
 }
 
 export interface NavigateStartEvent {
-  args: ParsedArgs;
   config: UnusedSourceConfig;
+  context: Context;
   page: Page;
   url: string;
 }
@@ -48,8 +48,8 @@ export interface NavigateEndEvent extends NavigateStartEvent {
 }
 
 export interface AuditStartEvent {
-  args: ParsedArgs;
   config: UnusedSourceConfig;
+  context: Context;
   page: Page;
   url: string;
 }
@@ -60,8 +60,8 @@ export interface AuditEndEvent extends AuditStartEvent {
 }
 
 export interface AuditParseStartEvent {
-  args: ParsedArgs;
   config: UnusedSourceConfig;
+  context: Context;
   css: CoverageEntry[];
   js: CoverageEntry[];
   page: Page;
@@ -75,9 +75,9 @@ export interface AuditParseEndEvent extends AuditParseStartEvent {
 }
 
 export interface ReportStartEvent {
-  args: ParsedArgs;
   audit: Entry[];
   config: UnusedSourceConfig;
+  context: Context;
   url: string;
 }
 

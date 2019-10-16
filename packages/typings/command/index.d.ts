@@ -1,4 +1,4 @@
-import { ParsedArgs } from 'minimist';
+import { Context } from '../context/index';
 
 export type ReportThresholdLimit = 'lower' | 'upper';
 
@@ -34,8 +34,8 @@ export interface Report {
 }
 
 export interface StartEvent {
-  args: ParsedArgs;
   command: string;
+  context: Context;
 }
 
 export interface EndEvent extends StartEvent {
@@ -43,8 +43,8 @@ export interface EndEvent extends StartEvent {
 }
 
 export interface ActionStartEvent {
-  args: ParsedArgs;
   command: string;
+  context: Context;
 }
 
 export interface ActionEndEvent extends ActionStartEvent {

@@ -1,9 +1,7 @@
-import { ParsedArgs } from 'minimist';
+import { Context } from '../../context';
 
 export interface PluginOptions {
-  args?: ParsedArgs;
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  bus: (path: string) => any;
+  context: Context;
   dir: string;
 }
 

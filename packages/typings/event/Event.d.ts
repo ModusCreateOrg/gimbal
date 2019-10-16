@@ -14,7 +14,7 @@ export interface Config {
 }
 
 export interface Event {
-  priority: number;
-  fire: Fire;
   createCallback: CreateCallback;
+  fire: Fire;
+  priority: number;
 }

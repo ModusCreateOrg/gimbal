@@ -1,28 +1,16 @@
 import deepmerge from 'deepmerge';
-import { ParsedArgs } from 'minimist';
 import resolver from '@/config/resolver';
 import EventEmitter from '@/event';
 import { PluginConfig, Plugin, PluginOptions } from '@/typings/config/plugin';
 import { LoadEndEvent } from '@/typings/config';
-
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-const bus = async (name: string): Promise<any> => {
-  const imported = await import(`${__dirname}/../../${name}`);
-
-  if (imported.default) {
-    return imported.default;
-  }
-
-  return imported;
-};
+import { Context } from '@/typings/context';
 
 interface Map {
   [label: string]: PluginConfig;
 }
 
 // this is the object that gets passed to a plugin function
-const options: PluginOptions = {
-  bus,
+const options: Pick<PluginOptions, 'dir'> = {
   dir: __dirname,
 };
 
@@ -31,7 +19,7 @@ const map: Map = {};
 const parsePlugins = async (
   plugins: (string | PluginConfig)[],
   dir: string,
-  args: ParsedArgs,
+  context: Context,
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 ): Promise<any[]> => {
   const pluginConfigs = await Promise.all(
@@ -68,7 +56,7 @@ const parsePlugins = async (
         // it that could cause issues.
         // Also return it in case it's a promise, we can
         // wait for it.
-        return func({ ...options, args: { ...args }, dir }, deepmerge(pluginConfig, {}));
+        return func({ ...options, context, dir }, deepmerge(pluginConfig, {}));
       },
     ),
   );
@@ -77,8 +65,8 @@ const parsePlugins = async (
 EventEmitter.on(
   'config/load/end',
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  async (_eventName: string, { args, config: { plugins }, dir }: LoadEndEvent): Promise<void | any[]> =>
-    plugins && plugins.length ? parsePlugins(plugins, dir, args) : undefined,
+  async (_eventName: string, { config: { plugins }, context, dir }: LoadEndEvent): Promise<void | any[]> =>
+    plugins && plugins.length ? parsePlugins(plugins, dir, context) : undefined,
 );
 
 export default parsePlugins;

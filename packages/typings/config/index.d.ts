@@ -1,11 +1,12 @@
 // @ts-ignore
 import lighthouse from 'lighthouse';
-import { ParsedArgs } from 'minimist';
 import { Plugin } from '@/typings/config/plugin';
 import { Modules } from '@/typings/module';
 import { Config as HeapSnapshotConfig } from '@/typings/module/heap-snapshot';
 import { SizeConfigs } from '@/typings/module/size';
 import { UnusedSourceConfig } from '@/typings/module/unused-source';
+
+import { Context } from '../context/index';
 
 export type PluginType = string | Plugin;
 
@@ -44,9 +45,9 @@ export interface LoaderMap {
 }
 
 export interface LoadStartEvent {
-  args: ParsedArgs;
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   Config: any; // would cause circular dependency if imported the command class
+  context: Context;
   dir: string;
   file: string;
   force: boolean;

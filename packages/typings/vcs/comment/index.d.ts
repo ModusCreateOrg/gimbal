@@ -1,10 +1,11 @@
-import { ParsedArgs } from 'minimist';
 import { CIs } from '@/ci';
 import GitHub from '@/vcs/GitHub';
 import { Report, ReportItem } from '@/typings/command';
+import { Context } from '@/typings/context';
 
 export interface CommentBuildStartEvent {
   ci: CIs;
+  context: Context;
   report: Report;
   vcs: GitHub;
 }
@@ -14,7 +15,7 @@ export interface CommentBuildEndEvent extends CommentBuildStartEvent {
 }
 
 export interface CommentRenderTableStartEvent {
-  args: ParsedArgs;
+  context: Context;
   reportItem: ReportItem;
 }
 
@@ -25,6 +26,7 @@ export interface CommentRenderTableEndEvent extends CommentRenderTableStartEvent
 export interface CommentStartEvent {
   ci: CIs;
   comment: string;
+  context: Context;
   report: Report;
   vcs: GitHub;
 }

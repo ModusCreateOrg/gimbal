@@ -88,7 +88,7 @@ Cli.add({
     updateNotifier({ pkg: packageJson }).notify();
 
     try {
-      await gimbal(args);
+      await gimbal();
 
       logger.log('Finished successfully');
 

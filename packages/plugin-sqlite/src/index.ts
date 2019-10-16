@@ -28,11 +28,13 @@ const defaultConfig: Config = {
 
 const willNeedDatabase = (config: Config): boolean => config.lastValue !== false;
 
-const sqlite = async ({ args, bus }: PluginOptions, config: Config): Promise<void> => {
+const sqlite = async ({ context }: PluginOptions, config: Config): Promise<void> => {
   const sqliteConfig = deepmerge(defaultConfig, config);
 
-  if (args && sqliteConfig.file !== ':memory:') {
-    sqliteConfig.file = resolvePath(args.cwd, sqliteConfig.file);
+  if (sqliteConfig.file !== ':memory:') {
+    const cwd = context.config.get('configs.cwd');
+
+    sqliteConfig.file = resolvePath(cwd, sqliteConfig.file);
   }
 
   if (willNeedDatabase(sqliteConfig)) {
@@ -40,7 +42,6 @@ const sqlite = async ({ args, bus }: PluginOptions, config: Config): Promise<voi
       await mkdirp(dirname(sqliteConfig.file));
     }
 
-    const event = await bus('event');
     const db = new sqlite3.Database(sqliteConfig.file);
 
     if (config.lastValue) {
@@ -58,12 +59,12 @@ const sqlite = async ({ args, bus }: PluginOptions, config: Config): Promise<voi
 
       await init(pluginConfig);
 
-      event.on(
+      context.event.on(
         'plugin/last-value/report/get',
         (_eventName: string, { command }: GetEvent): Promise<void> => getLastReport(command, pluginConfig),
       );
 
-      event.on(
+      context.event.on(
         'plugin/last-value/report/save',
         (_eventName: string, { command, report }: SaveEvent): Promise<void> =>
           saveLastReport(command, report, pluginConfig),

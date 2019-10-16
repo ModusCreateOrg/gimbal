@@ -5,6 +5,7 @@ import { ParsedArgs } from 'minimist';
 import { extname } from 'path';
 import EventEmitter from '../event';
 import { Config as ConfigType, LoaderMap, LoadStartEvent, LoadEndEvent } from '@/typings/config';
+import { Context } from '@/typings/context';
 import jsLoader from './loader/js';
 import yamlLoader from './loader/yaml';
 import './plugin';
@@ -47,30 +48,35 @@ class Config {
     return this.loading;
   }
 
-  public async load(dir: string, args: ParsedArgs, force = false): Promise<ConfigType> {
+  public async load(context: Context, force = false): Promise<ConfigType> {
     if (this.loaded && !force) {
       throw new Error('Configuration is already loaded!');
     }
 
-    if (args.config) {
-      const file = resolvePath(args.cwd, args.config);
+    const config = context.args.get('config');
+    const cwd = context.args.get('cwd');
 
-      return this.doLoad(dir, file, args, force);
+    if (config) {
+      const file = resolvePath(cwd, config);
+
+      return this.doLoad(file, context, force);
     }
 
-    const glob = resolvePath(dir, this.CONFIG_FILE_GLOB);
+    const glob = resolvePath(cwd, this.CONFIG_FILE_GLOB);
     const [file] = await globby(glob);
 
-    return this.doLoad(dir, file, args, force);
+    return this.doLoad(file, context, force);
   }
 
-  private async doLoad(dir: string, file: string, args: ParsedArgs, force: boolean): Promise<ConfigType> {
+  private async doLoad(file: string, context: Context, force: boolean): Promise<ConfigType> {
     this.loading = true;
 
+    const cwd = context.args.get('cwd');
+
     const loadStartEvent: LoadStartEvent = {
-      args,
       Config: this,
-      dir,
+      context,
+      dir: cwd,
       file,
       force,
     };
@@ -81,16 +87,16 @@ class Config {
       await this.loadFile(file);
     }
 
-    const config = this.mergeArgs(args);
+    const config = this.mergeArgs(context.args.get());
 
     this.loaded = true;
     this.loading = false;
 
     const loadEndEvent: LoadEndEvent = {
-      args,
       Config: this,
       config,
-      dir,
+      context,
+      dir: cwd,
       file,
       force,
     };
@@ -275,7 +281,7 @@ class Config {
     return this.config;
   }
 
-  private mergeArgs(args: ParsedArgs): ConfigType {
+  public mergeArgs(args: ParsedArgs): ConfigType {
     const config = this.ensureConfig();
 
     Object.keys(args)

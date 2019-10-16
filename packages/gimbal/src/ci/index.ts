@@ -7,6 +7,8 @@ export const CircleCI = 'CircleCI';
 export const GitHubActions = 'GitHubActions';
 export const TravisCI = 'TravisCI';
 
+export type CIs = CircleCICls | GitHubActionsCls | TravisCICls;
+
 const manager = new CIManager({
   name: 'CI',
 });

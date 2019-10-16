@@ -53,12 +53,11 @@ const createConnection = (config: ItemConfig, env: EnvOrDefault): Promise<Connec
     });
   });
 
-const mysql = async ({ bus }: PluginOptions, config: Config): Promise<void> => {
+const mysql = async ({ context }: PluginOptions, config: Config): Promise<void> => {
   const mysqlConfig = deepmerge(defaultConfig, config);
 
   if (mysqlConfig.lastValue) {
     const { getLastReport, init, saveLastReport } = await import('./last-value');
-    const event = await bus('event');
     const itemConfig: ItemConfig = deepmerge(
       {
         ...mysqlConfig,
@@ -72,12 +71,12 @@ const mysql = async ({ bus }: PluginOptions, config: Config): Promise<void> => {
 
     await init(connection, itemConfig);
 
-    event.on(
+    context.event.on(
       'plugin/last-value/report/get',
       (_eventName: string, { command }: GetEvent): Promise<void> => getLastReport(command, connection, itemConfig),
     );
 
-    event.on(
+    context.event.on(
       'plugin/last-value/report/save',
       (_eventName: string, { command, report }: SaveEvent): Promise<void> =>
         saveLastReport(command, report, connection, itemConfig),
