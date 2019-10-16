@@ -126,7 +126,7 @@ const vcsComment = async (report: Report, context: Context): Promise<void> => {
           if (renderedReport.length > 0) {
             const isBuilt = path.extname(__filename) === '.js';
             const { version } = await readPkg({
-              cwd: isBuilt ? path.join(__dirname, '../../..') : path.join(__dirname, '..'),
+              cwd: isBuilt ? path.join(__dirname, '../../../../..') : path.join(__dirname, '../../..'),
             });
 
             renderedReport.unshift(`## ModusCreate Gimbal v${version} Results`);
