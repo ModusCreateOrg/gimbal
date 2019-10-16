@@ -68,6 +68,9 @@ Cli.add({
   },
 });
 
+const failMessages: string[] = ['Looks like there was a failure, maybe check some thresholds.'];
+const passMessages: string[] = ['All audits passed! Great job!', 'Hey, you’re doing great!'];
+
 (async (): Promise<void> => {
   const { args } = Cli;
 
@@ -92,11 +95,19 @@ Cli.add({
 
       logger.log('Finished successfully');
 
+      const message = passMessages[Math.floor(Math.random() * passMessages.length)];
+
+      logger.log(`\n${message}`);
+
       process.exit(0);
     } catch (e) {
       logger.log(e);
 
       logger.log('Finished with failure');
+
+      const message = failMessages[Math.floor(Math.random() * failMessages.length)];
+
+      logger.log(`\n${message}`);
 
       process.exit(1);
     }
