@@ -1,10 +1,13 @@
 import Manager from '@modus/gimbal-core/lib/Manager';
 import { URL } from 'url';
 import Config from '../config';
-import { Cls, VCS as VCSTypes } from '@/typings/vcs';
+import { Cls } from '@/typings/vcs';
 import GitHubCls from './GitHub';
 
 const GIT_URL_RE = /((git|ssh|http(s)?)|(git@[\w.]+))(:(\/\/)?)([\w.@:/\-~]+)(\.git)(\/)?/;
+
+type VCSTypes = typeof GitHubCls;
+type VCSs = GitHubCls;
 
 let vcs: GitHubCls | void;
 
@@ -37,8 +40,8 @@ const gitUrlToHttpUrl = (gitUrl: string): string => {
 };
 
 class VCSManager extends Manager {
-  getActive(repoUrl: string): VCSTypes | void {
-    if (vcs) {
+  getActive(repoUrl: string): VCSs | void {
+    if (vcs != null) {
       return vcs;
     }
 
@@ -46,16 +49,22 @@ class VCSManager extends Manager {
     const url = new URL(gitUrlToHttpUrl(repoUrl));
 
     if (configuredVCS) {
-      const match = this.get(configuredVCS.provider);
+      const MatchVCS = this.get(configuredVCS.provider);
 
-      if (match) {
-        return match;
+      if (MatchVCS != null) {
+        vcs = new MatchVCS();
+
+        return vcs;
       }
     }
 
-    const found: VCSTypes | void = this.find((_name: string, cls: Cls): boolean => cls.is(url));
+    const found: [string, VCSTypes] | void = this.find((_name: string, cls: Cls): boolean => cls.is(url));
 
-    vcs = found;
+    if (found != null) {
+      const [, FoundFCS] = found;
+
+      vcs = new FoundFCS();
+    }
 
     return vcs;
   }

@@ -11,6 +11,8 @@ export const CircleCI = 'CircleCI';
 export const GitHubActions = 'GitHubActions';
 export const TravisCI = 'TravisCI';
 
+type CITypes = typeof CircleCICls | typeof GitHubActionsCls | typeof TravisCICls;
+
 export type CIs = CircleCICls | GitHubActionsCls | TravisCICls;
 
 let ci: CIs | void;
@@ -36,16 +38,22 @@ class CIManager extends Manager {
     const configuredCI = normalizeConfiguredCI(Config.get('configs.ci'));
 
     if (configuredCI) {
-      const match = this.get(configuredCI.provider);
+      const MatchCI: CITypes | void = this.get(configuredCI.provider);
 
-      if (match) {
-        return match;
+      if (MatchCI != null) {
+        ci = new MatchCI();
+
+        return ci;
       }
     }
 
-    const found: CIs | void = this.find((_name: string, cls: Cls): boolean => cls.is());
+    const found: [string, CITypes] | void = this.find((_name: string, cls: Cls): boolean => cls.is());
 
-    ci = found;
+    if (found != null) {
+      const [, FoundCI] = found;
+
+      ci = new FoundCI();
+    }
 
     return ci;
   }

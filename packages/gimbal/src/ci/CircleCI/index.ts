@@ -58,9 +58,13 @@ export default class CircleCI {
     const repoUrl = env('CIRCLE_REPOSITORY_URL');
 
     if (repoUrl) {
-      this.$vcs = VCSManager.getActive(repoUrl) as VCSTypes;
+      const vcs = VCSManager.getActive(repoUrl) as VCSTypes;
 
-      this.$vcs.ci = this;
+      if (vcs) {
+        vcs.ci = this;
+
+        this.$vcs = vcs;
+      }
 
       return this.$vcs;
     }
