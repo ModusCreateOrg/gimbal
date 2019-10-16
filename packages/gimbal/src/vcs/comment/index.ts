@@ -1,4 +1,6 @@
 import { namedLogger } from '@modus/gimbal-core/lib/logger';
+import path from 'path';
+import readPkg from 'read-pkg';
 import CIManager from '@/ci';
 import Config from '@/config';
 import EventEmitter from '@/event';
@@ -120,6 +122,15 @@ const vcsComment = async (report: Report, context: Context): Promise<void> => {
                 report.data.map((item: ReportItem): Promise<string> => renderItem(item, context, comment)),
               )
             : [];
+
+          if (renderedReport.length > 0) {
+            const isBuilt = path.extname(__filename) === '.js';
+            const { version } = await readPkg({
+              cwd: isBuilt ? path.join(__dirname, '../../..') : path.join(__dirname, '..'),
+            });
+
+            renderedReport.unshift(`## ModusCreate Gimbal v${version} Results`);
+          }
 
           let markdown = renderedReport.join('\n\n').trim();
 
