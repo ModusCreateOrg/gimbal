@@ -11,27 +11,27 @@ jobs:
     steps:
       - run: |
           printenv
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install
-        uses: nuxt/actions-yarn@master
-        with:
-          args: install
-      - name: Lint
-        uses: nuxt/actions-yarn@master
-        with:
-          args: lint
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install
-        uses: nuxt/actions-yarn@master
-        with:
-          args: install
-      - name: Test
-        uses: nuxt/actions-yarn@master
-        with:
-          args: test
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Install
+  #       uses: nuxt/actions-yarn@master
+  #       with:
+  #         args: install
+  #     - name: Lint
+  #       uses: nuxt/actions-yarn@master
+  #       with:
+  #         args: lint
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Install
+  #       uses: nuxt/actions-yarn@master
+  #       with:
+  #         args: install
+  #     - name: Test
+  #       uses: nuxt/actions-yarn@master
+  #       with:
+  #         args: test
