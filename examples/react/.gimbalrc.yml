@@ -48,8 +48,7 @@ plugins:
   - plugin: "@modus/gimbal-plugin-mysql"
     enabled: ${env:CI, true, false}
     commandPrefix:
-      - react-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
-      - react-example-${env:CIRCLE_BRANCH}
+      - react-example-${env:GITHUB_REPOSITORY}-${env:GITHUB_REF}
       - react-example
     lastValue:
       database: gimbal_github
@@ -59,7 +58,6 @@ plugins:
 # - plugin: '@modus/gimbal-plugin-sqlite'
 #   enabled: ${env:CI, true, false}
 #   commandPrefix:
-#     - react-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
-#     - react-example-${env:CIRCLE_BRANCH}
+#     - react-example-${env:GITHUB_REPOSITORY}-${env:GITHUB_REF}
 #     - react-example
 #   lastValue: true

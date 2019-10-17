@@ -68,8 +68,7 @@ plugins:
   - plugin: "@modus/gimbal-plugin-mysql"
     enabled: ${env:CI, true, false}
     commandPrefix:
-      - angular-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
-      - angular-example-${env:CIRCLE_BRANCH}
+      - angular-example-${env:GITHUB_REPOSITORY}-${env:GITHUB_REF}
       - angular-example
     lastValue:
       database: gimbal_github
@@ -79,7 +78,6 @@ plugins:
   # - plugin: '@modus/gimbal-plugin-sqlite'
   #   enabled: ${env:CI, true, false}
   #   commandPrefix:
-  #     - angular-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
-  #     - angular-example-${env:CIRCLE_BRANCH}
+  #     - angular-example-${env:GITHUB_REPOSITORY}-${env:GITHUB_REF}
   #     - angular-example
   #   lastValue: true
