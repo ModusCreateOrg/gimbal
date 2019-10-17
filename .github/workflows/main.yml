@@ -1,12 +1,14 @@
-name: Lint & Test
+name: CI
 
 on: [push]
 
-# GitHub Actions don't support cache yet so need
+# GitHub Actions don't support cache yet so need...
 # to install on each step.
 
 jobs:
-  lint:
+  lint-test-build:
+    env:
+      CI: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -16,21 +18,13 @@ jobs:
           args: install
       - name: Lint
         uses: nuxt/actions-yarn@master
-        env:
-          CI: true
         with:
           args: lint
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install
-        uses: nuxt/actions-yarn@master
-        with:
-          args: install
       - name: Test
         uses: nuxt/actions-yarn@master
-        env:
-          CI: true
         with:
           args: test
+      - name: Build
+        uses: nuxt/actions-yarn@master
+        with:
+          args: build
