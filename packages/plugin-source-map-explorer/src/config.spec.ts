@@ -8,6 +8,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/config', (): void => {
 
     expect(meta).toEqual({
       capabilities: {
+        browser: false,
         remote: false,
       },
       maxNumRoutes: 1,

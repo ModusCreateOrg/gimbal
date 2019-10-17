@@ -220,7 +220,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
       expect(register).toHaveBeenCalledWith(
         'source-map-explorer',
         {
-          capabilities: { remote: false },
+          capabilities: { browser: false, remote: false },
           maxNumRoutes: 1,
           thresholdLimit: 'upper',
           thresholdType: 'size',

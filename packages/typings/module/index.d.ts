@@ -9,12 +9,13 @@ interface TypesMap {
 }
 
 interface Capabilities {
+  browser: boolean;
   remote: boolean;
 }
 
 /* eslint-disable-next-line import/prefer-default-export */
 export interface Meta {
-  capabilities?: Capabilities;
+  capabilities: Capabilities;
   maxNumRoutes?: number;
   thresholdLimit: ReportThresholdLimit;
   thresholdType?: Types;

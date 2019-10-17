@@ -22,6 +22,7 @@ export const defaultConfig: Config = {
 
 export const meta: Meta = {
   capabilities: {
+    browser: false,
     remote: false,
   },
   maxNumRoutes: 1,

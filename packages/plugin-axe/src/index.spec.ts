@@ -65,7 +65,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
     expect(register).toHaveBeenCalledWith(
       'axe',
       {
-        capabilities: { remote: true },
+        capabilities: { browser: true, remote: true },
         thresholdLimit: 'upper',
         thresholdType: 'number',
       },
@@ -123,7 +123,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
         expect(type).toBe('axe');
         expect(meta).toEqual({
-          capabilities: { remote: true },
+          capabilities: { browser: true, remote: true },
           thresholdLimit: 'upper',
           thresholdType: 'number',
         });
@@ -278,7 +278,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
     expect(register).toHaveBeenCalledWith(
       'axe',
       {
-        capabilities: { remote: true },
+        capabilities: { browser: true, remote: true },
         thresholdLimit: 'upper',
         thresholdType: 'number',
       },
@@ -336,7 +336,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
 
         expect(type).toBe('axe');
         expect(meta).toEqual({
-          capabilities: { remote: true },
+          capabilities: { browser: true, remote: true },
           thresholdLimit: 'upper',
           thresholdType: 'number',
         });
@@ -490,7 +490,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
     expect(register).toHaveBeenCalledWith(
       'axe',
       {
-        capabilities: { remote: true },
+        capabilities: { browser: true, remote: true },
         thresholdLimit: 'upper',
         thresholdType: 'number',
       },
@@ -511,7 +511,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         expect(type).toBe('axe');
 
         expect(meta).toEqual({
-          capabilities: { remote: true },
+          capabilities: { browser: true, remote: true },
           thresholdLimit: 'upper',
           thresholdType: 'number',
         });
@@ -581,7 +581,7 @@ describe('@modus/gimbal-plugin-axe', (): void => {
     expect(register).toHaveBeenCalledWith(
       'axe',
       {
-        capabilities: { remote: true },
+        capabilities: { browser: true, remote: true },
         thresholdLimit: 'upper',
         thresholdType: 'number',
       },
