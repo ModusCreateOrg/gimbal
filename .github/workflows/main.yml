@@ -6,6 +6,11 @@ on: [push]
 # to install on each step.
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          printenv
   lint:
     runs-on: ubuntu-latest
     steps:
