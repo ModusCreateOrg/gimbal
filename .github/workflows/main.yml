@@ -1,0 +1,31 @@
+name: Lint & Test
+
+on: [push]
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install
+        uses: nuxt/actions-yarn@master
+        with:
+          args: install
+  lint:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Lint
+        uses: nuxt/actions-yarn@master
+        with:
+          args: lint
+  test:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Test
+        uses: nuxt/actions-yarn@master
+        with:
+          args: test
