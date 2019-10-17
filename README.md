@@ -52,7 +52,7 @@ You can execute it via a npm script: (`package.json`):
 ```json
 {
   "scripts": {
-    "audit": "gimbal audit"
+    "audit": "gimbal"
   }
 }
 ```
