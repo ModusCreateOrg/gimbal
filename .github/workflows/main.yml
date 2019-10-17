@@ -37,4 +37,7 @@ jobs:
         with:
           args: yarn test:examples
         env:
+          GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
+          GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
+          GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
