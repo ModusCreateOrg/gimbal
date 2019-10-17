@@ -11,8 +11,6 @@ jobs:
       CI: true
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          printenv
       - uses: actions/checkout@v1
       - name: Install
         uses: nuxt/actions-yarn@master
