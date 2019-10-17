@@ -6,32 +6,31 @@ on: [push]
 # to install on each step.
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install
+        uses: nuxt/actions-yarn@master
+        with:
+          args: install
+      - name: Lint
+        uses: nuxt/actions-yarn@master
+        env:
+          CI: true
+        with:
+          args: lint
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          printenv
-  # lint:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - name: Install
-  #       uses: nuxt/actions-yarn@master
-  #       with:
-  #         args: install
-  #     - name: Lint
-  #       uses: nuxt/actions-yarn@master
-  #       with:
-  #         args: lint
-  # test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - name: Install
-  #       uses: nuxt/actions-yarn@master
-  #       with:
-  #         args: install
-  #     - name: Test
-  #       uses: nuxt/actions-yarn@master
-  #       with:
-  #         args: test
+      - uses: actions/checkout@v1
+      - name: Install
+        uses: nuxt/actions-yarn@master
+        with:
+          args: install
+      - name: Test
+        uses: nuxt/actions-yarn@master
+        env:
+          CI: true
+        with:
+          args: test
