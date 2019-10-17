@@ -28,3 +28,13 @@ jobs:
         uses: nuxt/actions-yarn@master
         with:
           args: build
+      - name: Build Examples
+        uses: nuxt/actions-yarn@master
+        with:
+          args: build:examples
+      - name: Test Examples
+        uses: ianwalter/puppeteer@v2.0.0
+        with:
+          args: yarn test:examples
+        env:
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

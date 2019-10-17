@@ -58,34 +58,34 @@ jobs:
           command: node packages/gimbal/bin/index.js --version
 
   build-docker:
-      <<: *defaults
-      executor: docker-publisher
-      steps:
-        - checkout
-        - setup_remote_docker
-        - run:
-            name: Build Docker image
-            command: |
-              # gives version without the v prefix, e.g. 1.2.3
-              IMAGE_TAG=${CIRCLE_TAG/v/''}
-              # gives minor version for latest, e.g. 1.2:latest
-              MINOR_VERSION=$(echo "$CIRCLE_TAG" | sed -E 's/v([[:digit:]]+).([[:digit:]]+).([[:digit:]]+)/\1.\2-latest/g')
-              # gives major version for latest, e.g. 1:latest
-              MAJOR_VERSION=$(echo "$CIRCLE_TAG" | sed -E 's/v([[:digit:]]+).([[:digit:]]+).([[:digit:]]+)/\1-latest/g')
-              docker build \
-                --build-arg GIMBAL_VERSION=$IMAGE_TAG \
-                -t $IMAGE_NAME:latest \
-                -t $IMAGE_NAME:$IMAGE_TAG \
-                -t $IMAGE_NAME:$MINOR_VERSION \
-                -t $IMAGE_NAME:$MAJOR_VERSION \
-                packages/gimbal
-        - run:
-            name: Archive Docker image
-            command: docker save -o gimbal.tar $IMAGE_NAME
-        - persist_to_workspace:
-            root: .
-            paths:
-              - ./gimbal.tar
+    <<: *defaults
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            # gives version without the v prefix, e.g. 1.2.3
+            IMAGE_TAG=${CIRCLE_TAG/v/''}
+            # gives minor version for latest, e.g. 1.2:latest
+            MINOR_VERSION=$(echo "$CIRCLE_TAG" | sed -E 's/v([[:digit:]]+).([[:digit:]]+).([[:digit:]]+)/\1.\2-latest/g')
+            # gives major version for latest, e.g. 1:latest
+            MAJOR_VERSION=$(echo "$CIRCLE_TAG" | sed -E 's/v([[:digit:]]+).([[:digit:]]+).([[:digit:]]+)/\1-latest/g')
+            docker build \
+              --build-arg GIMBAL_VERSION=$IMAGE_TAG \
+              -t $IMAGE_NAME:latest \
+              -t $IMAGE_NAME:$IMAGE_TAG \
+              -t $IMAGE_NAME:$MINOR_VERSION \
+              -t $IMAGE_NAME:$MAJOR_VERSION \
+              packages/gimbal
+      - run:
+          name: Archive Docker image
+          command: docker save -o gimbal.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./gimbal.tar
 
   install-dependencies:
     <<: *defaults
@@ -153,37 +153,37 @@ jobs:
 
 workflows:
   version: 2
-  test-and-build:
-    jobs:
-      - install-dependencies:
-          filters:
-            tags:
-              ignore: /^v.*/
-      - lint:
-          requires:
-            - install-dependencies
-          filters:
-            tags:
-              ignore: /^v.*/
-      - test:
-          requires:
-            - install-dependencies
-          filters:
-            tags:
-              ignore: /^v.*/
-      - test-examples:
-          requires:
-            - lint
-            - test
-          filters:
-            tags:
-              ignore: /^v.*/
-      - build:
-          requires:
-            - test-examples
-          filters:
-            tags:
-              ignore: /^v.*/
+  # test-and-build:
+  #   jobs:
+  #     - install-dependencies:
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
+  #     - lint:
+  #         requires:
+  #           - install-dependencies
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
+  #     - test:
+  #         requires:
+  #           - install-dependencies
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
+  #     - test-examples:
+  #         requires:
+  #           - lint
+  #           - test
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
+  #     - build:
+  #         requires:
+  #           - test-examples
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
   publish:
     jobs:
       - publish:
