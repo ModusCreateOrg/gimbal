@@ -2,8 +2,11 @@ name: Lint & Test
 
 on: [push]
 
+# GitHub Actions don't support cache yet so need
+# to install on each step.
+
 jobs:
-  install:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -11,20 +14,18 @@ jobs:
         uses: nuxt/actions-yarn@master
         with:
           args: install
-  lint:
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
       - name: Lint
         uses: nuxt/actions-yarn@master
         with:
           args: lint
   test:
-    needs: install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Install
+        uses: nuxt/actions-yarn@master
+        with:
+          args: install
       - name: Test
         uses: nuxt/actions-yarn@master
         with:
