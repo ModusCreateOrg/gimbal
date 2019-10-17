@@ -9,7 +9,6 @@ jobs:
   lint-test-build:
     env:
       CI: true
-      FORCE_COLORS: true # for unit tests for colors
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1

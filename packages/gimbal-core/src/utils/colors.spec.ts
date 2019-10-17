@@ -1,5 +1,3 @@
-import { sectionHeading, successOrFailure } from './colors';
-
 const ORIG_ENV = process.env;
 
 beforeEach((): void => {
@@ -12,9 +10,8 @@ afterEach((): void => {
 
 describe('@modus/gimbal-core/utils/colors', (): void => {
   describe('sectionHeading', (): void => {
-    it('should bold text', (): void => {
-      // in a CI, force the color
-      process.env['FORCE_COLOR'] = 'true';
+    it('should bold text', async (): Promise<void> => {
+      const { sectionHeading } = await import('./colors');
 
       const ret = sectionHeading('this should be bold');
 
@@ -23,18 +20,16 @@ describe('@modus/gimbal-core/utils/colors', (): void => {
   });
 
   describe('successOrFailure', (): void => {
-    it('should be green for success', (): void => {
-      // in a CI, force the color
-      process.env['FORCE_COLOR'] = 'true';
+    it('should be green for success', async (): Promise<void> => {
+      const { successOrFailure } = await import('./colors');
 
       const ret = successOrFailure('this should be green', true);
 
       expect(ret).toBe('[32mthis should be green[39m');
     });
 
-    it('should be red for failure', (): void => {
-      // in a CI, force the color
-      process.env['FORCE_COLOR'] = 'true';
+    it('should be red for failure', async (): Promise<void> => {
+      const { successOrFailure } = await import('./colors');
 
       const ret = successOrFailure('this should be red', false);
 
