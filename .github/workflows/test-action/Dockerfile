@@ -7,7 +7,7 @@ RUN	yum update  -y \
   && curl -sL https://rpm.nodesource.com/setup_10.x | bash - \
   && yum install -y nodejs \
   && curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo \
-  && yum install yarn
+  && yum install -y yarn
 
 RUN yum install ipa-gothic-fonts xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc  libXext cups-libs libXScrnSaver -y
 
