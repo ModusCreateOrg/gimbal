@@ -29,13 +29,21 @@ jobs:
         uses: nuxt/actions-yarn@master
         with:
           args: build
+  test-examples:
+    env:
+      CI: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install
+        uses: nuxt/actions-yarn@master
+        with:
+          args: install
       - name: Build Examples
         uses: nuxt/actions-yarn@master
         with:
           args: build:examples
       - name: Test Examples
-        # uses: ianwalter/puppeteer@v2.0.0
-        uses: ./.github/workflows/test-action
         with:
           args: yarn test:examples
         env:

@@ -1,7 +1,7 @@
 audits:
   - axe
   - size
-  # - lighthouse
+  - lighthouse
   - unused-source
   - heap-snapshot
   - source-map-explorer
