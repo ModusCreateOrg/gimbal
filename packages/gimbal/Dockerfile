@@ -1,19 +1,23 @@
-FROM centos:7 AS Gimbal
+FROM node:10-slim
 
 ARG GIMBAL_VERSION
 
-# Install packages
-RUN	yum update  -y \
-  && yum install -y gcc-c++ make curl libX11-devel libXcomposite libXcursor libXdamage \
-  && yum clean all \
-  && curl -sL https://rpm.nodesource.com/setup_10.x | bash - \
-  && yum install -y nodejs \
-  && npm install -g --unsafe-perm=true --allow-root @modus/gimbal@${GIMBAL_VERSION}
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+ENV CHROME_BIN /usr/bin/google-chrome-unstable
 
-RUN yum install ipa-gothic-fonts xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc  libXext cups-libs libXScrnSaver -y
+# from https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md#running-puppeteer-in-docker
 
-RUN yum install alsa-lib pango -y
+# Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
+# Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer
+# installs, work.
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+  && apt-get update \
+  && apt-get install -y google-chrome-unstable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf \
+  --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN yum install pango.x86_64 libXcomposite.x86_64 libXcursor.x86_64 libXdamage.x86_64 libXext.x86_64 libXi.x86_64 libXtst.x86_64 cups-libs.x86_64 libXScrnSaver.x86_64 libXrandr.x86_64 GConf2.x86_64 alsa-lib.x86_64 atk.x86_64 gtk3.x86_64 -y
+# Install gimbal
+RUN	npm install -g --unsafe-perm=true --allow-root @modus/gimbal@${GIMBAL_VERSION}
 
 CMD ["/bin/sh"]

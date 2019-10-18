@@ -1,32 +1,3 @@
-aliases:
-  - &restore-npm-cache
-    key: v1-dependencies-{{ checksum "yarn.lock" }}
-    name: Restoring node_modules/ cache
-  - &save-npm-cache
-    key: v1-dependencies-{{ checksum "yarn.lock" }}
-    name: Saving node_modules/ cache
-    paths:
-      - node_modules
-      - packages/gimbal/node_modules
-      - packages/gimbal-core/node_modules
-      - packages/plugin-axe/node_modules
-      - packages/plugin-last-value/node_modules
-      - packages/plugin-mysql/node_modules
-      - packages/plugin-sqlite/node_modules
-  - &restore-example-cache
-    key: v1-dependencies-{{ checksum "examples/angular/yarn.lock" }}-{{ checksum "examples/react/yarn.lock" }}
-    name: Restoring examples node_modules/ cache
-  - &save-example-cache
-    key: v1-dependencies-{{ checksum "examples/angular/yarn.lock" }}-{{ checksum "examples/react/yarn.lock" }}
-    name: Saving examples node_modules/ cache
-    paths:
-      - examples/angular/dist
-      - examples/angular/node_modules
-      - examples/angular/gimbal.db
-      - examples/react/build
-      - examples/react/node_modules
-      - examples/react/gimbal.db
-
 docker-defaults: &docker-defaults
   docker:
     - image: circleci/node:12-browsers
@@ -44,19 +15,6 @@ executors:
       IMAGE_NAME: moduscreate/gimbal
 
 jobs:
-  build:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-npm-cache
-      - run: yarn build
-      - run:
-          name: Test Gimbal CLI Help
-          command: node packages/gimbal/bin/index.js --help
-      - run:
-          name: Test Gimbal CLI Version
-          command: node packages/gimbal/bin/index.js --version
-
   build-docker:
     <<: *defaults
     executor: docker-publisher
@@ -86,23 +44,6 @@ jobs:
           root: .
           paths:
             - ./gimbal.tar
-
-  install-dependencies:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-npm-cache
-      - run:
-          name: Install Node modules
-          command: yarn
-      - save_cache: *save-npm-cache
-
-  lint:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-npm-cache
-      - run: yarn lint
 
   publish:
     <<: *defaults
@@ -134,56 +75,8 @@ jobs:
             # push the image with no tag and it will push all tags
             docker push $IMAGE_NAME
 
-  test-examples:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-example-cache
-      - restore_cache: *restore-npm-cache
-      - run: yarn build:examples
-      - run: yarn test:examples
-      - save_cache: *save-example-cache
-
-  test:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-npm-cache
-      - run: yarn test
-
 workflows:
   version: 2
-  # test-and-build:
-  #   jobs:
-  #     - install-dependencies:
-  #         filters:
-  #           tags:
-  #             ignore: /^v.*/
-  #     - lint:
-  #         requires:
-  #           - install-dependencies
-  #         filters:
-  #           tags:
-  #             ignore: /^v.*/
-  #     - test:
-  #         requires:
-  #           - install-dependencies
-  #         filters:
-  #           tags:
-  #             ignore: /^v.*/
-  #     - test-examples:
-  #         requires:
-  #           - lint
-  #           - test
-  #         filters:
-  #           tags:
-  #             ignore: /^v.*/
-  #     - build:
-  #         requires:
-  #           - test-examples
-  #         filters:
-  #           tags:
-  #             ignore: /^v.*/
   publish:
     jobs:
       - publish:
