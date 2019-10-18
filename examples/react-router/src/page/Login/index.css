@@ -1,0 +1,8 @@
+.Login-form {
+  margin: 1rem;
+}
+
+.Login-form label {
+  display: block;
+  margin-bottom: 1em;
+}
