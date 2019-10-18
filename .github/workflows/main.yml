@@ -3,7 +3,8 @@ name: CI
 on: [push]
 
 # GitHub Actions don't support cache yet so need...
-# to install on each step.
+# to install first and run steps after. This causes
+# steps to run sequentially instead of parallel tho.
 
 jobs:
   lint-test-build:
@@ -33,7 +34,8 @@ jobs:
         with:
           args: build:examples
       - name: Test Examples
-        uses: ianwalter/puppeteer@v2.0.0
+        # uses: ianwalter/puppeteer@v2.0.0
+        uses: ./.github/workflows/test-action
         with:
           args: yarn test:examples
         env:
