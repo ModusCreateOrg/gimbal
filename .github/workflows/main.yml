@@ -44,8 +44,7 @@ jobs:
         with:
           args: build:examples
       - name: Test Examples
-        with:
-          args: yarn test:examples
+        run: yarn test:examples
         env:
           GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
