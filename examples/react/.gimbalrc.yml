@@ -1,10 +1,10 @@
 audits:
-  - axe
-  - size
-  - lighthouse
-  - unused-source
-  - heap-snapshot
-  - source-map-explorer
+  axe: true
+  heap-snapshot: true
+  lighthouse: true
+  size: true
+  source-map-explorer: true
+  unused-source: true
 
 configs:
   comment:
