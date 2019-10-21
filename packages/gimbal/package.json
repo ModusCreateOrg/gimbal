@@ -22,7 +22,10 @@
     "copy-static-assets": "copyfiles -u 1 src/**/*/*.{html,txt} lib/gimbal/src",
     "start": "node -r ts-node/register -r tsconfig-paths/register src/cli.ts",
     "start:break": "node --inspect-brk -r ts-node/register -r tsconfig-paths/register src/cli.ts",
-    "start:debug": "node --inspect -r ts-node/register -r tsconfig-paths/register src/cli.ts"
+    "start:debug": "node --inspect -r ts-node/register -r tsconfig-paths/register src/cli.ts",
+    "test": "jest --coverage",
+    "test:coveralls": "cat ./coverage/lcov.info | coveralls",
+    "test:nocov": "jest"
   },
   "repository": {
     "type": "git",

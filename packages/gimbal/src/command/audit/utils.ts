@@ -28,15 +28,17 @@ export const didAuditPass = (report?: Report): boolean => !report || report.succ
 
 export const findBuildDir = async (context: Context, dirArr = buildDirs): Promise<string | void> => {
   const arr = dirArr.slice();
+  const dir = arr.shift();
 
-  if (arr.length !== 0) {
-    const dir = arr.shift();
-    const cwd = context.config.get('configs.cwd');
-    const fullPath = resolvePath(cwd, dir as string);
+  const cwd = context.config.get('configs.cwd');
+  const fullPath = resolvePath(cwd, dir as string);
 
-    if (await exists(fullPath)) {
-      return fullPath;
-    }
+  if (await exists(fullPath)) {
+    return fullPath;
+  }
+
+  if (arr.length === 0) {
+    return undefined;
   }
 
   return findBuildDir(context, arr);
@@ -51,7 +53,7 @@ export const getModulesToRun = (audits: AuditObject, index: number, context: Con
     if (!obj.disabled) {
       const meta = context.module.getMeta(name);
 
-      if (!meta || !meta.maxNumRoutes || index <= meta.maxNumRoutes) {
+      if (meta && (meta.maxNumRoutes == null || index <= meta.maxNumRoutes)) {
         toRun[name] = {
           ...obj,
         };
@@ -66,6 +68,10 @@ export const isModuleBrowserable = (context: Context): boolean => {
   const audits: AuditObject = context.config.get('audits');
 
   return Object.keys(audits).some((audit: string): boolean => {
+    if (audits[audit].disabled) {
+      return false;
+    }
+
     const meta = context.module.getMeta(audit);
 
     return meta != null && meta.capabilities.browser === true;
@@ -135,14 +141,17 @@ export const normalizeAudits = (audits: ConfigValue = defaultAudits): AuditObjec
 export const setCapabilities = (audits: AuditObject, capabilities: Capabilities, context: Context): AuditObject => {
   Object.keys(audits).forEach((name: string): void => {
     const obj = audits[name];
-    const meta = context.module.getMeta(name);
 
-    if (meta) {
-      // check if there are only remote routes, disable
-      // those modules that are local only
-      obj.disabled = !capabilities.hasLocalRoute && !meta.capabilities.remote;
-    } else {
-      obj.disabled = true;
+    if (!obj.disabled) {
+      const meta = context.module.getMeta(name);
+
+      if (meta) {
+        // check if there are only remote routes, disable
+        // those modules that are local only
+        obj.disabled = capabilities.hasLocalRoute ? false : meta.capabilities.remote === false;
+      } else {
+        obj.disabled = true;
+      }
     }
   });
 
