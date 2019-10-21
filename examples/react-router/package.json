@@ -21,6 +21,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "gimbal": "TS_NODE_PROJECT=../../packages/gimbal/tsconfig.json yarn start --cwd ../../packages/gimbal -- --cwd ../../examples/react-router",
+    "gimbal:built": "gimbal",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
