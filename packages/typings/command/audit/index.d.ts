@@ -1,5 +1,6 @@
 export interface Audit {
   disabled?: boolean;
+  module: string;
   name: string;
 }
 
@@ -8,7 +9,7 @@ export interface AuditObject {
 }
 
 export interface AuditObjectConfig {
-  [name: string]: boolean | Audit;
+  [name: string]: boolean | Partial<Audit>;
 }
 
 export type ConfigValue = string[] | AuditObjectConfig;

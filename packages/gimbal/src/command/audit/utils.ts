@@ -104,6 +104,7 @@ export const normalizeAudits = (audits: ConfigValue = defaultAudits): AuditObjec
 
     audits.forEach((name: string): void => {
       obj[name] = {
+        module: name,
         name,
       };
     });
@@ -119,16 +120,19 @@ export const normalizeAudits = (audits: ConfigValue = defaultAudits): AuditObjec
     if (value === true) {
       obj[name] = {
         disabled: false,
+        module: name,
         name,
       };
     } else if (value === false) {
       obj[name] = {
         disabled: true,
+        module: name,
         name,
       };
     } else {
       obj[name] = {
         disabled: false,
+        module: name,
         ...value,
         name,
       };

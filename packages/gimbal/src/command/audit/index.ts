@@ -37,10 +37,11 @@ const doAudit = async (options: AuditOptions, audits: AuditObject, context: Cont
 
   await Promise.all(
     Object.keys(audits).map(async (name: string) => {
-      const mod = context.module.get(name);
+      const { module: moduleName } = audits[name];
+      const mod = context.module.get(moduleName);
 
       if (!mod) {
-        finishSpinner(name, false, `"${mod}" was not found in the module registry`);
+        finishSpinner(name, false, `"${moduleName}" was not found in the module registry`);
 
         throw new Error(`"${mod}" was not found in the module registry`);
       }

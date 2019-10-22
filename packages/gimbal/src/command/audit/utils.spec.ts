@@ -17,12 +17,15 @@ describe('gimbal/command/audit/utils', () => {
 
       addSpinners({
         foo: {
+          module: 'foo',
           name: 'foo',
         },
         bar: {
+          module: 'bar',
           name: 'bar',
         },
         baz: {
+          module: 'baz',
           name: 'baz',
         },
       });
@@ -46,12 +49,15 @@ describe('gimbal/command/audit/utils', () => {
       addSpinners(
         {
           foo: {
+            module: 'foo',
             name: 'foo',
           },
           bar: {
+            module: 'bar',
             name: 'bar',
           },
           baz: {
+            module: 'baz',
             name: 'baz',
           },
         },
@@ -237,12 +243,15 @@ describe('gimbal/command/audit/utils', () => {
       const audits = {
         foo: {
           disabled: true,
+          module: 'foo',
           name: 'foo',
         },
         bar: {
+          module: 'bar',
           name: 'bar',
         },
         baz: {
+          module: 'baz',
           name: 'baz',
         },
       };
@@ -261,9 +270,11 @@ describe('gimbal/command/audit/utils', () => {
 
       expect(ret).toEqual({
         bar: {
+          module: 'bar',
           name: 'bar',
         },
         baz: {
+          module: 'baz',
           name: 'baz',
         },
       });
@@ -286,12 +297,15 @@ describe('gimbal/command/audit/utils', () => {
 
       const audits = {
         foo: {
+          module: 'foo',
           name: 'foo',
         },
         bar: {
+          module: 'bar',
           name: 'bar',
         },
         baz: {
+          module: 'baz',
           name: 'baz',
         },
       };
@@ -310,6 +324,7 @@ describe('gimbal/command/audit/utils', () => {
 
       expect(ret).toEqual({
         baz: {
+          module: 'baz',
           name: 'baz',
         },
       });
@@ -510,12 +525,15 @@ describe('gimbal/command/audit/utils', () => {
 
       expect(ret).toEqual({
         foo: {
+          module: 'foo',
           name: 'foo',
         },
         bar: {
+          module: 'bar',
           name: 'bar',
         },
         baz: {
+          module: 'baz',
           name: 'baz',
         },
       });
@@ -526,6 +544,7 @@ describe('gimbal/command/audit/utils', () => {
         foo: true,
         bar: false,
         baz: {
+          module: 'baz-mod',
           name: 'bad',
         },
       };
@@ -537,14 +556,17 @@ describe('gimbal/command/audit/utils', () => {
       expect(ret).toEqual({
         foo: {
           disabled: false,
+          module: 'foo',
           name: 'foo',
         },
         bar: {
           disabled: true,
+          module: 'bar',
           name: 'bar',
         },
         baz: {
           disabled: false,
+          module: 'baz-mod',
           name: 'baz',
         },
       });
@@ -558,18 +580,22 @@ describe('gimbal/command/audit/utils', () => {
       expect(ret).toEqual({
         'heap-snapshot': {
           disabled: false,
+          module: 'heap-snapshot',
           name: 'heap-snapshot',
         },
         lighthouse: {
           disabled: false,
+          module: 'lighthouse',
           name: 'lighthouse',
         },
         size: {
           disabled: false,
+          module: 'size',
           name: 'size',
         },
         'unused-source': {
           disabled: false,
+          module: 'unused-source',
           name: 'unused-source',
         },
       });
@@ -593,13 +619,16 @@ describe('gimbal/command/audit/utils', () => {
 
       const audits = {
         foo: {
+          module: 'foo',
           name: 'foo',
         },
         bar: {
           disabled: true,
+          module: 'bar',
           name: 'bar',
         },
         baz: {
+          module: 'baz',
           name: 'baz',
         },
       };
@@ -623,14 +652,17 @@ describe('gimbal/command/audit/utils', () => {
       expect(ret).toEqual({
         foo: {
           disabled: false,
+          module: 'foo',
           name: 'foo',
         },
         bar: {
           disabled: true,
+          module: 'bar',
           name: 'bar',
         },
         baz: {
           disabled: false,
+          module: 'baz',
           name: 'baz',
         },
       });
@@ -657,16 +689,20 @@ describe('gimbal/command/audit/utils', () => {
 
       const audits = {
         foo: {
+          module: 'foo',
           name: 'foo',
         },
         bar: {
           disabled: true,
+          module: 'bar',
           name: 'bar',
         },
         baz: {
+          module: 'baz',
           name: 'baz',
         },
         foobar: {
+          module: 'foobar',
           name: 'foobar',
         },
       };
@@ -690,18 +726,22 @@ describe('gimbal/command/audit/utils', () => {
       expect(ret).toEqual({
         foo: {
           disabled: false,
+          module: 'foo',
           name: 'foo',
         },
         bar: {
           disabled: true,
+          module: 'bar',
           name: 'bar',
         },
         baz: {
           disabled: true,
+          module: 'baz',
           name: 'baz',
         },
         foobar: {
           disabled: true,
+          module: 'foobar',
           name: 'foobar',
         },
       });
