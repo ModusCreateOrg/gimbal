@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 import { Metrics, Page } from 'puppeteer';
 import Config from '@/config';
 import EventEmitter from '@/event';
@@ -20,8 +21,9 @@ const heapSnapshot = async (
   page: Page,
   url: string,
   context: Context,
-  config: HeapSnapshotConfig = Config.get('configs.heap-snapshot', defaultConfig),
+  configArg: HeapSnapshotConfig = Config.get('configs.heap-snapshot', {}),
 ): Promise<Report> => {
+  const config = deepmerge(configArg, defaultConfig);
   const navigationStartEvent: NavigationStartEvent = {
     config,
     context,

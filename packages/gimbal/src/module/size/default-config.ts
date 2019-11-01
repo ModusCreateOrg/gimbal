@@ -4,53 +4,51 @@ import { SizeConfig } from '@/typings/module/size';
 
 const defaultConfig = (context: Context): SizeConfig => {
   const buildDir = context.config.get('configs.buildDir');
-  const cwd = context.config.get('configs.cwd');
-  const resolvedBuildDir = resolvePath(cwd, buildDir as string);
 
   return {
     threshold: [
       {
-        path: resolvePath(resolvedBuildDir, 'static/css/main.*.chunk.css'),
+        path: resolvePath(buildDir, 'static/css/main.*.chunk.css'),
         maxSize: '5 KB',
       },
       {
-        path: resolvePath(resolvedBuildDir, 'static/js/main.*.chunk.js'),
+        path: resolvePath(buildDir, 'static/js/main.*.chunk.js'),
         maxSize: '5 KB',
       },
       {
-        path: resolvePath(resolvedBuildDir, 'static/js/*.chunk.js'),
+        path: resolvePath(buildDir, 'static/js/*.chunk.js'),
         maxSize: '150 KB',
       },
       {
-        path: resolvePath(resolvedBuildDir, 'static/js/runtime*.js'),
+        path: resolvePath(buildDir, 'static/js/runtime*.js'),
         maxSize: '5 KB',
       },
       {
-        path: resolvePath(resolvedBuildDir, 'static/media/logo*.svg'),
+        path: resolvePath(buildDir, 'static/media/logo*.svg'),
         maxSize: '3 KB',
       },
       {
-        path: resolvePath(resolvedBuildDir, 'favicon.ico'),
+        path: resolvePath(buildDir, 'favicon.ico'),
         maxSize: '4 KB',
       },
       {
-        path: resolvePath(resolvedBuildDir, 'index.html'),
+        path: resolvePath(buildDir, 'index.html'),
         maxSize: '3 KB',
       },
       {
-        path: resolvePath(resolvedBuildDir, 'manifest.json'),
+        path: resolvePath(buildDir, 'manifest.json'),
         maxSize: '500 B',
       },
       {
-        path: resolvePath(resolvedBuildDir, 'precache-*.js'),
+        path: resolvePath(buildDir, 'precache-*.js'),
         maxSize: '1 KB',
       },
       {
-        path: resolvePath(resolvedBuildDir, 'service-worker.js'),
+        path: resolvePath(buildDir, 'service-worker.js'),
         maxSize: '1.2 KB',
       },
       {
-        path: resolvedBuildDir,
+        path: buildDir,
         maxSize: '500 KB',
       },
     ],

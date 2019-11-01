@@ -7,11 +7,11 @@ import meta from './meta';
 registry.register(
   'heap-snapshot',
   meta,
-  async ({ context, chrome, url }: Options): Promise<Report> => {
+  async ({ chrome, config, context, url }: Options): Promise<Report> => {
     const page = await chrome.newPage();
 
     if (page) {
-      const report = await HeapSnapshot(page, url, context);
+      const report = await HeapSnapshot(page, url, context, config == null ? undefined : config);
 
       await page.close();
 

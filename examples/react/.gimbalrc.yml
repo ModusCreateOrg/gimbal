@@ -1,27 +1,14 @@
 audits:
-  axe: true
   heap-snapshot: true
   lighthouse: true
   size: true
-  source-map-explorer: true
   unused-source: true
-
-configs:
-  comment:
-    onlyFailures: true
-
-outputs:
-  html: artifacts/gimbal.html
-  json: artifacts/gimbal.json
-  markdown: artifacts/gimbal.md
-
-plugins:
-  - plugin: "@modus/gimbal-plugin-axe"
+  axe:
     thresholds:
       bypass: serious
       landmark-one-main: moderate
       page-has-heading-one: moderate
-  - plugin: "@modus/gimbal-plugin-source-map-explorer"
+  source-map-explorer:
     bundles:
       - path: "**/main.*.js"
         thresholds:
@@ -44,6 +31,19 @@ plugins:
       - "!precache-manifest*"
       - "!service-worker.js"
       - "!**/runtime*.js"
+
+configs:
+  comment:
+    onlyFailures: true
+
+outputs:
+  html: artifacts/gimbal.html
+  json: artifacts/gimbal.json
+  markdown: artifacts/gimbal.md
+
+plugins:
+  - "@modus/gimbal-plugin-axe"
+  - "@modus/gimbal-plugin-source-map-explorer"
   - "@modus/gimbal-plugin-last-value"
   - plugin: "@modus/gimbal-plugin-mysql"
     enabled: ${env:CI, true, false}

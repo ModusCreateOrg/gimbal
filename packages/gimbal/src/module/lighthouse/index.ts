@@ -26,8 +26,9 @@ const lighthouseRunner = async (
   url: string,
   userOptions: Options,
   context: Context,
-  config: LighthouseConfig = Config.get('configs.lighthouse', defaultConfig),
+  configArg: LighthouseConfig = Config.get('configs.lighthouse', {}),
 ): Promise<Report> => {
+  const config = deepmerge(configArg, defaultConfig);
   // Build options but let users change the defaults if needed
   const options = {
     ...deepmerge(defaults, userOptions),

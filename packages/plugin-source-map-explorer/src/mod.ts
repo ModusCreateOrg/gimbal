@@ -1,5 +1,6 @@
 import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import bytes from 'bytes';
+import deepmerge from 'deepmerge';
 import globby from 'globby';
 import minimatch from 'minimatch';
 // @ts-ignore
@@ -66,11 +67,15 @@ export const parseBundle = (rawBundle: RawReport, bundleConfig: BundleType): Rep
   };
 };
 
-export const runModule = (pluginConfig: Config): RunModuleFn => async ({ context }: Options): Promise<Report> => {
+export const runModule = (pluginConfig: Config): RunModuleFn => async ({
+  config,
+  context,
+}: Options): Promise<Report> => {
+  const auditConfig = deepmerge(pluginConfig, config);
   const buildDir = context.config.get('configs.buildDir');
   const cwd = context.config.get('configs.cwd');
   const globBase = resolvePath(cwd, buildDir as string);
-  const globs: string[] = pluginConfig.bundles.map((glob: BundleType): string => {
+  const globs: string[] = auditConfig.bundles.map((glob: BundleType): string => {
     const normalizedGlob: BundleObject = typeof glob === 'string' ? { path: glob, thresholds: {} } : glob;
     const { path } = normalizedGlob;
 
@@ -103,7 +108,7 @@ export const runModule = (pluginConfig: Config): RunModuleFn => async ({ context
       (entry: RawReport): ReportItem => {
         const globMatch = globs.find((glob: string): boolean => minimatch(entry.bundle, glob));
         const index = globs.indexOf(globMatch as string);
-        const bundleConfig = pluginConfig.bundles[index];
+        const bundleConfig = auditConfig.bundles[index];
 
         return parseBundle(entry, bundleConfig);
       },

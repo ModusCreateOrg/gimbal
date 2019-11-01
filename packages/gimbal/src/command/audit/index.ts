@@ -37,7 +37,8 @@ const doAudit = async (options: AuditOptions, audits: AuditObject, context: Cont
 
   await Promise.all(
     Object.keys(audits).map(async (name: string) => {
-      const { module: moduleName } = audits[name];
+      const auditConfig = audits[name];
+      const { module: moduleName } = auditConfig;
       const mod = context.module.get(moduleName);
 
       if (!mod) {
@@ -50,6 +51,7 @@ const doAudit = async (options: AuditOptions, audits: AuditObject, context: Cont
 
       const report = await mod({
         ...options,
+        config: auditConfig,
         context,
       });
 
@@ -107,20 +109,22 @@ const audit = async (context: Context): Promise<Report | Report[]> => {
   let servePort: number | undefined;
   let serve: Serve | undefined;
 
+  if (hasLocalRoute) {
+    // only need a build dir if we have a local route
+    buildDir = await findBuildDir(context);
+
+    if (!buildDir) {
+      throw Error('Could not find a build directory. Make sure the application is built');
+    }
+
+    context.config.set('configs.buildDir', buildDir);
+  }
+
   if (modulesBrowserable) {
     if (hasLocalRoute) {
-      // only need a build dir if we have a local route
-      buildDir = await findBuildDir(context);
-
-      if (!buildDir) {
-        throw Error('Could not find a build directory. Make sure the application is built');
-      }
-
-      context.config.set('configs.buildDir', buildDir);
-
       // only need to start a local server if we have a local route
       servePort = await findPort();
-      serve = new Serve({ port: servePort, public: buildDir });
+      serve = new Serve({ port: servePort, public: buildDir as string });
     }
 
     chrome = new Chrome();

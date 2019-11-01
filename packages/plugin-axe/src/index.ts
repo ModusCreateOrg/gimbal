@@ -5,7 +5,7 @@ import deepmerge from 'deepmerge';
 import { Report, ReportItem } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Options } from '@/typings/module/registry';
-import { meta, type } from './config';
+import { defaultConfig, meta, type } from './config';
 
 type ThresholdValueString = ImpactValue | 'none';
 
@@ -24,13 +24,6 @@ interface Config {
 
 type ImpactMap = {
   [key in ThresholdValueString]: number;
-};
-
-const defaultConfig: Config = {
-  showSuccesses: true,
-  thresholds: {
-    impact: 'none',
-  },
 };
 
 const impactMap: ImpactMap = {
@@ -73,14 +66,15 @@ const parseEntry = (entry: Result, success: boolean, config: Config): ReportItem
   };
 };
 
-const Axe = async ({ context }: PluginOptions, config: Config): Promise<void> => {
-  const pluginConfig = deepmerge(defaultConfig, config);
+const Axe = async ({ context }: PluginOptions, configArg: Config): Promise<void> => {
+  const pluginConfig = deepmerge(defaultConfig, configArg);
 
   context.module.register(
     type,
     meta,
-    async ({ chrome, url }: Options): Promise<Report> => {
+    async ({ chrome, config: auditConfig, url }: Options): Promise<Report> => {
       const page = await chrome.newPage();
+      const config = deepmerge(pluginConfig, auditConfig);
 
       if (page) {
         await page.setBypassCSP(true);
@@ -89,33 +83,31 @@ const Axe = async ({ context }: PluginOptions, config: Config): Promise<void> =>
 
         const instance = new AxePuppeteer(page);
 
-        if (pluginConfig.disabledRules) {
-          instance.disableRules(pluginConfig.disabledRules);
+        if (config.disabledRules) {
+          instance.disableRules(config.disabledRules);
         }
 
-        if (pluginConfig.exclude) {
-          instance.exclude(pluginConfig.exclude);
+        if (config.exclude) {
+          instance.exclude(config.exclude);
         }
 
-        if (pluginConfig.include) {
-          instance.include(pluginConfig.include);
+        if (config.include) {
+          instance.include(config.include);
         }
 
-        if (pluginConfig.rules) {
-          instance.withRules(pluginConfig.rules);
+        if (config.rules) {
+          instance.withRules(config.rules);
         }
 
-        if (pluginConfig.tags) {
-          instance.withTags(pluginConfig.tags);
+        if (config.tags) {
+          instance.withTags(config.tags);
         }
 
         const raw = await instance.analyze();
         const { passes, violations } = raw;
         const data = [
-          ...(pluginConfig.showSuccesses
-            ? passes.map((entry: Result): ReportItem => parseEntry(entry, true, pluginConfig))
-            : []),
-          ...violations.map((entry: Result): ReportItem => parseEntry(entry, false, pluginConfig)),
+          ...(config.showSuccesses ? passes.map((entry: Result): ReportItem => parseEntry(entry, true, config)) : []),
+          ...violations.map((entry: Result): ReportItem => parseEntry(entry, false, config)),
         ];
         const success = data.every((item: ReportItem): boolean => item.success);
 

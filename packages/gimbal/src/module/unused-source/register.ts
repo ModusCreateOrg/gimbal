@@ -7,11 +7,11 @@ import meta from './meta';
 registry.register(
   'unused-source',
   meta,
-  async ({ chrome, context, url }: Options): Promise<Report> => {
+  async ({ chrome, config, context, url }: Options): Promise<Report> => {
     const page = await chrome.newPage();
 
     if (page) {
-      const report = await UnusedSource(page, url, context);
+      const report = await UnusedSource(page, url, context, config == null ? undefined : config);
 
       await page.close();
 
