@@ -1,0 +1,10 @@
+image: moduscreate/gimbal:latest
+
+pipelines:
+  default:
+    - step:
+      name: Gimbal audit
+      script:
+        - npm install
+        - npm run-script build
+        - gimbal audit

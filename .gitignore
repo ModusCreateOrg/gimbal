@@ -7,3 +7,5 @@ packages/*/lib
 *error.log
 package-lock.json
 artifacts/
+.idea
+*.iml

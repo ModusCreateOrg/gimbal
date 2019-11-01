@@ -1,0 +1,41 @@
+image: node:10.15.3
+
+definitions:
+  steps:
+    ######
+    # This step definition emulates your actual install / build process
+    # This is what you must have already
+    ######
+    - step: &step-install
+        name: Install
+        caches:
+          - node
+        script:
+          - npm install
+          - npm run-script build
+        artifacts:
+          #######
+          # Important to save the build to artifacts
+          # so Gimbal step can retrieve the build
+          #
+          # You should set your build folder here
+          #######
+          - your-build-folder/**
+
+    - step: &step-gimbal
+        name: Gimbal Audit
+        # use the gimbal docker container for this step only
+        image: moduscreate/gimbal:1.2-latest
+        script:
+          - gimbal audit
+        artifacts:
+          - gimbal-artifacts/**
+
+pipelines:
+  default:
+    - step: *step-install
+    - step: *step-gimbal
+  branches:
+    master:
+      - step: *step-install
+      - step: *step-gimbal

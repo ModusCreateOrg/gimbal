@@ -1,0 +1,85 @@
+image: node:10.15.3
+
+# Breaking these out allows reuse across pipelines
+definitions:
+  caches:
+    yarn: /usr/local/share/.cache/yarn/v4
+  services:
+    docker:
+      memory: 4096
+  steps:
+    - step: &step-install
+        name: Install
+        caches:
+          - node
+          - yarn
+        script:
+          - yarn
+          # triggers caching for our custom yarn cache
+          - yarn cache dir
+    - step: &step-build
+        name: Build
+        caches:
+          - node
+          - yarn
+        script:
+          - yarn
+          # likely just `yarn build` but keeping it for reference
+          - yarn build:frontend
+        artifacts:
+          #######
+          # Important to save the build to artifacts
+          # so Gimbal step can retrieve the build
+          #######
+          - frontend/build/**
+    - step: &step-lint
+        name: Lint
+        services:
+          - docker
+        caches:
+          - node
+          - yarn
+        script:
+          - yarn
+          - yarn lint
+    - step: &step-test
+        name: Unit Tests
+        caches:
+          - node
+          - yarn
+        script:
+          - yarn
+          - yarn test
+    - step: &step-gimbal
+        name: Gimbal Audit
+        # use the gimbal docker container for this step only
+        image: moduscreate/gimbal:1.2-latest
+        caches:
+          - node
+          - yarn
+        script:
+          - gimbal audit
+        artifacts:
+          - gimbal-artifacts/**
+
+options:
+  size: 2x
+
+pipelines:
+  default:
+    - step: *step-install
+    - parallel:
+        - step: *step-build
+        - step: *step-lint
+        - step: *step-test
+    # cannot be parallel since it depends on the build
+    - step: *step-gimbal
+  branches:
+    master:
+      - step: *step-install
+      - parallel:
+          - step: *step-build
+          - step: *step-lint
+          - step: *step-test
+      # cannot be parallel since it depends on the build
+      - step: *step-gimbal
