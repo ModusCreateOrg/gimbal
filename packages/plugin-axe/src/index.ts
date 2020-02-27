@@ -74,7 +74,7 @@ const Axe = async ({ context }: PluginOptions, configArg: Config): Promise<void>
     meta,
     async ({ chrome, config: auditConfig, url }: Options): Promise<Report> => {
       const page = await chrome.newPage();
-      const config = deepmerge(pluginConfig, auditConfig);
+      const config = deepmerge(pluginConfig, auditConfig || {});
 
       if (page) {
         await page.setBypassCSP(true);

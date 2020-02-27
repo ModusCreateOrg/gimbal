@@ -30,7 +30,7 @@ const inspectArgs = (context: Context, callback: InspectCallback): void | Promis
 
 const LastValue = async (pluginOptions: PluginOptions, config: Config): Promise<void> => {
   const { context } = pluginOptions;
-  const pluginConfig = deepmerge(defaultConfig, config);
+  const pluginConfig = deepmerge(defaultConfig, config || {});
 
   context.args.add({
     'check-last-values': {

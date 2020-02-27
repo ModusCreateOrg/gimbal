@@ -71,7 +71,7 @@ export const runModule = (pluginConfig: Config): RunModuleFn => async ({
   config,
   context,
 }: Options): Promise<Report> => {
-  const auditConfig = deepmerge(pluginConfig, config);
+  const auditConfig = deepmerge(pluginConfig, config || {});
   const buildDir = context.config.get('configs.buildDir');
   const cwd = context.config.get('configs.cwd');
   const globBase = resolvePath(cwd, buildDir as string);

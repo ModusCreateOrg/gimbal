@@ -54,7 +54,7 @@ const createConnection = (config: ItemConfig, env: EnvOrDefault): Promise<Connec
   });
 
 const mysql = async ({ context }: PluginOptions, config: Config): Promise<void> => {
-  const mysqlConfig = deepmerge(defaultConfig, config);
+  const mysqlConfig = deepmerge(defaultConfig, config || {});
 
   if (mysqlConfig.lastValue) {
     const { getLastReport, init, saveLastReport } = await import('./last-value');
