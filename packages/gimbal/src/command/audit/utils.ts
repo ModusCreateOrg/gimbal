@@ -18,7 +18,7 @@ const defaultAudits = {
 export const addSpinners = (audits: AuditObject, route?: string): void =>
   Object.keys(audits).forEach((name: string) => {
     if (route) {
-      addSpinner(name, { status: 'stopped', text: `[ ${name} ] - ${route}` });
+      addSpinner(name, { status: 'spinning', text: `[ ${name} ] - ${route}` });
     } else {
       addSpinner(name, `[ ${name} ]`);
     }

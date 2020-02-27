@@ -8070,10 +8070,10 @@ speedline-core@1.4.2:
     image-ssim "^0.2.0"
     jpeg-js "^0.1.2"
 
-spinnies@0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/spinnies/-/spinnies-0.5.0.tgz#0935e15e740d05aecb4f5a917761bba716c300ba"
-  integrity sha512-qXFNy0lW5Qd9epBFY6W/HVD6gonChWjiolD0C4M3a44tWpaxsw2Ry1liWb4I8WIWaeFeEOfX+Xc3GuDX2QvS9w==
+spinnies@0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/spinnies/-/spinnies-0.5.1.tgz#6ac88455d9117c7712d52898a02c969811819a7e"
+  integrity sha512-WpjSXv9NQz0nU3yCT9TFEOfpFrXADY9C5fG6eAJqixLhvTX1jP3w92Y8IE5oafIe42nlF9otjhllnXN/QCaB3A==
   dependencies:
     chalk "^2.4.2"
     cli-cursor "^3.0.0"

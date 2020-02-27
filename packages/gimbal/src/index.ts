@@ -64,6 +64,10 @@ const gimbal = async (args?: ParsedArgs): Promise<void> => {
   };
 
   await EventEmitter.fire(`command/audit/end`, endEvent);
+
+  if (!report.success) {
+    throw new Error('Finished with failure');
+  }
 };
 
 export default gimbal;

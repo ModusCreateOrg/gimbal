@@ -40,7 +40,7 @@
     "minimatch": "3.0.4",
     "mkdirp": "0.5.1",
     "pidusage": "2.0.17",
-    "spinnies": "0.5.0",
+    "spinnies": "0.5.1",
     "strip-ansi": "5.2.0"
   },
   "devDependencies": {

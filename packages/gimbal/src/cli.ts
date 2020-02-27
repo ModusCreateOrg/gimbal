@@ -103,8 +103,6 @@ const passMessages: string[] = ['All audits passed! Great job!', 'Hey, you’re 
     } catch (e) {
       logger.log(e);
 
-      logger.log('Finished with failure');
-
       const message = failMessages[Math.floor(Math.random() * failMessages.length)];
 
       logger.log(`\n${message}`);
