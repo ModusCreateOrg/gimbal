@@ -1,13 +1,4 @@
 audits:
-  - axe
-  - size
-  - lighthouse
-  - unused-source
-  - heap-snapshot
-  - source-map-explorer
-
-configs:
-  buildDir: dist/example-angular
   heap-snapshot:
     threshold:
       Nodes: 81
@@ -33,18 +24,14 @@ configs:
         maxSize: 700 KB
       - path: dist/example-angular/
         maxSize: 17 MB
-
-outputs:
-  html: artifacts/gimbal.html
-  json: artifacts/gimbal.json
-  markdown: artifacts/gimbal.md
-
-plugins:
-  - plugin: "@modus/gimbal-plugin-axe"
+      - path: dist/
+        maxSize: 17 MB
+  unused-source: true
+  axe:
     thresholds:
       landmark-one-main: moderate
       region: moderate
-  - plugin: "@modus/gimbal-plugin-source-map-explorer"
+  source-map-explorer:
     bundles:
       - path: "main*.js"
         thresholds:
@@ -64,6 +51,18 @@ plugins:
       - "!**/polyfills*.js"
       - "!**/runtime*.js"
       - "!**/vendor*.js"
+
+configs:
+  buildDir: dist/example-angular
+
+outputs:
+  html: artifacts/gimbal.html
+  json: artifacts/gimbal.json
+  markdown: artifacts/gimbal.md
+
+plugins:
+  - "@modus/gimbal-plugin-axe"
+  - "@modus/gimbal-plugin-source-map-explorer"
   - "@modus/gimbal-plugin-last-value"
   - plugin: "@modus/gimbal-plugin-mysql"
     enabled: ${env:CI, true, false}
