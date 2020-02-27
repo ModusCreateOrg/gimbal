@@ -203,14 +203,20 @@ outputs:
 # Plugins
 plugins:
   # Compare metrics to last-saved values
+  # Install the Last Value plugin with
+  #     npm i @modus/gimbal-plugin-last-value --save-dev 
   - plugin: "@modus/gimbal-plugin-last-value"
     saveOnlyOnSuccess: false
 
   # Save reports to a database. Needed for gimbal-plugin-last-value
+  # Install the Sqlite plugin with
+  #     npm i @modus/gimbal-plugin-sqlite --save-dev 
   - plugin: "@modus/gimbal-plugin-sqlite"
     lastValue: true
 
   # Axe a11y audits
+  # Install Axe plugin with
+  #     npm i @modus/gimbal-plugin-axe --save-dev 
   - plugin: "@modus/gimbal-plugin-axe"
     thresholds:
       aria-allowed-attr: critical
