@@ -117,8 +117,8 @@ const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[])
       // apply config onto default
       Object.assign(match, sourceItem);
     } else {
-      // is a new item
-      newDestinationArray.push(sourceItem);
+      // is a new item, add to beginning because likely user specified
+      newDestinationArray.unshift(sourceItem);
     }
   });
 
@@ -199,6 +199,11 @@ const UnusedCSS = async (
 
     const unused = entryTotal - entryUsed;
     const percentage = (unused / entryTotal) * 100;
+
+    if (entry.url === 'http://localhost:3000/static/js/main.dfdc8459.chunk.js') {
+      // debugger;
+    }
+
     const threshold = isThresholdArray
       ? getThreshold(entry.url, thresholds as SizeConfigs[], type)
       : (thresholds as string);

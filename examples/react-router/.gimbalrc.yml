@@ -1,30 +1,26 @@
 audits:
-  - axe
-  - size
-  - lighthouse
-  - unused-source
-  - heap-snapshot
-  - source-map-explorer
-
-configs:
-  comment:
-    onlyFailures: true
-  lighthouse:
-    disableStorageReset: true
-
-outputs:
-  html: artifacts/gimbal.html
-  json: artifacts/gimbal.json
-  markdown: artifacts/gimbal.md
-
-plugins:
-  - ./gimbal/auth-plugin
-  - plugin: "@modus/gimbal-plugin-axe"
+  heap-snapshot: true
+  lighthouse: true
+  size:
+    threshold:
+      - path: build/favicon.ico
+        maxSize: 4.5 KB
+      - path: build/
+        maxSize: 1 MB
+  unused-source:
+    threshold:
+      - path: /static/css/5.*.chunk.css
+        maxSize: "100%"
+      - path: /static/js/4.*.chunk.js
+        maxSize: "85%"
+      - path: /static/js/main.*.chunk.js
+        maxSize: "25%"
+  axe:
     thresholds:
       bypass: serious
       landmark-one-main: moderate
       page-has-heading-one: moderate
-  - plugin: "@modus/gimbal-plugin-source-map-explorer"
+  source-map-explorer:
     bundles:
       - path: "**/main.*.js"
         thresholds:
@@ -47,6 +43,22 @@ plugins:
       - "!precache-manifest*"
       - "!service-worker.js"
       - "!**/runtime*.js"
+
+configs:
+  comment:
+    onlyFailures: true
+  lighthouse:
+    disableStorageReset: true
+
+outputs:
+  html: artifacts/gimbal.html
+  json: artifacts/gimbal.json
+  markdown: artifacts/gimbal.md
+
+plugins:
+  - ./gimbal/auth-plugin
+  - "@modus/gimbal-plugin-axe"
+  - "@modus/gimbal-plugin-source-map-explorer"
   - "@modus/gimbal-plugin-last-value"
   - plugin: "@modus/gimbal-plugin-mysql"
     enabled: ${env:CI, true, false}
