@@ -70,9 +70,14 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
             {
               bundleName: 'some-bundle.js',
               totalBytes: 22222,
+              eolBytes: 1,
+              mappedBytes: 1,
+              sourceMapCommentBytes: 1,
               unmappedBytes: 0,
               files: {
-                'foo.js': 1234,
+                'foo.js': {
+                  size: 1234,
+                },
               },
             },
           ],
@@ -111,9 +116,14 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
             {
               bundleName: 'some-bundle.js',
               totalBytes: 22222,
+              eolBytes: 1,
+              mappedBytes: 1,
+              sourceMapCommentBytes: 1,
               unmappedBytes: 0,
               files: {
-                'foo.js': 1234,
+                'foo.js': {
+                  size: 1234,
+                },
               },
             },
           ],
@@ -157,9 +167,14 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
             {
               bundleName: 'some-bundle.js',
               totalBytes: 22222,
+              eolBytes: 1,
+              mappedBytes: 1,
+              sourceMapCommentBytes: 1,
               unmappedBytes: 0,
               files: {
-                'foo.js': 1234,
+                'foo.js': {
+                  size: 1234,
+                },
               },
             },
           ],
@@ -258,7 +273,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
               totalBytes: 22222,
               unmappedBytes: 0,
               files: {
-                'foo.js': 1234,
+                'foo.js': { size: 1234 },
               },
             },
           ],
@@ -272,7 +287,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
               totalBytes: 22222,
               unmappedBytes: 0,
               files: {
-                'bar.js': 1234,
+                'bar.js': { size: 1234 },
               },
             },
           ],
@@ -359,7 +374,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
                 totalBytes: 22222,
                 unmappedBytes: 0,
                 files: {
-                  'foo.js': 1234,
+                  'foo.js': { size: 1234 },
                 },
               },
             ],
@@ -373,7 +388,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
                 totalBytes: 22222,
                 unmappedBytes: 0,
                 files: {
-                  'bar.js': 1234,
+                  'bar.js': { size: 1234 },
                 },
               },
             ],
@@ -425,7 +440,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
               totalBytes: 22222,
               unmappedBytes: 0,
               files: {
-                'foo.js': 1234,
+                'foo.js': { size: 1234 },
               },
             },
           ],
@@ -439,8 +454,8 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
               totalBytes: 22222,
               unmappedBytes: 0,
               files: {
-                'bar.js': 1234,
-                'foo.js': 1234,
+                'bar.js': { size: 1234 },
+                'foo.js': { size: 1234 },
               },
             },
           ],
@@ -540,7 +555,7 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
                 totalBytes: 22222,
                 unmappedBytes: 0,
                 files: {
-                  'foo.js': 1234,
+                  'foo.js': { size: 1234 },
                 },
               },
             ],
@@ -554,8 +569,8 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
                 totalBytes: 22222,
                 unmappedBytes: 0,
                 files: {
-                  'bar.js': 1234,
-                  'foo.js': 1234,
+                  'bar.js': { size: 1234 },
+                  'foo.js': { size: 1234 },
                 },
               },
             ],

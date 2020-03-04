@@ -1,11 +1,11 @@
 import deepmerge from 'deepmerge';
-import { addColumn } from './render';
-import { getLastReport, saveReport } from './storage';
 import { ActionEndEvent, EndEvent } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Context } from '@/typings/context';
 import { Config, InspectCallback } from '@/typings/plugin/last-value';
 import { CliReportEndEvent } from '@/typings/output';
+import { addColumn } from './render';
+import { getLastReport, saveReport } from './storage';
 
 const defaultConfig: Config = {
   failOnBreach: false,

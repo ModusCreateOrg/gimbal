@@ -1,7 +1,6 @@
-import registry from '../../module/registry';
-
 import { Meta } from '@/typings/module';
 import { Module } from '@/typings/module/registry';
+import registry from '../../module/registry';
 
 class ModuleContext {
   get(name: string): Module | void {

@@ -1,8 +1,8 @@
 import bytes from 'bytes';
-import { doesItemFail } from './util';
 import { Table } from '@/typings/components/Table';
 import { Config, LastReportItem } from '@/typings/plugin/last-value';
 import { PluginOptions } from '@/typings/config/plugin';
+import { doesItemFail } from './util';
 
 type Renderer = (lastValue: number | string | void, item: LastReportItem) => Promise<string>;
 

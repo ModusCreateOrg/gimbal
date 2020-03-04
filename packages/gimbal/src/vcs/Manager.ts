@@ -1,7 +1,7 @@
 import Manager from '@modus/gimbal-core/lib/Manager';
 import { URL } from 'url';
-import Config from '../config';
 import { Cls } from '@/typings/vcs';
+import Config from '../config';
 import GitHubCls from './GitHub';
 
 const GIT_URL_RE = /((git|ssh|http(s)?)|(git@[\w.]+))(:(\/\/)?)([\w.@:/\-~]+)(\.git)(\/)?/;

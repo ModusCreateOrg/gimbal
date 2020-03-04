@@ -1,11 +1,9 @@
 import Manager from '@modus/gimbal-core/lib/Manager';
-
+import { Cls } from '@/typings/ci';
 import Config from '../config';
 import CircleCICls from './CircleCI';
 import GitHubActionsCls from './GitHubActions';
 import TravisCICls from './TravisCI';
-
-import { Cls } from '@/typings/ci';
 
 export const CircleCI = 'CircleCI';
 export const GitHubActions = 'GitHubActions';

@@ -1,11 +1,11 @@
 import { TableInstanceOptions } from 'cli-table3';
-import { createTable } from '../cli';
 import EventEmitter from '@/event';
 import { Report, ReportItem } from '@/typings/command';
 import { Config } from '@/typings/components/Table';
 import { Context } from '@/typings/context';
 import { CliOutputOptions } from '@/typings/output/cli';
 import { MarkdownRenderTableEndEvent, MarkdownRenderTableStartEvent } from '@/typings/output/markdown';
+import { createTable } from '../cli';
 
 const markdownTableOptions = {
   chars: {

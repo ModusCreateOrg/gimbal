@@ -52,6 +52,8 @@ describe('@modus/gimbal-plugin-source-map-explorer', (): void => {
       },
       {
         arrayMerge: expect.any(Function),
+        cloneUnlessOtherwiseSpecified: expect.any(Function),
+        isMergeableObject: expect.any(Function),
       },
     );
 
@@ -156,6 +158,8 @@ describe('@modus/gimbal-plugin-source-map-explorer', (): void => {
       },
       {
         arrayMerge: expect.any(Function),
+        cloneUnlessOtherwiseSpecified: expect.any(Function),
+        isMergeableObject: expect.any(Function),
       },
     );
 
@@ -301,6 +305,8 @@ describe('@modus/gimbal-plugin-source-map-explorer', (): void => {
       },
       {
         arrayMerge: expect.any(Function),
+        cloneUnlessOtherwiseSpecified: expect.any(Function),
+        isMergeableObject: expect.any(Function),
       },
     );
 

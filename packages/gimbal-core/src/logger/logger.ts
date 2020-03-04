@@ -12,7 +12,7 @@ const $levels: string[] = $defaultLevels; // possible levels to log out
 let $allowedLevel: string = $defaultLevel; // one of the values from $levels or 'silent' for no logging
 const $indentLevel = 2; // the number of spaces to indent by when grouping
 
-/* eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars */
+/* eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function */
 const emptyLoggerFn: LoggerFunction = (..._val: LoggerArgs): void => {};
 
 // checks to see whether the requested level is allowed to be logged

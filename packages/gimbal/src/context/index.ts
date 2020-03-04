@@ -1,10 +1,9 @@
 import logger from '@modus/gimbal-core/lib/logger';
+import { Logger } from '@/typings/logger/index';
 import Config from '../config';
 import ArgsContext from './args';
 import EventContext from './event';
 import ModuleContext from './module';
-
-import { Logger } from '@/typings/logger/index';
 
 class Context {
   public readonly args: ArgsContext = new ArgsContext();

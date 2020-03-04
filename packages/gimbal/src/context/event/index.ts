@@ -1,9 +1,8 @@
-import Emitter from '../../event';
-import Event from '../../event/Event';
-
 import { FireRet } from '@/typings/event';
 import { Callback, Config } from '@/typings/event/Event';
 import { Data } from '@/typings/utils/Queue';
+import Emitter from '../../event';
+import Event from '../../event/Event';
 
 class EventContext {
   public on(event: string, config: Callback | Config): Event {

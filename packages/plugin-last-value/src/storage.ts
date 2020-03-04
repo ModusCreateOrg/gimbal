@@ -1,9 +1,9 @@
 import Queue from '@modus/gimbal-core/lib/utils/Queue';
-import { doesItemFail, getItemDiff } from './util';
 import { Report, ReportItem } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Context } from '@/typings/context';
 import { Config, LastReportItem, GetEvent, SaveEvent } from '@/typings/plugin/last-value';
+import { doesItemFail, getItemDiff } from './util';
 
 const applyRow = async (
   archiveItem: LastReportItem,

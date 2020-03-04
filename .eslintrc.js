@@ -24,6 +24,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'class-methods-use-this': 'off',
     curly: ['error', 'all'],
+    'import/extensions': ['error', 'never'],
     'max-len': [
       'error',
       {
