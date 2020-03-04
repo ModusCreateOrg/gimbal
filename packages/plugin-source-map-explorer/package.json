@@ -46,13 +46,13 @@
   "dependencies": {
     "@modus/gimbal-core": "2.0.0-dev",
     "bytes": "3.1.0",
-    "deepmerge": "4.1.1",
-    "globby": "10.0.1",
+    "deepmerge": "4.2.2",
+    "globby": "11.0.0",
     "minimatch": "3.0.4",
-    "source-map-explorer": "2.1.0"
+    "source-map-explorer": "2.3.1"
   },
   "devDependencies": {
-    "@types/bytes": "3.0.0",
+    "@types/bytes": "3.1.0",
     "@types/globby": "9.1.0",
     "@types/minimatch": "3.0.3"
   }

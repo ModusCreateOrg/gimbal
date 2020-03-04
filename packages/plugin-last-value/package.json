@@ -34,11 +34,11 @@
   "dependencies": {
     "@modus/gimbal-core": "2.0.0-dev",
     "bytes": "3.1.0",
-    "deepmerge": "4.1.1",
+    "deepmerge": "4.2.2",
     "minimist": "1.2.0"
   },
   "devDependencies": {
-    "@types/bytes": "3.0.0",
+    "@types/bytes": "3.1.0",
     "@types/minimist": "1.2.0"
   }
 }

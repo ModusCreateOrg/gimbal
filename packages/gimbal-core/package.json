@@ -32,23 +32,23 @@
   "dependencies": {
     "cli-table3": "0.5.1",
     "colors": "1.4.0",
-    "deepmerge": "4.1.1",
+    "deepmerge": "4.2.2",
     "get-folder-size": "2.0.1",
-    "get-port": "5.0.0",
-    "globby": "10.0.1",
+    "get-port": "5.1.1",
+    "globby": "11.0.0",
     "is-ci": "2.0.0",
     "minimatch": "3.0.4",
-    "mkdirp": "0.5.1",
-    "pidusage": "2.0.17",
+    "mkdirp": "1.0.3",
+    "pidusage": "2.0.18",
     "spinnies": "0.5.1",
-    "strip-ansi": "5.2.0"
+    "strip-ansi": "6.0.0"
   },
   "devDependencies": {
     "@types/get-folder-size": "2.0.0",
     "@types/globby": "9.1.0",
     "@types/is-ci": "2.0.0",
     "@types/minimatch": "3.0.3",
-    "@types/mkdirp": "0.5.2",
+    "@types/mkdirp": "1.0.0",
     "@types/pidusage": "2.0.1"
   }
 }

@@ -39,7 +39,7 @@ const sqlite = async ({ context }: PluginOptions, config: Config): Promise<void>
 
   if (willNeedDatabase(sqliteConfig)) {
     if (sqliteConfig.file !== ':memory:') {
-      await mkdirp(dirname(sqliteConfig.file));
+      await mkdirp(dirname(sqliteConfig.file), undefined);
     }
 
     const db = new sqlite3.Database(sqliteConfig.file);

@@ -1,12 +1,6 @@
 import Logger from '@modus/gimbal-core/lib/logger';
 import env from '@modus/gimbal-core/lib/utils/env';
-import Octokit, {
-  IssuesCreateCommentParams,
-  IssuesCreateCommentResponse,
-  ReposCreateCommitCommentParams,
-  ReposCreateCommitCommentResponse,
-  Response,
-} from '@octokit/rest';
+import { Octokit } from '@octokit/rest';
 import { URL } from 'url';
 import EventEmitter from '@/event';
 import {
@@ -36,12 +30,8 @@ export default class GitHub {
     return this.constructor.name;
   }
 
-  public comment(
-    body: string,
-  ): Promise<
-    Response<ReposCreateCommitCommentResponse> | Response<IssuesCreateCommentResponse>
-    /* eslint-disable-next-line @typescript-eslint/indent */
-  > | void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public comment(body: string): Promise<any> | void {
     if (env(GITHUB_AUTH_TOKEN)) {
       const { ci } = this;
 
@@ -61,8 +51,9 @@ export default class GitHub {
     /* eslint-disable-next-line @typescript-eslint/camelcase,camelcase */
     commit_sha: string,
     body: string,
-  ): Promise<Response<ReposCreateCommitCommentResponse>> {
-    const comment: ReposCreateCommitCommentParams = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any> {
+    const comment = {
       body,
       /* eslint-disable-next-line @typescript-eslint/camelcase */
       commit_sha,
@@ -94,8 +85,9 @@ export default class GitHub {
     /* eslint-disable-next-line @typescript-eslint/camelcase,camelcase */
     issue_number: number,
     body: string,
-  ): Promise<Response<IssuesCreateCommentResponse>> {
-    const comment: IssuesCreateCommentParams = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any> {
+    const comment = {
       body,
       /* eslint-disable-next-line @typescript-eslint/camelcase */
       issue_number,

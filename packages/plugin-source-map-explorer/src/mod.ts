@@ -3,10 +3,7 @@ import bytes from 'bytes';
 import deepmerge from 'deepmerge';
 import globby from 'globby';
 import minimatch from 'minimatch';
-// @ts-ignore
-import explore from 'source-map-explorer';
-// looks like their types are nested in the src dir of dist...
-import { ExploreBundleResult, ExploreResult } from 'source-map-explorer/dist/src';
+import explore, { ExploreBundleResult, ExploreResult } from 'source-map-explorer';
 import { Report, ReportItem } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Options } from '@/typings/module/registry';
@@ -36,7 +33,7 @@ export const parseBundle = (rawBundle: RawReport, bundleConfig: BundleType): Rep
 
   rawBundle.bundles.forEach((bundleResult: ExploreBundleResult): void => {
     Object.keys(bundleResult.files).forEach((file: string): void => {
-      const size = bundleResult.files[file];
+      const { size } = bundleResult.files[file];
       const threshold = getThreshold(file, bundleConfig as BundleObject);
       const rawThreshold = threshold == null ? threshold : bytes(threshold);
       const fileSuccess = rawThreshold == null ? true : size <= rawThreshold;
