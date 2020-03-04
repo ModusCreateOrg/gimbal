@@ -66,9 +66,9 @@ describe('gimbal/command/audit/utils', () => {
 
       expect(addSpinner).toHaveBeenCalledTimes(3);
 
-      expect(addSpinner).toHaveBeenNthCalledWith(1, 'foo', { status: 'stopped', text: '[ foo ] - /foo' });
-      expect(addSpinner).toHaveBeenNthCalledWith(2, 'bar', { status: 'stopped', text: '[ bar ] - /foo' });
-      expect(addSpinner).toHaveBeenNthCalledWith(3, 'baz', { status: 'stopped', text: '[ baz ] - /foo' });
+      expect(addSpinner).toHaveBeenNthCalledWith(1, 'foo', { status: 'spinning', text: '[ foo ] - /foo' });
+      expect(addSpinner).toHaveBeenNthCalledWith(2, 'bar', { status: 'spinning', text: '[ bar ] - /foo' });
+      expect(addSpinner).toHaveBeenNthCalledWith(3, 'baz', { status: 'spinning', text: '[ baz ] - /foo' });
     });
   });
 
