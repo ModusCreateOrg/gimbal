@@ -1,33 +1,27 @@
-import {
-  IssuesCreateCommentParams,
-  IssuesCreateCommentResponse,
-  ReposCreateCommitCommentParams,
-  ReposCreateCommitCommentResponse,
-  Response,
-} from '@octokit/rest';
+import { OctokitResponse } from '@octokit/types';
 
 export interface CommitCommentStartEvent {
-  comment: ReposCreateCommitCommentParams;
+  comment: unknown; // ReposCreateCommitCommentParams
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   vcs: any; // would cause circular dependency if imported the command class
 }
 
 export interface CommitCommentEndEvent {
-  comment: ReposCreateCommitCommentParams;
-  ret: Response<ReposCreateCommitCommentResponse>;
+  comment: unknown; // ReposCreateCommitCommentParams
+  ret: OctokitResponse<unknown>; // ReposCreateCommitCommentResponse
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   vcs: any; // would cause circular dependency if imported the command class
 }
 
 export interface CommitPRStartEvent {
-  comment: IssuesCreateCommentParams;
+  comment: unknown; // IssuesCreateCommentParams
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   vcs: any; // would cause circular dependency if imported the command class
 }
 
 export interface CommitPREndEvent {
-  comment: IssuesCreateCommentParams;
-  ret: Response<IssuesCreateCommentResponse>;
+  comment: unknown; // IssuesCreateCommentParams
+  ret: OctokitResponse<unknown>; // IssuesCreateCommentResponse
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   vcs: any; // would cause circular dependency if imported the command class
 }
