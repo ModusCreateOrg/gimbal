@@ -3,6 +3,8 @@ import { CIMode } from '@/typings/ci';
 import { VCS as VCSTypes } from '@/typings/vcs';
 import GitHub from '@/vcs/GitHub';
 
+const PR_REG = /^refs\/pull\/([0-9]+)\/merge$/;
+
 export default class GitHubActions {
   private $vcs?: VCSTypes;
 
@@ -23,6 +25,16 @@ export default class GitHubActions {
   }
 
   public get pr(): number | void {
+    const ref = env('GITHUB_REF');
+
+    if (ref) {
+      const matches = ref.match(PR_REG);
+
+      if (matches) {
+        return Number(matches[1]);
+      }
+    }
+
     return undefined;
   }
 
