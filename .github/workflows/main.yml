@@ -1,6 +1,6 @@
 name: CI
 
-on: [push]
+on: push
 
 # GitHub Actions don't support cache yet so need...
 # to install first and run steps after. This causes
@@ -8,8 +8,6 @@ on: [push]
 
 jobs:
   lint-test-build:
-    env:
-      CI: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -29,38 +27,3 @@ jobs:
         uses: nuxt/actions-yarn@master
         with:
           args: build
-  test-examples:
-    env:
-      CI: true
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install
-        uses: nuxt/actions-yarn@master
-        with:
-          args: install
-      - name: Build Examples
-        uses: nuxt/actions-yarn@master
-        with:
-          args: build:examples
-      - name: Test Angular example
-        run: yarn --cwd examples/angular gimbal --verbose
-        env:
-          GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
-          GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
-          GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Test React example
-        run: yarn --cwd examples/react gimbal --verbose
-        env:
-          GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
-          GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
-          GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Test React Router example
-        run: yarn --cwd examples/react-router gimbal --verbose
-        env:
-          GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
-          GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
-          GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
