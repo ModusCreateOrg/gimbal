@@ -15,6 +15,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$( cd "${DIR}/.." && pwd )"
 EXAMPLES_DIR="$BASE_DIR/examples"
 
+export SKIP_PREFLIGHT_CHECK=true
+
 for file in $EXAMPLES_DIR/*; do
   cd $file
 
