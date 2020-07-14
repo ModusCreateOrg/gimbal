@@ -8,8 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: bahmutov/npm-install@v1.1.0
-      - name: Install
-        run: yarn
       - name: Test Angular example
         run: ./bin/test_example.sh angular
         env:
