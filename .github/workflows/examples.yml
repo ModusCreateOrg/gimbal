@@ -10,36 +10,22 @@ jobs:
       - uses: bahmutov/npm-install@v1.1.0
       - name: Install
         run: yarn
-      - name: Build Examples
-        run: yarn build:examples
-
-      - uses: bahmutov/npm-install@v1.1.0
-        with:
-          working-directory: examples/angular
       - name: Test Angular example
-        run: yarn gimbal --verbose
+        run: ./bin/test_example.sh angular
         env:
           GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
           GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: bahmutov/npm-install@v1.1.0
-        with:
-          working-directory: examples/react
       - name: Test React example
-        run: yarn gimbal --verbose
+        run: ./bin/test_example.sh react
         env:
           GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
           GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: bahmutov/npm-install@v1.1.0
-        with:
-          working-directory: examples/react-router
       - name: Test React Router example
-        run: yarn gimbal --verbose
+        run: ./bin/test_example.sh react-router
         env:
           GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
