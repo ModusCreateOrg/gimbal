@@ -46,10 +46,12 @@ const yamlLoader = async (file: string): Promise<Config> => {
     },
   );
 
-  return yaml.safeLoad(doc, {
+  const config: unknown = yaml.safeLoad(doc, {
     filename: file,
     json: true,
   });
+
+  return config as Config;
 };
 
 export default yamlLoader;

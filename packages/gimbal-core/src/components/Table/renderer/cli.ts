@@ -1,4 +1,4 @@
-import Table, { Cell, HorizontalTable } from 'cli-table3';
+import Table, { Cell, Table as TableType } from 'cli-table3';
 import { Column, Data, RendererArgs } from '@/typings/components/Table';
 import { sectionHeading } from '../../../utils/colors';
 import Queue from '../../../utils/Queue';
@@ -7,7 +7,7 @@ const defaultConfig = {
   style: { head: ['white'] },
 };
 
-const renderItem = async (table: HorizontalTable, item: Data, index: number, columns: Column[]): Promise<void> => {
+const renderItem = async (table: TableType, item: Data, index: number, columns: Column[]): Promise<void> => {
   if (item.data) {
     const { length: numColumns } = columns;
     const { label } = item;
@@ -80,7 +80,7 @@ const renderCli = async ({ columns, data, options }: RendererArgs): Promise<stri
     ...defaultConfig,
     head: columns.map((column: Column): string => column.header),
     ...options,
-  }) as HorizontalTable;
+  }) as TableType;
 
   data.forEach((item: Data, index: number): void =>
     queue.add((): Promise<void> => renderItem(table, item, index, columns)),
