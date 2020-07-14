@@ -21,7 +21,7 @@
     "build:check": "ttsc --noEmit -p .",
     "build:watch": "ttsc --watch -p .",
     "lint": "eslint 'src/**/*.ts'",
-    "prepublish": "yarn build",
+    "prepublish": "npm run build",
     "test": "jest --coverage",
     "test:coveralls": "cat ./coverage/lcov.info | coveralls",
     "test:nocov": "jest"

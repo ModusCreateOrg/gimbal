@@ -15,7 +15,7 @@
     "build:watch": "ttsc --watch -p .",
     "link": "npm link",
     "lint": "eslint 'src/**/*.ts'",
-    "prepublish": "yarn build",
+    "prepublish": "npm run build",
     "test": "jest --coverage",
     "test:coveralls": "cat ./coverage/lcov.info | coveralls",
     "test:nocov": "jest"
@@ -42,6 +42,10 @@
   },
   "dependencies": {
     "axe-puppeteer": "1.1.0",
-    "deepmerge": "4.2.2"
+    "deepmerge": "4.2.2",
+    "puppeteer": "5.1.0"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "3.0.1"
   }
 }
