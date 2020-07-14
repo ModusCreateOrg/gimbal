@@ -184,6 +184,7 @@ export const namedLogger = (name: string, timeStamp = true): Logger => {
   const nextColor = getNextColor();
 
   return createLogger((level: string, logger: Logger): void => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const nameColor = colors[nextColor](name);
     const fn = createLoggerFunction(level, timeStamp, nameColor);

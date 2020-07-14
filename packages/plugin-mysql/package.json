@@ -37,6 +37,6 @@
     "mysql": "2.18.1"
   },
   "devDependencies": {
-    "@types/mysql": "2.15.9"
+    "@types/mysql": "2.15.15"
   }
 }

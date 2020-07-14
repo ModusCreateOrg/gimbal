@@ -1,4 +1,3 @@
-// @ts-ignore
 import stripAnsi from 'strip-ansi';
 import { Column, RendererArgs } from '@/typings/components/Table';
 import renderCli from './cli';

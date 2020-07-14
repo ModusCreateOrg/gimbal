@@ -30,16 +30,16 @@
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
-    "cli-table3": "0.5.1",
+    "cli-table3": "0.6.0",
     "colors": "1.4.0",
     "deepmerge": "4.2.2",
     "get-folder-size": "2.0.1",
     "get-port": "5.1.1",
-    "globby": "11.0.0",
+    "globby": "11.0.1",
     "is-ci": "2.0.0",
     "minimatch": "3.0.4",
-    "mkdirp": "1.0.3",
-    "pidusage": "2.0.18",
+    "mkdirp": "1.0.4",
+    "pidusage": "2.0.20",
     "spinnies": "0.5.1",
     "strip-ansi": "6.0.0"
   },
@@ -48,7 +48,7 @@
     "@types/globby": "9.1.0",
     "@types/is-ci": "2.0.0",
     "@types/minimatch": "3.0.3",
-    "@types/mkdirp": "1.0.0",
+    "@types/mkdirp": "1.0.1",
     "@types/pidusage": "2.0.1"
   }
 }

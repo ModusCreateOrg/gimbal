@@ -1,6 +1,7 @@
 import deepmerge from 'deepmerge';
 import { existsSync } from 'fs';
 import http from 'http';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import handler from 'serve-handler';
 import Config from '@/config';

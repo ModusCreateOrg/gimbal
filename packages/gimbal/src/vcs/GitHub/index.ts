@@ -48,14 +48,13 @@ export default class GitHub {
   }
 
   private async createCommitComment(
-    /* eslint-disable-next-line @typescript-eslint/camelcase,camelcase */
+    /* eslint-disable-next-line camelcase */
     commit_sha: string,
     body: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     const comment = {
       body,
-      /* eslint-disable-next-line @typescript-eslint/camelcase */
       commit_sha,
       owner: this.ci.owner,
       repo: this.ci.repo,
@@ -82,14 +81,13 @@ export default class GitHub {
   }
 
   private async createPRComment(
-    /* eslint-disable-next-line @typescript-eslint/camelcase,camelcase */
+    /* eslint-disable-next-line camelcase */
     issue_number: number,
     body: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     const comment = {
       body,
-      /* eslint-disable-next-line @typescript-eslint/camelcase */
       issue_number,
       owner: this.ci.owner,
       repo: this.ci.repo,

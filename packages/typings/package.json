@@ -13,8 +13,8 @@
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
-    "@octokit/rest": "17.0.0",
+    "@octokit/rest": "18.0.0",
     "@octokit/types": "5.0.1",
-    "cli-table3": "0.5.1"
+    "cli-table3": "0.6.0"
   }
 }

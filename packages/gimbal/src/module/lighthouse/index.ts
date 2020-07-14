@@ -1,4 +1,5 @@
 import deepmerge from 'deepmerge';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import lighthouse from 'lighthouse';
 import Config from '@/config';
