@@ -1,4 +1,4 @@
-name: CI
+name: Test
 
 on: push
 
@@ -11,19 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - uses: bahmutov/npm-install@v1.1.0
       - name: Install
-        uses: nuxt/actions-yarn@master
-        with:
-          args: install
+        run: yarn
       - name: Lint
-        uses: nuxt/actions-yarn@master
-        with:
-          args: lint
+        run: yarn lint
       - name: Test
-        uses: nuxt/actions-yarn@master
-        with:
-          args: test
+        run: yarn test
       - name: Build
-        uses: nuxt/actions-yarn@master
-        with:
-          args: build
+        run: yarn build

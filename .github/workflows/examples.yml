@@ -1,4 +1,4 @@
-name: CI
+name: Example Test
 
 on: push
 
@@ -7,30 +7,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - uses: bahmutov/npm-install@v1.1.0
       - name: Install
-        uses: nuxt/actions-yarn@master
-        with:
-          args: install
+        run: yarn
       - name: Build Examples
-        uses: nuxt/actions-yarn@master
+        run: yarn build:examples
+
+      - uses: bahmutov/npm-install@v1.1.0
         with:
-          args: build:examples
+          working-directory: examples/angular
       - name: Test Angular example
-        run: yarn --cwd examples/angular gimbal --verbose
+        run: yarn gimbal --verbose
         env:
           GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
           GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: bahmutov/npm-install@v1.1.0
+        with:
+          working-directory: examples/react
       - name: Test React example
-        run: yarn --cwd examples/react gimbal --verbose
+        run: yarn gimbal --verbose
         env:
           GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
           GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: bahmutov/npm-install@v1.1.0
+        with:
+          working-directory: examples/react-router
       - name: Test React Router example
-        run: yarn --cwd examples/react-router gimbal --verbose
+        run: yarn gimbal --verbose
         env:
           GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
