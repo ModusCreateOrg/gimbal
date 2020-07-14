@@ -59,3 +59,7 @@ echo "# Testing $EXAMPLE example..."
 echo
 
 yarn gimbal --verbose
+
+echo "# Finished testing!"
+
+exit 0
