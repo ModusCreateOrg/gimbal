@@ -53,10 +53,10 @@ const heapSnapshot = async (
 
   await EventEmitter.fire(`module/heap-snapsnot/audit/start`, auditStartEvent);
 
-  const audit: Metrics = await page.metrics();
+  const audit: unknown = await page.metrics();
 
   const auditEndEvent: AuditEndEvent = {
-    audit,
+    audit: audit as Metrics,
     config,
     context,
     page,
@@ -66,7 +66,7 @@ const heapSnapshot = async (
   await EventEmitter.fire(`module/heap-snapsnot/audit/end`, auditEndEvent);
 
   const reportStartEvent: ReportStartEvent = {
-    audit,
+    audit: audit as Metrics,
     config,
     context,
     page,
@@ -78,7 +78,7 @@ const heapSnapshot = async (
   const report = parseReport(audit as HeapMetrics, config, context);
 
   const reportEndEvent: ReportEndEvent = {
-    audit,
+    audit: audit as Metrics,
     config,
     context,
     page,

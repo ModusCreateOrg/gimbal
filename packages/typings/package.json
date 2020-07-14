@@ -14,7 +14,10 @@
   },
   "dependencies": {
     "@octokit/rest": "18.0.0",
-    "@octokit/types": "5.0.1",
     "cli-table3": "0.6.0"
+  },
+  "devDependencies": {
+    "@octokit/types": "5.0.1",
+    "@types/puppeteer": "3.0.1"
   }
 }
