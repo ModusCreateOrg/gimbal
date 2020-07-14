@@ -10,9 +10,6 @@
   "scripts": {
     "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
-    "gimbal": "TS_NODE_PROJECT=../../packages/gimbal/tsconfig.json yarn start --cwd ../../packages/gimbal -- --cwd ../../examples/react",
-    "gimbal:break": "TS_NODE_PROJECT=../../packages/gimbal/tsconfig.json yarn start:break --cwd ../../packages/gimbal -- --cwd ../../examples/react",
-    "gimbal:built": "gimbal",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

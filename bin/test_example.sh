@@ -12,7 +12,8 @@ export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 # Credit to http://stackoverflow.com/a/246128/424301
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BASE_DIR="$( cd "${DIR}/.." && pwd )"
+BASE_DIR=$( cd "${DIR}/.." && pwd )
+GIMBAL_DIR="$BASE_DIR/packages/gimbal"
 EXAMPLE=${1:-}
 
 if [[ ! "$EXAMPLE" ]]; then
@@ -41,7 +42,7 @@ if [[ -d node_modules ]]; then
 else
   echo "# Installing $EXAMPLE example dependencies..."
 
-  yarn
+  npm ci
 fi
 
 echo
@@ -51,15 +52,13 @@ if [[ -d build ]] || [[ -d dist ]]; then
 else
   echo "# Building $EXAMPLE example..."
 
-  yarn build
+  npm run build
 fi
+
+cd "$GIMBAL_DIR"
 
 echo
 echo "# Testing $EXAMPLE example..."
 echo
 
-yarn gimbal --verbose
-
-echo "# Finished testing!"
-
-exit 0
+npm start -- --verbose --cwd "$EXAMPLE_DIR"

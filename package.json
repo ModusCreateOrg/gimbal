@@ -11,7 +11,7 @@
     "link": "lerna run link",
     "lint": "lerna run lint",
     "lint-staged": "lint-staged",
-    "postinstall": "yarn run bootstrap",
+    "postinstall": "npm run bootstrap",
     "test": "lerna run test --stream",
     "test:coveralls": "cat ./coverage/lcov.info | coveralls",
     "test:nocov": "lerna run test:nocov --stream",
@@ -19,7 +19,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run lint-staged"
+      "pre-commit": "npm run lint-staged"
     }
   },
   "lint-staged": {

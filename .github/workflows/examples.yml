@@ -7,7 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: bahmutov/npm-install@v1.1.0
+      - uses: actions/setup-node@v2.1.0
+        with:
+          node-version: 14
+      - name: Install
+        run: npm ci
       - name: Test Angular example
         run: ./bin/test_example.sh angular
         env:
@@ -22,10 +26,10 @@ jobs:
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
           GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Test React Router example
-        run: ./bin/test_example.sh react-router
-        env:
-          GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
-          GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
-          GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Test React Router example
+      #   run: ./bin/test_example.sh react-router
+      #   env:
+      #     GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
+      #     GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
+      #     GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
+      #     GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
