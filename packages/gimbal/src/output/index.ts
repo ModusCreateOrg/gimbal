@@ -107,7 +107,7 @@ const doHtmlOutput: OutputFn = async (report: Report, context: Context, html: st
   const file = html ? resolvePath(context.config.get('configs.cwd'), html) : context.config.get('configs.outputHtml');
 
   if (file) {
-    await mkdirp(path.dirname(file), undefined);
+    await mkdirp(path.dirname(file));
 
     const htmlReportStartEvent: HtmlReportStartEvent = {
       context,
@@ -136,7 +136,7 @@ const doJsonOutput: OutputFn = async (report: Report, context: Context, json: st
   const file = json ? resolvePath(context.config.get('configs.cwd'), json) : context.config.get('configs.outputJson');
 
   if (file) {
-    await mkdirp(path.dirname(file), undefined);
+    await mkdirp(path.dirname(file));
 
     const jsonReportStartEvent: JsonReportStartEvent = {
       context,
@@ -167,7 +167,7 @@ const doMarkdownOutput: OutputFn = async (report: Report, context: Context, mark
     : context.config.get('configs.outputMarkdown');
 
   if (file) {
-    await mkdirp(path.dirname(file), undefined);
+    await mkdirp(path.dirname(file));
 
     const markdownReportStartEvent: MarkdownReportStartEvent = {
       context,

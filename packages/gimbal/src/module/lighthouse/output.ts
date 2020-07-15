@@ -46,7 +46,7 @@ const parseReport = async (raw: Audit, { outputHtml, threshold }: Config, contex
     const cwd = context.config.get('configs.cwd');
     const path = resolvePath(cwd, outputHtml);
 
-    await mkdirp(dirname(path), undefined);
+    await mkdirp(dirname(path));
 
     await writeFile(path, html, 'utf8');
   }

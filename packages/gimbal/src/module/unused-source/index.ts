@@ -200,10 +200,6 @@ const UnusedCSS = async (
     const unused = entryTotal - entryUsed;
     const percentage = (unused / entryTotal) * 100;
 
-    if (entry.url === 'http://localhost:3000/static/js/main.dfdc8459.chunk.js') {
-      // debugger;
-    }
-
     const threshold = isThresholdArray
       ? getThreshold(entry.url, thresholds as SizeConfigs[], type)
       : (thresholds as string);

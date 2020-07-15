@@ -1,13 +1,10 @@
 import { resolvePath } from '@modus/gimbal-core/lib/utils/fs';
 import deepmerge from 'deepmerge';
-import mkdirpMod from 'mkdirp';
+import mkdirp from 'mkdirp';
 import { dirname } from 'path';
 import sqlite3 from 'sqlite3';
-import { promisify } from 'util';
 import { PluginOptions } from '@/typings/config/plugin';
 import { GetEvent, SaveEvent } from '@/typings/plugin/last-value';
-
-const mkdirp = promisify(mkdirpMod);
 
 interface ItemConfig {
   table: string;
@@ -39,7 +36,7 @@ const sqlite = async ({ context }: PluginOptions, config: Config): Promise<void>
 
   if (willNeedDatabase(sqliteConfig)) {
     if (sqliteConfig.file !== ':memory:') {
-      await mkdirp(dirname(sqliteConfig.file), undefined);
+      await mkdirp(dirname(sqliteConfig.file));
     }
 
     const db = new sqlite3.Database(sqliteConfig.file);
