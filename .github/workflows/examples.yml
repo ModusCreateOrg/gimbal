@@ -3,15 +3,38 @@ name: Example Test
 on: push
 
 jobs:
-  test-examples:
+  install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2.1.0
         with:
           node-version: 14
-      - name: Install
-        run: npm ci
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - name: Zip node_modules
+        run: zip -9qry "node_modules.zip" "./" -i "node_modules/*"
+      - name: Upload build.zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: node_modules.zip
+          path: node_modules.zip
+
+  test-angular-example:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.0
+        with:
+          node-version: 14
+      - name: Download node_modules.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: node_modules.zip
+      - name: Unzip node_modules.zip
+        run: unzip -q node_modules.zip
       - name: Test Angular example
         run: ./bin/test_example.sh angular
         env:
@@ -19,6 +42,21 @@ jobs:
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
           GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test-react-example:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.0
+        with:
+          node-version: 14
+      - name: Download node_modules.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: node_modules.zip
+      - name: Unzip node_modules.zip
+        run: unzip -q node_modules.zip
       - name: Test React example
         run: ./bin/test_example.sh react
         env:
@@ -26,10 +64,25 @@ jobs:
           GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
           GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Test React Router example
-      #   run: ./bin/test_example.sh react-router
-      #   env:
-      #     GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
-      #     GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
-      #     GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
-      #     GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test-react-router-example:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.0
+        with:
+          node-version: 14
+      - name: Download node_modules.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: node_modules.zip
+      - name: Unzip node_modules.zip
+        run: unzip -q node_modules.zip
+      - name: Test React Router example
+        run: ./bin/test_example.sh react-router
+        env:
+          GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
+          GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
+          GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
