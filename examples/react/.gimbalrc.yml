@@ -34,6 +34,7 @@ audits:
 
 configs:
   comment:
+    header: React Example
     onlyFailures: true
 
 outputs:

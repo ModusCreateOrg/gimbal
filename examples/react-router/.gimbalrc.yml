@@ -9,9 +9,9 @@ audits:
         maxSize: 1 MB
   unused-source:
     threshold:
-      - path: /static/css/5.*.chunk.css
+      - path: /static/css/4.*.chunk.css
         maxSize: "100%"
-      - path: /static/js/4.*.chunk.js
+      - path: /static/js/5.*.chunk.js
         maxSize: "85%"
       - path: /static/js/main.*.chunk.js
         maxSize: "25%"
@@ -46,6 +46,7 @@ audits:
 
 configs:
   comment:
+    header: React Router Example
     onlyFailures: true
   lighthouse:
     disableStorageReset: true

@@ -36,6 +36,7 @@ export interface CommentEndEvent extends CommentStartEvent {
 }
 
 export interface CommentObject {
+  header?: string;
   onlyFailures?: boolean;
 }
 

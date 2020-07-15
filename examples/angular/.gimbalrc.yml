@@ -53,6 +53,9 @@ audits:
       - "!**/vendor*.js"
 
 configs:
+  comment:
+    header: Angular Example
+    onlyFailures: true
   buildDir: dist/example-angular
 
 outputs:

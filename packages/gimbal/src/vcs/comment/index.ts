@@ -129,6 +129,10 @@ const vcsComment = async (report: Report, context: Context): Promise<void> => {
               cwd: isBuilt ? path.join(__dirname, '../../../../..') : path.join(__dirname, '../../..'),
             });
 
+            if (comment.header) {
+              renderedReport.unshift(`### ${comment.header}`);
+            }
+
             renderedReport.unshift(`## ModusCreate Gimbal v${version} Results`);
           }
 
