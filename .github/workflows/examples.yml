@@ -12,8 +12,8 @@ jobs:
           node-version: 14
       - run: npm ci
       - name: Zip node_modules
-        run: zip -9qry "node_modules.zip" "./" -i "**/*/node_modules/*"
-      - name: Upload build.zip
+        run: zip -9qry "node_modules.zip" "./" -i "node_modules/*" -i "packages/*/node_modules/*"
+      - name: Upload node_modules.zip
         uses: actions/upload-artifact@v2
         with:
           name: node_modules.zip
