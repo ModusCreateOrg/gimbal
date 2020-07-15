@@ -62,3 +62,4 @@ echo "# Testing $EXAMPLE example..."
 echo
 
 npm start -- --verbose --cwd "$EXAMPLE_DIR"
+# npm run start:break -- --verbose --cwd "$EXAMPLE_DIR"
