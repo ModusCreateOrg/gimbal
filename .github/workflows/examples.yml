@@ -19,7 +19,7 @@ jobs:
           name: node_modules.zip
           path: node_modules.zip
 
-  test-angular-example:
+  test-angular-v2-example:
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +41,29 @@ jobs:
           GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  test-react-example:
+  test-angular-v1-example:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.0
+        with:
+          node-version: 14
+      - name: Download node_modules.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: node_modules.zip
+      - name: Unzip node_modules.zip
+        run: unzip -q node_modules.zip
+      - name: Test Angular example
+        run: ./bin/test_example.sh angular .gimbalrc.1.yml
+        env:
+          GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
+          GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
+          GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test-react-v2-example:
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -63,7 +85,29 @@ jobs:
           GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  test-react-router-example:
+  test-react-v1-example:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.0
+        with:
+          node-version: 14
+      - name: Download node_modules.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: node_modules.zip
+      - name: Unzip node_modules.zip
+        run: unzip -q node_modules.zip
+      - name: Test React example
+        run: ./bin/test_example.sh react .gimbalrc.1.yml
+        env:
+          GIMBAL_MYSQL_HOST: ${{ secrets.GIMBAL_MYSQL_HOST }}
+          GIMBAL_MYSQL_PASSWORD: ${{ secrets.GIMBAL_MYSQL_PASSWORD }}
+          GIMBAL_MYSQL_USERNAME: ${{ secrets.GIMBAL_MYSQL_USERNAME }}
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test-react-router-v2-example:
     needs: install
     runs-on: ubuntu-latest
     steps:

@@ -1,6 +1,6 @@
-import { Config } from '@/typings/config';
+import { RawConfig } from '@/typings/config';
 
-const jsLoader = async (file: string): Promise<Config> => {
+const jsLoader = async (file: string): Promise<RawConfig> => {
   const config = await import(file);
 
   if (typeof config === 'function') {

@@ -1,40 +1,16 @@
-// @ts-ignore
-import lighthouse from 'lighthouse';
-import { Plugin } from '@/typings/config/plugin';
-import { Modules } from '@/typings/module';
-import { Config as HeapSnapshotConfig } from '@/typings/module/heap-snapshot';
-import { SizeConfigs } from '@/typings/module/size';
-import { UnusedSourceConfig } from '@/typings/module/unused-source';
+import { Plugin } from './plugin';
+import { Config as v1config } from './versions/1';
+import { Config as v2config } from './versions/2';
 
 import { Context } from '../context/index';
 
 export type PluginType = string | Plugin;
+export type RawConfig = v1config | v2config;
 
-export interface Configs {
-  'heap-snapshot'?: HeapSnapshotConfig;
-  lighthouse?: lighthouse.Config.Json;
-  size?: SizeConfigs[];
-  'unused-source'?: UnusedSourceConfig;
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  [name: string]: any;
-}
+// this is to reexport latest version
+export * from './versions/2';
 
-export interface Outputs {
-  html?: string;
-  json?: string;
-  markdown?: string;
-}
-
-export interface Config {
-  audits?: Modules[];
-  configs?: Configs;
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  jobs?: any; // still have to decide what this will look like fully
-  outputs?: Outputs;
-  plugins?: string[];
-}
-
-export type LoaderFn = (file: string) => Promise<Config>;
+export type LoaderFn = (file: string) => Promise<RawConfig>;
 
 export interface LoaderMap {
   js: LoaderFn;
@@ -54,5 +30,5 @@ export interface LoadStartEvent {
 }
 
 export interface LoadEndEvent extends LoadStartEvent {
-  config: Config;
+  config: v2config;
 }

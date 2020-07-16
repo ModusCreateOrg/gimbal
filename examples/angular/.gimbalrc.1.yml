@@ -1,6 +1,14 @@
-version: 2
-
 audits:
+  - axe
+  - size
+  - lighthouse
+  - unused-source
+  - heap-snapshot
+  - source-map-explorer
+
+configs:
+  buildDir: dist/example-angular
+  comment: false
   heap-snapshot:
     threshold:
       Nodes: 81
@@ -28,12 +36,18 @@ audits:
         maxSize: 17 MB
       - path: dist/
         maxSize: 17 MB
-  unused-source: true
-  axe:
+
+outputs:
+  html: artifacts/gimbal.html
+  json: artifacts/gimbal.json
+  markdown: artifacts/gimbal.md
+
+plugins:
+  - plugin: "@modus/gimbal-plugin-axe"
     thresholds:
       landmark-one-main: moderate
       region: moderate
-  source-map-explorer:
+  - plugin: "@modus/gimbal-plugin-source-map-explorer"
     bundles:
       - path: "main*.js"
         thresholds:
@@ -53,26 +67,12 @@ audits:
       - "!**/polyfills*.js"
       - "!**/runtime*.js"
       - "!**/vendor*.js"
-
-configs:
-  comment:
-    header: Angular Example
-    onlyFailures: true
-  buildDir: dist/example-angular
-
-outputs:
-  html: artifacts/gimbal.html
-  json: artifacts/gimbal.json
-  markdown: artifacts/gimbal.md
-
-plugins:
-  - "@modus/gimbal-plugin-axe"
-  - "@modus/gimbal-plugin-source-map-explorer"
   - "@modus/gimbal-plugin-last-value"
   - plugin: "@modus/gimbal-plugin-mysql"
     enabled: ${env:CI, true, false}
     commandPrefix:
-      - angular-example-${env:GITHUB_REPOSITORY}-${env:GITHUB_REF}
+      - angular-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
+      - angular-example-${env:CIRCLE_BRANCH}
       - angular-example
     lastValue:
       database: gimbal_github
@@ -82,6 +82,7 @@ plugins:
   # - plugin: '@modus/gimbal-plugin-sqlite'
   #   enabled: ${env:CI, true, false}
   #   commandPrefix:
-  #     - angular-example-${env:GITHUB_REPOSITORY}-${env:GITHUB_REF}
+  #     - angular-example-${env:CIRCLE_USERNAME}-${env:CIRCLE_BRANCH}
+  #     - angular-example-${env:CIRCLE_BRANCH}
   #     - angular-example
   #   lastValue: true

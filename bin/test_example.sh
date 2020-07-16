@@ -15,6 +15,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR=$( cd "${DIR}/.." && pwd )
 GIMBAL_DIR="$BASE_DIR/packages/gimbal"
 EXAMPLE=${1:-}
+CONFIG_FILE=${2:-.gimbalrc.yml}
 
 if [[ ! "$EXAMPLE" ]]; then
   echo "Must provide an example, e.g.: ./test_example.sh react"
@@ -61,5 +62,5 @@ echo
 echo "# Testing $EXAMPLE example..."
 echo
 
-npm start -- --verbose --cwd "$EXAMPLE_DIR"
-# npm run start:break -- --verbose --cwd "$EXAMPLE_DIR"
+npm start -- --verbose --cwd "$EXAMPLE_DIR" --config "$CONFIG_FILE"
+# npm run start:break -- --verbose --cwd "$EXAMPLE_DIR" --config "$CONFIG_FILE"

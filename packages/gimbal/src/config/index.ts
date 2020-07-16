@@ -5,10 +5,11 @@ import { ParsedArgs } from 'minimist';
 import { extname } from 'path';
 import { Config as ConfigType, LoaderMap, LoadStartEvent, LoadEndEvent } from '@/typings/config';
 import { Context } from '@/typings/context';
-import EventEmitter from '../event';
 import jsLoader from './loader/js';
 import yamlLoader from './loader/yaml';
+import versions from './versions';
 import './plugin';
+import EventEmitter from '../event';
 
 interface Descriptor {
   config: string;
@@ -114,7 +115,9 @@ class Config {
       throw new Error('No valid gimbal configuration file found!');
     }
 
-    this.config = await loader(file);
+    const config = await loader(file);
+
+    this.config = versions(config);
 
     return this.config;
   }
@@ -275,7 +278,9 @@ class Config {
 
   private ensureConfig(): ConfigType {
     if (!this.config) {
-      this.config = {};
+      this.config = {
+        version: 'ensured',
+      };
     }
 
     return this.config;

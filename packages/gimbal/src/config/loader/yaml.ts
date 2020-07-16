@@ -1,7 +1,7 @@
 import env from '@modus/gimbal-core/lib/utils/env';
 import { readFile } from '@modus/gimbal-core/lib/utils/fs';
 import yaml from 'js-yaml';
-import { Config } from '@/typings/config';
+import { RawConfig } from '@/typings/config';
 
 const VAR_RE = /\${(.+?):(.+?)(?:,\s*(.+?))?(?:,\s*(.+?))?}/gm;
 
@@ -18,7 +18,7 @@ const parseValue = (value: any): any => {
   return value;
 };
 
-const yamlLoader = async (file: string): Promise<Config> => {
+const yamlLoader = async (file: string): Promise<RawConfig> => {
   const source = await readFile(file, 'utf8');
   // this will allow for variable replacement. The following are the supported types and formats:
   // - ${env:SOME_VAR}
@@ -51,7 +51,7 @@ const yamlLoader = async (file: string): Promise<Config> => {
     json: true,
   });
 
-  return config as Config;
+  return config as RawConfig;
 };
 
 export default yamlLoader;
