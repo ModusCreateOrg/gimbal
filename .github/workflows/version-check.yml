@@ -14,5 +14,9 @@ jobs:
       - uses: actions/setup-node@v2.1.0
         with:
           node-version: 14
-      - name: Check Versions
+      - name: Check Versions (cli)
         run: npm run version:check
+      - name: Check Versions
+        uses: mitchellsimoeens/versionator@v1
+        with:
+          exclude: "examples/**/package.json"
