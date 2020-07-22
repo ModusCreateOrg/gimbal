@@ -17,6 +17,6 @@ jobs:
       - name: Check Versions (cli)
         run: npm run version:check
       - name: Check Versions
-        uses: mitchellsimoeens/versionator@v1
+        uses: mitchellsimoens/versionator@v1
         with:
           exclude: "examples/**/package.json"
