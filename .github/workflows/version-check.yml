@@ -1,0 +1,18 @@
+name: Version Check
+
+on: push
+
+# GitHub Actions don't support cache yet so need...
+# to install first and run steps after. This causes
+# steps to run sequentially instead of parallel tho.
+
+jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.0
+        with:
+          node-version: 14
+      - name: Check Versions
+        run: npm run version:check
