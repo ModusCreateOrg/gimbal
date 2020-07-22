@@ -13,12 +13,12 @@
     "url": "https://github.com/ModusCreateOrg/gimbal/issues"
   },
   "dependencies": {
-    "@octokit/rest": "18.0.0",
+    "@octokit/rest": "18.0.1",
     "cli-table3": "0.6.0",
     "lighthouse": "6.1.1"
   },
   "devDependencies": {
-    "@octokit/types": "5.0.1",
+    "@octokit/types": "5.1.0",
     "@types/puppeteer": "3.0.1"
   }
 }

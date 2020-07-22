@@ -39,7 +39,7 @@
     "is-ci": "2.0.0",
     "minimatch": "3.0.4",
     "mkdirp": "1.0.4",
-    "pidusage": "2.0.20",
+    "pidusage": "2.0.21",
     "spinnies": "0.5.1",
     "strip-ansi": "6.0.0"
   },

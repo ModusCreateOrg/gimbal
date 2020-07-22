@@ -43,7 +43,7 @@
   "dependencies": {
     "axe-puppeteer": "1.1.0",
     "deepmerge": "4.2.2",
-    "puppeteer": "5.1.0"
+    "puppeteer": "5.2.1"
   },
   "devDependencies": {
     "@types/puppeteer": "3.0.1"
