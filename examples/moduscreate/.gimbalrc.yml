@@ -1,0 +1,70 @@
+version: 2
+
+audits:
+  axe:
+    thresholds:
+      aria-hidden-focus: serious
+      color-contrast: serious
+      duplicate-id: minor
+      heading-order: moderate
+      identical-links-same-purpose: minor
+      landmark-one-main: moderate
+      link-name: serious
+      region: moderate
+  heap-snapshot:
+    threshold:
+      Documents: 15
+      Frames: 5
+      Nodes: 4300
+  lighthouse:
+    threshold:
+      accessibility: 95
+      best-practices: 85
+      performance: 30
+      pwa: 62
+      seo: 99
+  unused-source:
+    threshold:
+      - maxSize: "100%"
+        path: https://www.google-analytics.com/analytics.js
+      - maxSize: "100%"
+        path: https://static.addtoany.com/menu/page.js
+      - maxSize: "100%"
+        path: https://static.hsappstatic.net/conversations-visitor-ui/static-1.9566/sass/visitor.css
+      - maxSize: "35%"
+        path: "**/*/*.css"
+      - maxSize: "15%"
+        path: "**/*/main.*.js"
+      - maxSize: "70%"
+        path: "**/*.js"
+      - maxSize: "100%"
+        path: "/"
+        type: "js"
+      - maxSize: "100%"
+        path: "/"
+
+configs:
+  comment:
+    header: moduscreate.com Example
+    onlyFailures: true
+  route:
+    - https://moduscreate.com
+
+outputs:
+  html: artifacts/gimbal.html
+  json: artifacts/gimbal.json
+  markdown: artifacts/gimbal.md
+
+plugins:
+  - "@modus/gimbal-plugin-axe"
+  - "@modus/gimbal-plugin-last-value"
+  - plugin: "@modus/gimbal-plugin-mysql"
+    enabled: ${env:CI, true, false}
+    commandPrefix:
+      - moduscreate-example-${env:GITHUB_REPOSITORY}-${env:GITHUB_REF}
+      - moduscreate-example
+    lastValue:
+      database: gimbal_github
+    host: ${env:GIMBAL_MYSQL_HOST}
+    password: ${env:GIMBAL_MYSQL_PASSWORD}
+    user: ${env:GIMBAL_MYSQL_USERNAME}

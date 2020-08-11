@@ -38,22 +38,26 @@ cd "$EXAMPLE_DIR"
 
 echo
 
-if [[ -d node_modules ]]; then
-  echo "# Skipping dependency installation"
+if [[ -f package.json ]]; then
+  if [[ -d node_modules ]]; then
+    echo "# Skipping dependency installation"
+  else
+    echo "# Installing $EXAMPLE example dependencies..."
+
+    npm ci
+  fi
+
+  echo
+
+  if [[ -d build ]] || [[ -d dist ]]; then
+    echo "# Skipping building"
+  else
+    echo "# Building $EXAMPLE example..."
+
+    npm run build
+  fi
 else
-  echo "# Installing $EXAMPLE example dependencies..."
-
-  npm ci
-fi
-
-echo
-
-if [[ -d build ]] || [[ -d dist ]]; then
-  echo "# Skipping building"
-else
-  echo "# Building $EXAMPLE example..."
-
-  npm run build
+  echo "# Not a node project"
 fi
 
 cd "$GIMBAL_DIR"

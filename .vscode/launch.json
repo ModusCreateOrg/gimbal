@@ -110,7 +110,7 @@
     "type": "pickString",
     "id": "appInput",
     "description": "Which app do you want to run on?",
-    "options": ["angular", "react", "react-router"],
-    "default": "react"
+    "options": ["angular", "moduscreate", "react", "react-router"],
+    "default": "moduscreate"
   }]
 }
