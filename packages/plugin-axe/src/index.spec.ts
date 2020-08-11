@@ -1,10 +1,6 @@
-import realdeepmerge from 'deepmerge';
 import { Context } from '@/typings/context';
 import { Meta } from '@/typings/module';
 import { Module } from '@/typings/module/registry';
-
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-type Deepmerge = (x: any, y: any) => any;
 
 beforeEach((): void => {
   jest.resetModules();
@@ -12,7 +8,6 @@ beforeEach((): void => {
 
 describe('@modus/gimbal-plugin-axe', (): void => {
   it('should register module', async (): Promise<void> => {
-    const deepmergeMock = jest.fn();
     const register = jest.fn();
 
     const contextMock: unknown = {
@@ -22,37 +17,12 @@ describe('@modus/gimbal-plugin-axe', (): void => {
     };
     const context = contextMock as Context;
 
-    jest.doMock(
-      'deepmerge',
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      (): Deepmerge => (x: any, y: any): any => {
-        deepmergeMock(x, y);
-
-        return realdeepmerge(x, y);
-      },
-    );
-
     const { default: Axe } = await import('./index');
 
     await Axe(
       {
         context,
         dir: 'foo',
-      },
-      {
-        showSuccesses: false,
-        thresholds: {
-          impact: 'serious',
-        },
-      },
-    );
-
-    expect(deepmergeMock).toHaveBeenCalledWith(
-      {
-        showSuccesses: true,
-        thresholds: {
-          impact: 'none',
-        },
       },
       {
         showSuccesses: false,
@@ -74,7 +44,6 @@ describe('@modus/gimbal-plugin-axe', (): void => {
   });
 
   it('should execute module', async (): Promise<void> => {
-    const deepmergeMock = jest.fn();
     const close = jest.fn().mockResolvedValue(true);
     const goto = jest.fn().mockResolvedValue(true);
     const setBypassCSP = jest.fn().mockResolvedValue(true);
@@ -139,26 +108,26 @@ describe('@modus/gimbal-plugin-axe', (): void => {
             {
               data: [
                 {
-                  label: 'foo',
-                  rawLabel: 'foo',
-                  rawThreshold: 'minor',
-                  rawValue: undefined,
-                  success: true,
-                  threshold: 'minor',
-                  thresholdLimit: 'upper',
-                  type: 'axe',
-                  value: '',
-                },
-                {
                   label: 'bar',
                   rawLabel: 'bar',
-                  rawThreshold: 'minor',
+                  rawThreshold: 'none',
                   rawValue: 'moderate',
                   success: false,
-                  threshold: 'minor',
+                  threshold: 'none',
                   thresholdLimit: 'upper',
                   type: 'axe',
                   value: 'moderate',
+                },
+                {
+                  label: 'foo',
+                  rawLabel: 'foo',
+                  rawThreshold: 'none',
+                  rawValue: undefined,
+                  success: true,
+                  threshold: 'none',
+                  thresholdLimit: 'upper',
+                  type: 'axe',
+                  value: 'none',
                 },
               ],
               label: 'Axe Audits',
@@ -230,16 +199,6 @@ describe('@modus/gimbal-plugin-axe', (): void => {
       withTags,
     });
 
-    jest.doMock(
-      'deepmerge',
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      (): Deepmerge => (x: any, y: any): any => {
-        deepmergeMock(x, y);
-
-        return realdeepmerge(x, y);
-      },
-    );
-
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     jest.doMock('axe-puppeteer', (): any => ({
       AxePuppeteer,
@@ -251,21 +210,6 @@ describe('@modus/gimbal-plugin-axe', (): void => {
       {
         context,
         dir: 'foo',
-      },
-      {
-        showSuccesses: true,
-        thresholds: {
-          impact: 'minor',
-        },
-      },
-    );
-
-    expect(deepmergeMock).toHaveBeenCalledWith(
-      {
-        showSuccesses: true,
-        thresholds: {
-          impact: 'none',
-        },
       },
       {
         showSuccesses: true,
@@ -287,7 +231,6 @@ describe('@modus/gimbal-plugin-axe', (): void => {
   });
 
   it('should execute module with configs', async (): Promise<void> => {
-    const deepmergeMock = jest.fn();
     const close = jest.fn().mockResolvedValue(true);
     const goto = jest.fn().mockResolvedValue(true);
     const setBypassCSP = jest.fn().mockResolvedValue(true);
@@ -362,6 +305,17 @@ describe('@modus/gimbal-plugin-axe', (): void => {
                   type: 'axe',
                   value: 'moderate',
                 },
+                {
+                  label: 'foo',
+                  rawLabel: 'foo',
+                  rawThreshold: 'none',
+                  rawValue: undefined,
+                  success: true,
+                  threshold: 'none',
+                  thresholdLimit: 'upper',
+                  type: 'axe',
+                  value: 'none',
+                },
               ],
               label: 'Axe Audits',
               rawLabel: 'Axe Audits',
@@ -432,16 +386,6 @@ describe('@modus/gimbal-plugin-axe', (): void => {
       withTags,
     });
 
-    jest.doMock(
-      'deepmerge',
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      (): Deepmerge => (x: any, y: any): any => {
-        deepmergeMock(x, y);
-
-        return realdeepmerge(x, y);
-      },
-    );
-
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     jest.doMock('axe-puppeteer', (): any => ({
       AxePuppeteer,
@@ -462,26 +406,8 @@ describe('@modus/gimbal-plugin-axe', (): void => {
         showSuccesses: false,
         tags: ['blah'],
         thresholds: {
-          impact: 3,
-        },
-      },
-    );
-
-    expect(deepmergeMock).toHaveBeenCalledWith(
-      {
-        showSuccesses: true,
-        thresholds: {
-          impact: 'none',
-        },
-      },
-      {
-        disabledRules: 'rule-1',
-        exclude: ['.a', '.b > c'],
-        include: '#z',
-        rules: ['rule-2'],
-        showSuccesses: false,
-        tags: ['blah'],
-        thresholds: {
+          foo: 'none',
+          bar: 3,
           impact: 3,
         },
       },
@@ -499,7 +425,6 @@ describe('@modus/gimbal-plugin-axe', (): void => {
   });
 
   it('should handle error on opening new page', async (): Promise<void> => {
-    const deepmergeMock = jest.fn();
     const newPage = jest.fn().mockResolvedValue(null);
     const chrome = { newPage };
 
@@ -538,37 +463,12 @@ describe('@modus/gimbal-plugin-axe', (): void => {
     };
     const context = contextMock as Context;
 
-    jest.doMock(
-      'deepmerge',
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      (): Deepmerge => (x: any, y: any): any => {
-        deepmergeMock(x, y);
-
-        return realdeepmerge(x, y);
-      },
-    );
-
     const { default: Axe } = await import('./index');
 
     await Axe(
       {
         context,
         dir: 'foo',
-      },
-      {
-        showSuccesses: true,
-        thresholds: {
-          impact: 'minor',
-        },
-      },
-    );
-
-    expect(deepmergeMock).toHaveBeenCalledWith(
-      {
-        showSuccesses: true,
-        thresholds: {
-          impact: 'none',
-        },
       },
       {
         showSuccesses: true,

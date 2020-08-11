@@ -16,6 +16,8 @@ export interface Config {
   bundles: BundleType[];
 }
 
+export type PluginConfig = unknown;
+
 export const defaultConfig: Config = {
   bundles: ['**/*.js'],
 };

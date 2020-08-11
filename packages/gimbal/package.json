@@ -76,7 +76,7 @@
   "homepage": "https://github.com/ModusCreateOrg/gimbal/tree/master/packages/gimbal#readme",
   "dependencies": {
     "@modus/gimbal-core": "2.0.0-dev",
-    "@octokit/rest": "18.0.1",
+    "@octokit/rest": "18.0.3",
     "brotli-size": "4.0.0",
     "bytes": "3.1.0",
     "cli-table3": "0.6.0",
@@ -87,7 +87,7 @@
     "globby": "11.0.1",
     "gzip-size": "5.1.1",
     "js-yaml": "3.14.0",
-    "lighthouse": "6.1.1",
+    "lighthouse": "6.2.0",
     "marked": "1.1.1",
     "minimatch": "3.0.4",
     "minimist": "1.2.5",

@@ -94,10 +94,31 @@ const Axe = async ({ context }: PluginOptions, configArg: Config): Promise<void>
 
         const raw = await instance.analyze();
         const { passes, violations } = raw;
-        const data = [
+        const data: ReportItem[] = [
           ...(config.showSuccesses ? passes.map((entry: Result): ReportItem => parseEntry(entry, true, config)) : []),
-          ...violations.map((entry: Result): ReportItem => parseEntry(entry, false, config)),
+          ...violations
+            /**
+             * Filter since violations may actually have passes in them.
+             * Violations are not necessarily gimbal failures, they are
+             * just axe violations at this point.
+             */
+            .filter((violation: Result) => Boolean(passes.find((pass: Result) => pass.id === violation.id) == null))
+            .map((entry: Result): ReportItem => parseEntry(entry, false, config)),
         ];
+
+        // need to sort since violations will be popped on the end
+        data.sort((a: ReportItem, b: ReportItem): 0 | 1 | -1 => {
+          if (a.label < b.label) {
+            return -1;
+          }
+
+          if (a.label > b.label) {
+            return 1;
+          }
+
+          return 0;
+        });
+
         const success = data.every((item: ReportItem): boolean => item.success);
 
         await page.close();

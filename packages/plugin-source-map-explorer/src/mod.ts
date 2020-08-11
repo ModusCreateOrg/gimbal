@@ -8,7 +8,7 @@ import { ExploreBundleResult, ExploreResult } from 'source-map-explorer/dist/typ
 import { Report, ReportItem } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Options } from '@/typings/module/registry';
-import { BundleObject, BundleType, Config, defaultConfig, meta, type } from './config';
+import { BundleObject, BundleType, Config, PluginConfig, defaultConfig, meta, type } from './config';
 
 type RunModuleFn = (options: Options) => Promise<Report>;
 
@@ -92,17 +92,18 @@ const parseBundles = (config: Config): Config => {
   };
 };
 
-const parseConfig = (pluginConfig: Config, config: Config): Config => {
+const parseConfig = (config: Config): Config => {
   const sourceConfig: Config = config.bundles ? { ...defaultConfig, bundles: [] } : { ...defaultConfig };
 
-  return parseBundles(deepmerge(deepmerge(pluginConfig, sourceConfig), config));
+  return parseBundles(deepmerge(sourceConfig, config));
 };
 
-export const runModule = (pluginConfig: Config): RunModuleFn => async ({
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+export const runModule = (_pluginConfig?: PluginConfig): RunModuleFn => async ({
   config,
   context,
 }: Options): Promise<Report> => {
-  const auditConfig = parseConfig(pluginConfig, config || {});
+  const auditConfig = parseConfig(config || {});
   const buildDir = context.config.get('configs.buildDir');
   const cwd = context.config.get('configs.cwd');
   const globBase = resolvePath(cwd, buildDir as string);

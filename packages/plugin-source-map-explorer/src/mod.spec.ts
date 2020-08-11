@@ -302,19 +302,20 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
 
       const { runModule } = await import('./mod');
 
-      const fn = runModule({
-        bundles: [
-          {
-            path: '**/*.js',
-            thresholds: {
-              'bar.js': '1.5 KB',
-              'foo.js': '1 KB',
-            },
-          },
-        ],
-      });
+      const fn = runModule();
 
       const ret = await fn({
+        config: {
+          bundles: [
+            {
+              path: '**/*.js',
+              thresholds: {
+                'bar.js': '1.5 KB',
+                'foo.js': '1 KB',
+              },
+            },
+          ],
+        },
         context,
       });
 
@@ -471,21 +472,22 @@ describe('@modus/gimbal-plugin-source-map-explorer/mod', (): void => {
 
       const { runModule } = await import('./mod');
 
-      const fn = runModule({
-        bundles: [
-          'foo-bundle.js',
-          {
-            path: '**/*.js',
-            thresholds: {
-              'bar.js': '1 KB',
-              'foo.js': '1.5 KB',
-            },
-          },
-          '!not-this.js',
-        ],
-      });
+      const fn = runModule();
 
       const ret = await fn({
+        config: {
+          bundles: [
+            'foo-bundle.js',
+            {
+              path: '**/*.js',
+              thresholds: {
+                'bar.js': '1 KB',
+                'foo.js': '1.5 KB',
+              },
+            },
+            '!not-this.js',
+          ],
+        },
         context,
       });
 

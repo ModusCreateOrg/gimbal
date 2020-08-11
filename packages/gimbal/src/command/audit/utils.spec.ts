@@ -107,9 +107,44 @@ describe('gimbal/command/audit/utils', () => {
   });
 
   describe('findBuildDir', () => {
-    test('should find first dir', async (): Promise<void> => {
-      const exists = jest.fn().mockResolvedValue(true);
-      const resolvePath = jest.fn().mockReturnValue('/foo/build');
+    test('should find configured dir', async (): Promise<void> => {
+      const exists = jest.fn().mockResolvedValueOnce(true);
+      const resolvePath = jest.fn().mockReturnValueOnce('/foo/bar');
+      const get = jest.fn().mockReturnValueOnce('bar').mockReturnValueOnce('/foo');
+
+      jest.doMock('@modus/gimbal-core/lib/utils/fs', () => ({
+        exists,
+        resolvePath,
+      }));
+
+      const contextMock: unknown = {
+        config: {
+          get,
+        },
+      };
+
+      const context = contextMock as Context;
+
+      const { findBuildDir } = await import('./utils');
+
+      const buildDir = await findBuildDir(context);
+
+      expect(buildDir).toBe('/foo/bar');
+
+      expect(exists).toHaveBeenCalledTimes(1);
+      expect(exists).toHaveBeenNthCalledWith(1, '/foo/bar');
+
+      expect(resolvePath).toHaveBeenCalledTimes(1);
+      expect(resolvePath).toHaveBeenNthCalledWith(1, '/foo', 'bar');
+
+      expect(get).toHaveBeenCalledTimes(2);
+      expect(get).toHaveBeenNthCalledWith(1, 'configs.buildDir');
+      expect(get).toHaveBeenNthCalledWith(2, 'configs.cwd');
+    });
+
+    test('should find first default dir', async (): Promise<void> => {
+      const exists = jest.fn().mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+      const resolvePath = jest.fn().mockReturnValueOnce('/foo').mockReturnValueOnce('/foo/build');
       const get = jest.fn().mockReturnValue('/foo');
 
       jest.doMock('@modus/gimbal-core/lib/utils/fs', () => ({
@@ -131,23 +166,25 @@ describe('gimbal/command/audit/utils', () => {
 
       expect(buildDir).toBe('/foo/build');
 
-      expect(exists).toHaveBeenCalledTimes(1);
-      expect(exists).toHaveBeenCalledWith('/foo/build');
+      expect(exists).toHaveBeenCalledTimes(2);
+      expect(exists).toHaveBeenNthCalledWith(1, '/foo');
+      expect(exists).toHaveBeenNthCalledWith(2, '/foo/build');
 
-      expect(resolvePath).toHaveBeenCalledTimes(1);
-      expect(resolvePath).toHaveBeenCalledWith('/foo', 'build');
+      expect(resolvePath).toHaveBeenCalledTimes(2);
+      expect(resolvePath).toHaveBeenNthCalledWith(1, '/foo', '/foo');
+      expect(resolvePath).toHaveBeenNthCalledWith(2, '/foo', 'build');
 
-      expect(get).toHaveBeenCalledTimes(1);
-      expect(get).toHaveBeenCalledWith('configs.cwd');
+      expect(get).toHaveBeenCalledTimes(3);
+      expect(get).toHaveBeenNthCalledWith(1, 'configs.buildDir');
+      expect(get).toHaveBeenNthCalledWith(2, 'configs.cwd');
+      expect(get).toHaveBeenNthCalledWith(3, 'configs.cwd');
     });
 
-    test('should find second dir', async (): Promise<void> => {
-      const exists = jest
-        .fn()
-        .mockResolvedValueOnce(false)
-        .mockResolvedValueOnce(true);
+    test('should find second default dir', async (): Promise<void> => {
+      const exists = jest.fn().mockResolvedValueOnce(false).mockResolvedValueOnce(false).mockResolvedValueOnce(true);
       const resolvePath = jest
         .fn()
+        .mockReturnValueOnce('/foo')
         .mockReturnValueOnce('/foo/build')
         .mockReturnValueOnce('/foo/dist');
       const get = jest.fn().mockReturnValue('/foo');
@@ -171,26 +208,28 @@ describe('gimbal/command/audit/utils', () => {
 
       expect(buildDir).toBe('/foo/dist');
 
-      expect(exists).toHaveBeenCalledTimes(2);
-      expect(exists).toHaveBeenNthCalledWith(1, '/foo/build');
-      expect(exists).toHaveBeenNthCalledWith(2, '/foo/dist');
+      expect(exists).toHaveBeenCalledTimes(3);
+      expect(exists).toHaveBeenNthCalledWith(1, '/foo');
+      expect(exists).toHaveBeenNthCalledWith(2, '/foo/build');
+      expect(exists).toHaveBeenNthCalledWith(3, '/foo/dist');
 
-      expect(resolvePath).toHaveBeenCalledTimes(2);
-      expect(resolvePath).toHaveBeenNthCalledWith(1, '/foo', 'build');
-      expect(resolvePath).toHaveBeenNthCalledWith(2, '/foo', 'dist');
+      expect(resolvePath).toHaveBeenCalledTimes(3);
+      expect(resolvePath).toHaveBeenNthCalledWith(1, '/foo', '/foo');
+      expect(resolvePath).toHaveBeenNthCalledWith(2, '/foo', 'build');
+      expect(resolvePath).toHaveBeenNthCalledWith(3, '/foo', 'dist');
 
-      expect(get).toHaveBeenCalledTimes(2);
-      expect(get).toHaveBeenNthCalledWith(1, 'configs.cwd');
+      expect(get).toHaveBeenCalledTimes(4);
+      expect(get).toHaveBeenNthCalledWith(1, 'configs.buildDir');
       expect(get).toHaveBeenNthCalledWith(2, 'configs.cwd');
+      expect(get).toHaveBeenNthCalledWith(3, 'configs.cwd');
+      expect(get).toHaveBeenNthCalledWith(4, 'configs.cwd');
     });
 
     test('should not find a dir', async (): Promise<void> => {
-      const exists = jest
-        .fn()
-        .mockResolvedValueOnce(false)
-        .mockResolvedValueOnce(false);
+      const exists = jest.fn().mockResolvedValueOnce(false).mockResolvedValueOnce(false).mockResolvedValueOnce(false);
       const resolvePath = jest
         .fn()
+        .mockReturnValueOnce('/foo')
         .mockReturnValueOnce('/foo/build')
         .mockReturnValueOnce('/foo/dist');
       const get = jest.fn().mockReturnValue('/foo');
@@ -214,17 +253,21 @@ describe('gimbal/command/audit/utils', () => {
 
       expect(buildDir).toBe(undefined);
 
-      expect(exists).toHaveBeenCalledTimes(2);
-      expect(exists).toHaveBeenNthCalledWith(1, '/foo/build');
-      expect(exists).toHaveBeenNthCalledWith(2, '/foo/dist');
+      expect(exists).toHaveBeenCalledTimes(3);
+      expect(exists).toHaveBeenNthCalledWith(1, '/foo');
+      expect(exists).toHaveBeenNthCalledWith(2, '/foo/build');
+      expect(exists).toHaveBeenNthCalledWith(3, '/foo/dist');
 
-      expect(resolvePath).toHaveBeenCalledTimes(2);
-      expect(resolvePath).toHaveBeenNthCalledWith(1, '/foo', 'build');
-      expect(resolvePath).toHaveBeenNthCalledWith(2, '/foo', 'dist');
+      expect(resolvePath).toHaveBeenCalledTimes(3);
+      expect(resolvePath).toHaveBeenNthCalledWith(1, '/foo', '/foo');
+      expect(resolvePath).toHaveBeenNthCalledWith(2, '/foo', 'build');
+      expect(resolvePath).toHaveBeenNthCalledWith(3, '/foo', 'dist');
 
-      expect(get).toHaveBeenCalledTimes(2);
-      expect(get).toHaveBeenNthCalledWith(1, 'configs.cwd');
+      expect(get).toHaveBeenCalledTimes(4);
+      expect(get).toHaveBeenNthCalledWith(1, 'configs.buildDir');
       expect(get).toHaveBeenNthCalledWith(2, 'configs.cwd');
+      expect(get).toHaveBeenNthCalledWith(3, 'configs.cwd');
+      expect(get).toHaveBeenNthCalledWith(4, 'configs.cwd');
     });
   });
 

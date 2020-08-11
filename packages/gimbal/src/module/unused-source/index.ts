@@ -35,7 +35,7 @@ const doThresholdMatch = (url: string, threshold: SizeConfigs): boolean => {
 
   // use the pathname, not the whole url to make the
   // threshold path config simpler
-  return minimatch(info.pathname, threshold.path);
+  return info.href === threshold.path || minimatch(info.pathname, threshold.path);
 };
 
 const isThresholdMatch = (url: string, threshold: SizeConfigs, type?: EntryType): boolean => {
