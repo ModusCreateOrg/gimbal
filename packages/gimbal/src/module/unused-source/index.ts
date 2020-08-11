@@ -105,24 +105,11 @@ const sortThreshold = (thresholds: SizeConfigs[]): SizeConfigs[] => {
   return thresholds;
 };
 
-const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[]): SizeConfigs[] => {
-  const newDestinationArray = destinationArray.slice();
+const parseConfig = (config: UnusedSourceConfig): UnusedSourceConfig => {
+  // if the config is passed, do not use default threshold at all
+  const defConfig = config.threshold ? { ...defaultConfig, threshold: [] } : { ...defaultConfig };
 
-  sourceArray.forEach((sourceItem: SizeConfigs): void => {
-    const match = newDestinationArray.find(
-      (destItem: SizeConfigs): boolean => destItem.path === sourceItem.path && destItem.type === sourceItem.type,
-    );
-
-    if (match) {
-      // apply config onto default
-      Object.assign(match, sourceItem);
-    } else {
-      // is a new item, add to beginning because likely user specified
-      newDestinationArray.unshift(sourceItem);
-    }
-  });
-
-  return newDestinationArray;
+  return deepmerge(defConfig, config);
 };
 
 const UnusedCSS = async (
@@ -132,9 +119,7 @@ const UnusedCSS = async (
   config: UnusedSourceConfig = Config.get('configs.unused-source', {}),
 ): Promise<Report> => {
   const checkThresholds = context.config.get('configs.checkThresholds');
-  const sourceConfig = deepmerge(defaultConfig, config, {
-    arrayMerge,
-  });
+  const sourceConfig = parseConfig(config);
   const isThresholdArray = Array.isArray(sourceConfig.threshold);
   const thresholds: string | SizeConfigs[] = isThresholdArray
     ? sortThreshold(sourceConfig.threshold as SizeConfigs[])

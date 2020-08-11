@@ -1,30 +1,12 @@
 /* eslint-disable-next-line import/no-extraneous-dependencies */
-import { ImpactValue, Result } from 'axe-core';
+import { Result } from 'axe-core';
 import { AxePuppeteer } from 'axe-puppeteer';
 import deepmerge from 'deepmerge';
 import { Report, ReportItem } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Options } from '@/typings/module/registry';
 import { defaultConfig, meta, type } from './config';
-
-type ThresholdValueString = ImpactValue | 'none';
-
-interface Config {
-  disabledRules?: string | string[];
-  exclude?: string | string[];
-  include?: string | string[];
-  rules?: string | string[];
-  showSuccesses: boolean;
-  tags?: string | string[];
-  thresholds: {
-    impact: number | ThresholdValueString;
-    [name: string]: number | ThresholdValueString;
-  };
-}
-
-type ImpactMap = {
-  [key in ThresholdValueString]: number;
-};
+import { Config, ImpactMap, ThresholdValueString } from '../types';
 
 const impactMap: ImpactMap = {
   none: 0,
@@ -62,19 +44,26 @@ const parseEntry = (entry: Result, success: boolean, config: Config): ReportItem
     thresholdLimit: 'upper',
     threshold,
     type,
-    value: entry.impact == null ? '' : entry.impact,
+    value: entry.impact == null ? 'none' : entry.impact,
   };
 };
 
-const Axe = async ({ context }: PluginOptions, configArg: Config): Promise<void> => {
-  const pluginConfig = deepmerge(defaultConfig, configArg);
+const parseConfig = (moduleConfig: Config, config: Config): Config => {
+  // if the config is passed, do not use default threshold at all
+  const sourceConfig: Config = config.thresholds
+    ? { ...defaultConfig, thresholds: { impact: 'none' } }
+    : { ...defaultConfig };
 
+  return deepmerge(deepmerge(moduleConfig, sourceConfig), config);
+};
+
+const Axe = async ({ context }: PluginOptions, configArg: Config): Promise<void> => {
   context.module.register(
     type,
     meta,
     async ({ chrome, config: auditConfig, url }: Options): Promise<Report> => {
       const page = await chrome.newPage();
-      const config = deepmerge(pluginConfig, auditConfig || {});
+      const config = parseConfig(configArg, auditConfig || {});
 
       if (page) {
         await page.setBypassCSP(true);

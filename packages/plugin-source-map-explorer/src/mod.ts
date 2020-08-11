@@ -8,7 +8,7 @@ import { ExploreBundleResult, ExploreResult } from 'source-map-explorer/dist/typ
 import { Report, ReportItem } from '@/typings/command';
 import { PluginOptions } from '@/typings/config/plugin';
 import { Options } from '@/typings/module/registry';
-import { BundleObject, BundleType, Config, meta, type } from './config';
+import { BundleObject, BundleType, Config, defaultConfig, meta, type } from './config';
 
 type RunModuleFn = (options: Options) => Promise<Report>;
 
@@ -65,11 +65,44 @@ export const parseBundle = (rawBundle: RawReport, bundleConfig: BundleType): Rep
   };
 };
 
+const parseBundles = (config: Config): Config => {
+  const catchAll = config.bundles.filter((bundleConfig: BundleType): boolean =>
+    typeof bundleConfig === 'string'
+      ? bundleConfig === '**/*.js'
+      : (bundleConfig as BundleObject).path === '**/*.js' && (bundleConfig as BundleObject).disable !== true,
+  );
+  const exclusions = config.bundles.filter((bundleConfig: BundleType): boolean =>
+    typeof bundleConfig === 'string' ? bundleConfig[0] === '!' : (bundleConfig as BundleObject).path[0] === '!',
+  );
+  const inclusions = config.bundles.filter((bundleConfig: BundleType): boolean => {
+    if (typeof bundleConfig === 'string') {
+      return bundleConfig[0] !== '!' && bundleConfig !== '**/*.js';
+    }
+
+    return (bundleConfig as BundleObject).path[0] !== '!' && (bundleConfig as BundleObject).path !== '**/*.js';
+  });
+
+  // we need to order the bundle configs. The first group is the inclusions, next is the catch all,
+  // next the exclusions.
+  const bundles = [...inclusions, ...catchAll, ...exclusions];
+
+  return {
+    ...config,
+    bundles,
+  };
+};
+
+const parseConfig = (pluginConfig: Config, config: Config): Config => {
+  const sourceConfig: Config = config.bundles ? { ...defaultConfig, bundles: [] } : { ...defaultConfig };
+
+  return parseBundles(deepmerge(deepmerge(pluginConfig, sourceConfig), config));
+};
+
 export const runModule = (pluginConfig: Config): RunModuleFn => async ({
   config,
   context,
 }: Options): Promise<Report> => {
-  const auditConfig = deepmerge(pluginConfig, config || {});
+  const auditConfig = parseConfig(pluginConfig, config || {});
   const buildDir = context.config.get('configs.buildDir');
   const cwd = context.config.get('configs.cwd');
   const globBase = resolvePath(cwd, buildDir as string);

@@ -23,13 +23,20 @@ const defaults = {
   output: ['json'],
 };
 
+const parseConfig = (config: LighthouseConfig): LighthouseConfig => {
+  // if the config is passed, do not use default threshold at all
+  const sourceConfig: LighthouseConfig = config.threshold ? { ...defaultConfig, threshold: {} } : { ...defaultConfig };
+
+  return deepmerge(sourceConfig, config);
+};
+
 const lighthouseRunner = async (
   url: string,
   userOptions: Options,
   context: Context,
   configArg: LighthouseConfig = Config.get('configs.lighthouse', {}),
 ): Promise<Report> => {
-  const config = deepmerge(configArg, defaultConfig);
+  const config = parseConfig(configArg);
   // Build options but let users change the defaults if needed
   const options = {
     ...deepmerge(defaults, userOptions),

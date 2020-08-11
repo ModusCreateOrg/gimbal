@@ -3,13 +3,14 @@ version: 2
 audits:
   heap-snapshot:
     threshold:
-      Nodes: 81
+      Nodes: 83
   lighthouse:
     threshold:
       accessibility: 100
       "best-practices": 100
       performance: 1
-      pwa: 20
+      pwa: 19
+      seo: 90
   size:
     threshold:
       - path: dist/example-angular/main-*.js

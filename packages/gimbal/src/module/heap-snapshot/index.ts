@@ -17,13 +17,22 @@ import {
 import defaultConfig from './default-config';
 import parseReport from './output';
 
+const parseConfig = (config: HeapSnapshotConfig): HeapSnapshotConfig => {
+  // if the config is passed, do not use default threshold at all
+  const sourceConfig: HeapSnapshotConfig = config.threshold
+    ? { ...defaultConfig, threshold: {} }
+    : { ...defaultConfig };
+
+  return deepmerge(sourceConfig, config);
+};
+
 const heapSnapshot = async (
   page: Page,
   url: string,
   context: Context,
   configArg: HeapSnapshotConfig = Config.get('configs.heap-snapshot', {}),
 ): Promise<Report> => {
-  const config = deepmerge(configArg, defaultConfig);
+  const config = parseConfig(configArg);
   const navigationStartEvent: NavigationStartEvent = {
     config,
     context,

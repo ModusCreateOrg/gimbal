@@ -4,6 +4,7 @@
     "outDir": "lib",
     "rootDirs": ["src"],
     "baseUrl": ".",
+    "typeRoots": ["node_modules/@types", "types"],
     "paths": {
       "@/typings/*": ["../typings/*"],
       "@modus/gimbal-core": ["../gimbal-core/src/index.ts"],

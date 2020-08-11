@@ -26,7 +26,7 @@ export const addSpinners = (audits: AuditObject, route?: string): void =>
 
 export const didAuditPass = (report?: Report): boolean => !report || report.success;
 
-export const findBuildDir = async (context: Context, dirArr = buildDirs): Promise<string | void> => {
+export const findBuildDirByGuessing = async (context: Context, dirArr = buildDirs): Promise<string | void> => {
   const arr = dirArr.slice();
   const dir = arr.shift();
 
@@ -41,7 +41,22 @@ export const findBuildDir = async (context: Context, dirArr = buildDirs): Promis
     return undefined;
   }
 
-  return findBuildDir(context, arr);
+  return findBuildDirByGuessing(context, arr);
+};
+
+export const findBuildDir = async (context: Context): Promise<string | void> => {
+  const buildDir = context.config.get('configs.buildDir');
+
+  if (buildDir) {
+    const cwd = context.config.get('configs.cwd');
+    const fullPath = resolvePath(cwd, buildDir as string);
+
+    if (await exists(fullPath)) {
+      return fullPath;
+    }
+  }
+
+  return findBuildDirByGuessing(context);
 };
 
 export const getModulesToRun = (audits: AuditObject, index: number, context: Context): AuditObject => {

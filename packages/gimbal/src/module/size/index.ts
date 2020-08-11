@@ -74,41 +74,33 @@ const getResult = async (filePath: string, configObject: SizeConfig, context: Co
   return undefined;
 };
 
-const arrayMerge = (destinationArray: SizeConfigs[], sourceArray: SizeConfigs[], context: Context): SizeConfigs[] => {
-  const cwd = context.config.get('configs.cwd');
-  const newDestinationArray = destinationArray.slice();
+const parseConfig = (config: SizeConfig, defConfig: SizeConfig, cwd: string): SizeConfig => {
+  // if the config is passed, do not use default threshold at all
+  const sourceConfig: SizeConfig = config.threshold ? { ...defConfig, threshold: [] } : { ...defConfig };
+  const merged: SizeConfig = deepmerge(sourceConfig, config);
 
-  sourceArray.forEach((sourceItem: SizeConfigs): void => {
-    const match = newDestinationArray.find((destItem: SizeConfigs): boolean => {
-      const { path: destPath } = destItem;
-      const { path: sourcePath } = sourceItem;
+  if (config.threshold) {
+    merged.threshold = config.threshold.map(
+      (threshold: SizeConfigs): SizeConfigs => ({
+        ...threshold,
+        path: resolvePath(cwd, threshold.path),
+      }),
+    );
+  }
 
-      // check if the raw strings match or the resolved full paths match
-      return destPath === sourcePath || resolvePath(cwd, destPath) === resolvePath(cwd, sourcePath);
-    });
-
-    if (match) {
-      // apply config onto default
-      Object.assign(match, sourceItem);
-    } else {
-      // is a new item
-      newDestinationArray.push(sourceItem);
-    }
-  });
-
-  return newDestinationArray;
+  return merged;
 };
 
 const sizeModule = async (
   context: Context,
-  config: SizeConfig | SizeConfigs[] = Config.get('configs.size', []),
+  passedConfig: SizeConfig | SizeConfigs[] = Config.get('configs.size', []),
 ): Promise<Report> => {
   const cwd = context.config.get('configs.cwd');
-  const configObject = deepmerge(defaultConfig(context), Array.isArray(config) ? { threshold: config } : config, {
-    arrayMerge(destinationArray: SizeConfigs[], sourceArray: SizeConfigs[]): SizeConfigs[] {
-      return arrayMerge(destinationArray, sourceArray, context);
-    },
-  });
+  const configObject: SizeConfig = parseConfig(
+    Array.isArray(passedConfig) ? { threshold: passedConfig } : passedConfig,
+    defaultConfig(context),
+    cwd,
+  );
 
   const auditStartEvent: AuditStartEvent = {
     config: configObject,

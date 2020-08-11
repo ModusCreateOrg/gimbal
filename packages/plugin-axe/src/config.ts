@@ -1,6 +1,7 @@
 import { Meta } from '@/typings/module';
+import { Config } from '../types';
 
-export const defaultConfig = {
+export const defaultConfig: Config = {
   showSuccesses: true,
   thresholds: {
     impact: 'none',

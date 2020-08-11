@@ -17,9 +17,15 @@ export const checkPercentage = (raw: string, rawThreshold: string, mode: Modes):
   return checkValue(value, threshold, mode);
 };
 
-const checkThreshold = (value: number | string, threshold: number | string, mode: Modes = 'upper'): boolean =>
-  isPercentage(value)
+const checkThreshold = (value: number | string, threshold: number | string | void, mode: Modes = 'upper'): boolean => {
+  // if no threshold present, allow
+  if (threshold == null) {
+    return true;
+  }
+
+  return isPercentage(value)
     ? checkPercentage(value as string, threshold as string, mode)
     : checkValue(value as number, threshold as number, mode);
+};
 
 export default checkThreshold;
