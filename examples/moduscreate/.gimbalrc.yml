@@ -15,12 +15,12 @@ audits:
     threshold:
       Documents: 15
       Frames: 5
-      Nodes: 4300
+      Nodes: 4500
   lighthouse:
     threshold:
       accessibility: 95
-      best-practices: 85
-      performance: 30
+      best-practices: 75
+      performance: 28
       pwa: 62
       seo: 99
   unused-source:
@@ -45,7 +45,7 @@ audits:
 
 configs:
   comment:
-    header: moduscreate.com Example
+    header: "[moduscreate.com](https://moduscreate.com) Example"
     onlyFailures: true
   lighthouse:
     # don't allow seo and accessibility categories
