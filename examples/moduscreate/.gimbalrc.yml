@@ -1,21 +1,21 @@
 version: 2
 
 audits:
-  axe:
-    thresholds:
-      aria-hidden-focus: serious
-      color-contrast: serious
-      duplicate-id: minor
-      heading-order: moderate
-      identical-links-same-purpose: minor
-      landmark-one-main: moderate
-      link-name: serious
-      region: moderate
-  heap-snapshot:
-    threshold:
-      Documents: 15
-      Frames: 5
-      Nodes: 4300
+  # axe:
+  #   thresholds:
+  #     aria-hidden-focus: serious
+  #     color-contrast: serious
+  #     duplicate-id: minor
+  #     heading-order: moderate
+  #     identical-links-same-purpose: minor
+  #     landmark-one-main: moderate
+  #     link-name: serious
+  #     region: moderate
+  # heap-snapshot:
+  #   threshold:
+  #     Documents: 15
+  #     Frames: 5
+  #     Nodes: 4300
   lighthouse:
     threshold:
       accessibility: 95
@@ -23,25 +23,25 @@ audits:
       performance: 30
       pwa: 62
       seo: 99
-  unused-source:
-    threshold:
-      - maxSize: "100%"
-        path: https://www.google-analytics.com/analytics.js
-      - maxSize: "100%"
-        path: https://static.addtoany.com/menu/page.js
-      - maxSize: "100%"
-        path: https://static.hsappstatic.net/conversations-visitor-ui/static-1.9566/sass/visitor.css
-      - maxSize: "35%"
-        path: "**/*/*.css"
-      - maxSize: "15%"
-        path: "**/*/main.*.js"
-      - maxSize: "70%"
-        path: "**/*.js"
-      - maxSize: "100%"
-        path: "/"
-        type: "js"
-      - maxSize: "100%"
-        path: "/"
+  # unused-source:
+  #   threshold:
+  #     - maxSize: "100%"
+  #       path: https://www.google-analytics.com/analytics.js
+  #     - maxSize: "100%"
+  #       path: https://static.addtoany.com/menu/page.js
+  #     - maxSize: "100%"
+  #       path: https://static.hsappstatic.net/conversations-visitor-ui/static-1.9566/sass/visitor.css
+  #     - maxSize: "35%"
+  #       path: "**/*/*.css"
+  #     - maxSize: "15%"
+  #       path: "**/*/main.*.js"
+  #     - maxSize: "70%"
+  #       path: "**/*.js"
+  #     - maxSize: "100%"
+  #       path: "/"
+  #       type: "js"
+  #     - maxSize: "100%"
+  #       path: "/"
 
 configs:
   comment:
