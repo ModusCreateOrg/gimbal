@@ -254,7 +254,7 @@ This repo is organized as a [monorepo](https://en.wikipedia.org/wiki/Monorepo) t
 
 ## Questions and Support
 
-If you have a problem running Gimbal, [please submit an issue](./issues). The more information you give us the faster we can get back with a good answer.
+If you have a problem running Gimbal, [please submit an issue](https://github.com/ModusCreateOrg/gimbal/issues). The more information you give us the faster we can get back with a good answer.
 
 ### Manage UI Performance Budgets with Gimbal
 [![Manage UI Performance Budgets with Gimbal](https://img.youtube.com/vi/7nOH3EG4nV4/0.jpg)](https://youtu.be/7nOH3EG4nV4?t=138)
