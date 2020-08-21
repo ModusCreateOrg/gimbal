@@ -256,8 +256,14 @@ This repo is organized as a [monorepo](https://en.wikipedia.org/wiki/Monorepo) t
 
 If you have a problem running Gimbal, [please submit an issue](https://github.com/ModusCreateOrg/gimbal/issues). The more information you give us the faster we can get back with a good answer.
 
+### How to Improve Web Application Speed and Increase Revenue with Gimbal
+[![How to Improve Web Application Speed and Increase Revenue with Gimbal](https://img.youtube.com/vi/Lq9cRXr0X_Y/0.jpg)](https://youtu.be/Lq9cRXr0X_Y)
+
 ### Manage UI Performance Budgets with Gimbal
 [![Manage UI Performance Budgets with Gimbal](https://img.youtube.com/vi/7nOH3EG4nV4/0.jpg)](https://youtu.be/7nOH3EG4nV4?t=138)
+
+### How to Develop High Performing Web Applications
+[![How to Develop High Performing Web Applications](https://img.youtube.com/vi/EBDtUhqNZjQ/0.jpg)](https://www.youtube.com/watch?v=EBDtUhqNZjQ)
 
 ## Modus Create
 
